@@ -40,7 +40,7 @@
           name = "markdown";
           formatter = {
             command = "prettierd";
-            args = ["--parser" "html"];
+            args = ["--parser" "markdown"];
           };
         }
         {
