@@ -12,27 +12,31 @@
     (import ./services.nix {inherit pkgs;})
     ./xdg.nix
   ];
-
   home = {
     file.Downloads.source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/Documents/0-inbox/downloads";
     homeDirectory = "/home/delafthi";
+    pointerCursor = {
+      package = pkgs.whitesur-cursors;
+      gtk.enable = true;
+      name = "WhiteSur Cursors";
+      x11.enable = true;
+    };
     packages = with pkgs; [
+      ascii-draw
       blender
       brave
+      gnomeExtensions.keep-awake
       godot_4
       mpv
       proton-pass
       protonmail-desktop
       protonvpn-gui
+      ulauncher
     ];
     shellAliases = {
       open = "xdg-open";
     };
   };
-
-  # Enable home-manager to start the X session (otherwise graphical services are not started automatically)
   xsession.enable = true;
-
-  # Nicely reload system units when changing configs
   systemd.user.startServices = "sd-switch";
 }
