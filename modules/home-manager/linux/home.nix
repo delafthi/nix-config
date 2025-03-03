@@ -32,6 +32,7 @@
       protonmail-desktop
       protonvpn-gui
       ulauncher
+      virt-manager
     ];
     shellAliases = {
       open = "xdg-open";
