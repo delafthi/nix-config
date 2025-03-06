@@ -50,24 +50,7 @@
     };
   };
   networking = {
-    hostName = "Thierrys-Workstation";
-    interfaces = {
-      enp5s0.ipv4.addresses = [
-        {
-          address = "192.168.1.1";
-          prefixLength = 24;
-        }
-      ];
-      enp6s0.ipv4.addresses = [
-        {
-          address = "192.168.1.100";
-          prefixLength = 24;
-        }
-      ];
-    };
-    extraHosts = ''
-      192.168.1.1 local
-    '';
+    hostName = "Thierrys-Macbook-Air";
     networkmanager.enable = true;
     proxy.noProxy = "127.0.0.1,localhost,internal.domain";
   };
@@ -92,28 +75,6 @@
   };
   time.timeZone = "Europe/Zurich";
   services = {
-    btrbk = {
-      instances = {
-        local = {
-          onCalendar = "hourly";
-          settings = {
-            timestamp_format = "long";
-            snapshot_preserve_min = "2d";
-            snapshot_preserve = "14d";
-            target_preserve_min = "no";
-            target_preserve = "20d 10w *m";
-            volume."/" = {
-              subvolume = {
-                "home" = {
-                  snapshot_dir = "home/.snapshots";
-                  target = "/run/media/delafthi/c8a565fe-30ad-49e2-899d-d29d1ad4a992";
-                };
-              };
-            };
-          };
-        };
-      };
-    };
     btrfs.autoScrub = {
       enable = true;
       interval = "monthly";
@@ -128,7 +89,6 @@
     udev.packages = with pkgs; [zsa-udev-rules logitech-udev-rules];
     xserver = {
       enable = true;
-      videoDrivers = ["nvidia"];
       displayManager.gdm.enable = true;
       desktopManager.gnome = {
         enable = true;
