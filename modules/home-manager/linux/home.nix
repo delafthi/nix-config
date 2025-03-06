@@ -10,6 +10,7 @@
     (import ./dconf.nix {inherit lib;})
     (import ./gtk.nix {inherit config pkgs;})
     (import ./programs/gnome-shell.nix {inherit pkgs;})
+    (import ./programs/ulauncher.nix {inherit pkgs;})
     (import ./services/gpg-agent.nix {inherit pkgs;})
     ./services/podman.nix
     ./services/unclutter.nix
@@ -33,7 +34,6 @@
       proton-pass
       protonmail-desktop
       protonvpn-gui
-      ulauncher
       virt-manager
     ];
     shellAliases = {
