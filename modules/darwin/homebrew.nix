@@ -14,9 +14,9 @@
       }) [
         "alcove"
         "blender"
+        "domzilla-caffeine"
         "element"
         "ghostty"
-        "keepingyouawake"
         "lunar"
         "meetingbar"
         "monodraw"
