@@ -17,6 +17,7 @@
         "domzilla-caffeine"
         "element"
         "ghostty"
+        "krita"
         "lunar"
         "meetingbar"
         "monodraw"
