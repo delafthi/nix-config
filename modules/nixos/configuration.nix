@@ -32,22 +32,10 @@
     useXkbConfig = true; # use xkbOptions in tty.
   };
   environment = {
-    gnome.excludePackages = with pkgs; [
-      cheese
-      epiphany
-      geary
-      gnome-tour
-      seahorse
-      simple-scan
-      totem
-      yelp
-    ];
     shells = with pkgs; [bashInteractive fish];
     systemPackages = with pkgs; [
       coreutils
       git
-      nautilus-python
-      nautilus-open-any-terminal
       vim
       wget
       xclip
@@ -83,6 +71,7 @@
   };
   programs = {
     fish.enable = true;
+    hyprland.enable = true;
     nix-ld.enable = true;
     zsh.enable = true;
   };
@@ -92,9 +81,6 @@
       enable = true;
       interval = "monthly";
       fileSystems = ["/" "/var" "/data"];
-    };
-    gnome = {
-      gnome-keyring.enable = lib.mkForce false;
     };
     libinput.enable = true;
     openssh = {
@@ -106,17 +92,14 @@
         X11Forwarding = true;
       };
     };
+    pipewire.enable = true;
     printing.enable = true;
     qemuGuest.enable = true;
     spice-vdagentd.enable = true;
     udev.packages = with pkgs; [zsa-udev-rules logitech-udev-rules];
     xserver = {
       enable = true;
-      displayManager.gdm.enable = true;
-      desktopManager.gnome = {
-        enable = true;
-        extraGSettingsOverridePackages = [pkgs.nautilus-open-any-terminal];
-      };
+      displayManager.sddm.enable = true;
       xkb = {
         layout = "us";
         options = "mac";

@@ -1,5 +1,5 @@
 {
   imports = [
-    ./hyprlock.nix
+    ./hyprland.nix
   ];
 }

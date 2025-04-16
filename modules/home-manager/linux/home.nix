@@ -6,7 +6,6 @@
 }: {
   imports = [
     ../home.nix
-    ./dconf.nix
     ./gtk.nix
     ./xdg.nix
     ./programs
