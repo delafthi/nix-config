@@ -10,6 +10,7 @@ in
 {
   imports = [
     ./claude-code
+    ./opencode
     ./mcp.nix
   ];
   programs = {
