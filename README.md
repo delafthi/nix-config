@@ -14,7 +14,7 @@ Personal configuration files for managing Linux and macOS (Darwin) environments 
 1. **Clone the repository**
 
 ```bash
-git clone https://github.com/delafthi/dotfiles.git
+git clone https://codeberg.org/delafthi/dotfiles.git
 cd dotfiles
 ```
 

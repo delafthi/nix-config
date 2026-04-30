@@ -7,9 +7,8 @@
       id = "templates";
     };
     to = {
-      type = "github";
-      owner = "delafthi";
-      repo = "nix-templates";
+      type = "tarball";
+      url = "https://codeberg.org/delafthi/nix-templates/archive/main.tar.gz";
     };
   };
 }
