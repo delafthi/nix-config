@@ -4,6 +4,12 @@
     enable = true;
     enableDefaultConfig = false;
     matchBlocks = {
+      "codeberg.org" = {
+        hostname = "codeberg.org";
+        user = "git";
+        identityFile = "~/.ssh/id_codeberg.org.pub";
+        identitiesOnly = true;
+      };
       "github.com" = {
         hostname = "github.com";
         user = "git";
