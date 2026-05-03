@@ -46,6 +46,7 @@
     };
     skills = {
       caveman = "${pkgs.caveman}/skills/caveman";
+      jj = ./skills/jj;
     };
   };
 }
