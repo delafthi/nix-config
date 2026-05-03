@@ -62,5 +62,10 @@
 
       - NEVER post, push, publish, send, or otherwise externally share anything unless explicitly instructed to do so.
     '';
+    skills = {
+      diagnose = "${pkgs.mattpocock-skills}/skills/engineering/diagnose";
+      grill-me = "${pkgs.mattpocock-skills}/skills/engineering/grill-with-docs";
+      improve-codebase-architecture = "${pkgs.mattpocock-skills}/skills/engineering/improve-codebase-architecture";
+    };
   };
 }

@@ -38,6 +38,33 @@
     commands = {
       codedocs = ./commands/codedocs.md;
       commit = ./commands/commit.md;
+      diagnose = ''
+        ---
+        description: Diagnose a bug or performance regression
+        agent: investigator
+        ---
+        $ARGUMENTS
+
+        @~/.config/opencode/skills/diagnose/SKILL.md
+      '';
+      grill-me = ''
+        ---
+        description: Stress-test a plan against the domain model and documented decisions
+        agent: investigator
+        ---
+        $ARGUMENTS
+
+        @~/.config/opencode/skills/grill-me/SKILL.md
+      '';
+      improve-codebase-architecture = ''
+        ---
+        description: Find and apply architecture improvements in the codebase
+        agent: build
+        ---
+        $ARGUMENTS
+
+        @~/.config/opencode/skills/improve-codebase-architecture/SKILL.md
+      '';
       onboard = ./commands/onboard.md;
       pr = ./commands/pr.md;
       readme = ./commands/readme.md;
@@ -46,6 +73,9 @@
     };
     skills = {
       caveman = "${pkgs.caveman}/skills/caveman";
+      diagnose = "${pkgs.mattpocock-skills}/skills/engineering/diagnose";
+      grill-me = "${pkgs.mattpocock-skills}/skills/engineering/grill-with-docs";
+      improve-codebase-architecture = "${pkgs.mattpocock-skills}/skills/engineering/improve-codebase-architecture";
       jj = ./skills/jj;
     };
   };
