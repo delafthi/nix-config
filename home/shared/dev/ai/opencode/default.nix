@@ -4,8 +4,6 @@
     enable = true;
     enableMcpIntegration = true;
     context = ''
-      # Global Guidelines
-
       Terse like caveman. Technical substance exact. Only fluff die.
       Drop: articles, filler (just/really/basically), pleasantries, hedging.
       Fragments OK. Short synonyms. Code unchanged.
@@ -14,10 +12,12 @@
       Code/commits/PRs: normal. Off: "stop caveman" / "normal mode".
 
       ## Version Control
+
       - Prefer `jj` over `git`. Use `jj` commands by default.
       - Key commands: `jj new` (new change), `jj describe` (set message), `jj squash` (amend into parent), `jj log` (history), `jj diff` (show changes).
 
       ## External Actions
+
       - NEVER post, push, publish, send, or otherwise externally share anything unless explicitly instructed to do so.
     '';
     settings = {

@@ -7,35 +7,17 @@ template: Commit the current changes.
 
 # Create commit with description
 
-Commit the current changes. $ARGUMENTS
+Commit current changes. $ARGUMENTS
 
-## Existing Description Check
+## Check context
 
-Check if the current change already has a description:
 !`jj status`
-
-If the working copy shows an existing description (not "(no description set)"):
-
-- Update the existing description to reflect current/recent changes
-- Use `jj describe -m "updated message"` to modify the description
-- Analyze all changes since the description was first set
-- Ensure the updated description captures the full scope of current changes
-
-If no description exists, proceed with creating one below.
-
-## Analysis
-
-First, analyze recent commits to understand the project's commit style:
 !`jj log --limit 20`
-
-Follow the project's existing commit conventions if they are clearly established.
-If no clear pattern exists or the project uses varied styles, default to the
-Conventional Commits Specification (preferred).
-
-Check current changes:
 !`jj diff`
 
-## Format
+Use existing project style when clear. Else use Conventional Commits.
+
+## Commit message format
 
 ```text
 <type>(<scope>): <description>
@@ -45,32 +27,7 @@ Check current changes:
 [optional footer(s)]
 ```
 
-## Subject Line Requirements
-
-- Format: `<type>[optional (<scope>)]: <description>`
-- Imperative mood, lowercase, no period
-- Maximum 100 characters
-- English only
-
-## Body Requirements
-
-- For multiple/complex changes: use bullet points with "-"
-- For single/simple changes: use prose to describe why the change was necessary
-- Maximum 100 characters per line
-- Explain WHY changes were made, not WHAT changed
-- Be objective
-- English only
-
-## Footer Requirements
-
-- Format: `<token>: <value>`
-- Maximum 100 characters per line
-- Use GitHub CLI to fetch issue information if needed
-- Only reference issues if directly related
-- Types: `BREAKING CHANGE:`, `Fixes #`, `Closes #`, `Resolves #`, `Related to #`
-
-## General Requirements
-
-- Wrap all paths, commands, or environment variables in backticks
-- Backticks must be escaped (\`) when used on the command line
-- Keep commit messages minimal and concise
+- Subject: imperative, lowercase, no period, <=100 chars, English
+- Body: only when needed, explain why, <=100 chars/line
+- Footer: only when relevant (`BREAKING CHANGE:`, `Fixes #`, `Closes #`, `Resolves #`, `Related to #`)
+- Keep message minimal
