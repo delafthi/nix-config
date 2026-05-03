@@ -1,4 +1,5 @@
 {
+  config,
   pkgs,
   user,
   ...
@@ -14,11 +15,12 @@
       enable = true;
       createDirectories = true;
       extraConfig = {
-        DEVELOPER = "$HOME/Developer";
-        MOVIES = "$HOME/Movies";
+        DEVELOPER = "${config.home.homeDirectory}/Developer";
+        MOVIES = "${config.home.homeDirectory}/Movies";
       };
+      projects = "${config.home.homeDirectory}/Developer";
       setSessionVariables = true;
-      videos = "$HOME/Movies";
+      videos = "${config.home.homeDirectory}/Movies";
     };
   };
 }
