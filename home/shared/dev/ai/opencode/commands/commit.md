@@ -17,6 +17,8 @@ Commit current changes. $ARGUMENTS
 
 Use existing project style when clear. Else use Conventional Commits.
 
+If no working-copy changes, stop and report: nothing to commit.
+
 ## Commit message format
 
 ```text
