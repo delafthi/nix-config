@@ -8,4 +8,7 @@
   nixpkgs.config.allowUnsupportedSystem = true;
   services.spice-vdagentd.enable = true;
   virtualisation.rosetta.enable = true;
+
+  # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
+  system.stateVersion = "25.11";
 }
