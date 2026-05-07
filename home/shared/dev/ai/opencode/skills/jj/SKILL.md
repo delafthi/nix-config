@@ -15,6 +15,14 @@ Common actions:
 - Manage bookmarks: `jj bookmark list`, `jj bookmark create <name>`, `jj bookmark set <name>`
 - Push bookmark: `jj git push --bookmark <name>`
 
+Workflow (jj vs git):
+
+jj workflow: create change first, then make edits, then describe/commit.
+
+- `jj new` → make changes → `jj describe -m "..."` (or `jj commit -m "..."` to also create next change)
+- Do NOT make changes then commit like git — that leads to overusing `jj squash` and `jj split`.
+- `jj commit` = `jj describe` + `jj new` in one step; use it to close current change and start fresh.
+
 Gotchas:
 
 - Use `bookmark`, not `branch`.
