@@ -29,9 +29,9 @@
       Amphetamine = 937984704;
       Developer = 640199958;
       "Hand Mirror" = 1502839586;
-      Keynote = 409183694;
-      Numbers = 409203825;
-      Pages = 409201541;
+      Keynote = 361285480;
+      Numbers = 361304891;
+      Pages = 361309726;
       PDFgear = 6469021132;
       Photomator = 1444636541;
       Shazam = 897118787;
