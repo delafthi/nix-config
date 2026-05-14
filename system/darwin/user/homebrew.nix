@@ -7,10 +7,7 @@
   environment.systemPath = [ "/opt/homebrew/bin" ];
   homebrew = {
     enable = true;
-    caskArgs = {
-      no_quarantine = true;
-      require_sha = true;
-    };
+    caskArgs.require_sha = true;
     casks =
       map
         (cask: {
