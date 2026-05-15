@@ -64,7 +64,7 @@
     '';
     skills = {
       diagnose = "${pkgs.mattpocock-skills}/skills/engineering/diagnose";
-      grill-me = "${pkgs.mattpocock-skills}/skills/engineering/grill-with-docs";
+      grill-with-docs = "${pkgs.mattpocock-skills}/skills/engineering/grill-with-docs";
       improve-codebase-architecture = "${pkgs.mattpocock-skills}/skills/engineering/improve-codebase-architecture";
     };
   };

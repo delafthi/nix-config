@@ -47,14 +47,14 @@
 
         @~/.config/opencode/skills/diagnose/SKILL.md
       '';
-      grill-me = ''
+      grill-with-docs = ''
         ---
         description: Stress-test a plan against the domain model and documented decisions
         agent: investigator
         ---
         $ARGUMENTS
 
-        @~/.config/opencode/skills/grill-me/SKILL.md
+        @~/.config/opencode/skills/grill-with-docs/SKILL.md
       '';
       improve-codebase-architecture = ''
         ---
@@ -74,7 +74,7 @@
     skills = {
       caveman = "${pkgs.caveman}/skills/caveman";
       diagnose = "${pkgs.mattpocock-skills}/skills/engineering/diagnose";
-      grill-me = "${pkgs.mattpocock-skills}/skills/engineering/grill-with-docs";
+      grill-with-docs = "${pkgs.mattpocock-skills}/skills/engineering/grill-with-docs";
       improve-codebase-architecture = "${pkgs.mattpocock-skills}/skills/engineering/improve-codebase-architecture";
       jj = ./skills/jj;
     };
