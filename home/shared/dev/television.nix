@@ -94,10 +94,10 @@
         };
       };
       channels = {
-        # tv projects — developer projects sorted by frecency
-        projects = {
+        # tv project — developer projects sorted by frecency
+        project = {
           metadata = {
-            name = "projects";
+            name = "project";
             description = "Browse developer projects sorted by frecency";
             requirements = [
               "fd"
@@ -108,7 +108,7 @@
           };
           source = {
             command = ''
-              fd . "$XDG_DEVELOPER_DIR" --exact-depth 2 --type d |
+              fd . "$XDG_PROJECTS_DIR" --exact-depth 2 --type d |
                 sed 's|/$||' |
                 awk '
                   BEGIN {
@@ -152,7 +152,7 @@
                   input=$(gum input --placeholder "GitHub URL or project name" --header "New project")
                   [ -z "$input" ] && exit 0
                   pick_ns() {
-                    ns=$(printf "%s\n[new namespace]" "$(ls -1 "$XDG_DEVELOPER_DIR")" |
+                    ns=$(printf "%s\n[new namespace]" "$(ls -1 "$XDG_PROJECTS_DIR")" |
                       gum filter --header "Namespace for $1")
                     [ -z "$ns" ] && return 1
                     if [ "$ns" = "[new namespace]" ]; then
@@ -165,18 +165,18 @@
                   if echo "$input" | grep -qE "^(git@|https?://)"; then
                     proj=$(echo "$input" | sed -E "s|.*/||; s|\.git$||")
                     ns=$(pick_ns "$proj") || exit 0
-                    mkdir -p "$XDG_DEVELOPER_DIR/$ns"
-                    jj git clone "$input" "$XDG_DEVELOPER_DIR/$ns/$proj" || exit 1
-                    target="$XDG_DEVELOPER_DIR/$ns/$proj"
+                    mkdir -p "$XDG_PROJECTS_DIR/$ns"
+                    jj git clone "$input" "$XDG_PROJECTS_DIR/$ns/$proj" || exit 1
+                    target="$XDG_PROJECTS_DIR/$ns/$proj"
                   else
                     case "$input" in
                       */*)
-                        target="$XDG_DEVELOPER_DIR/$input"
+                        target="$XDG_PROJECTS_DIR/$input"
                         mkdir -p "$target"
                         ;;
                       *)
                         ns=$(pick_ns "$input") || exit 0
-                        target="$XDG_DEVELOPER_DIR/$ns/$input"
+                        target="$XDG_PROJECTS_DIR/$ns/$input"
                         mkdir -p "$target"
                         ;;
                     esac

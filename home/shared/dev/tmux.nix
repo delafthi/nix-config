@@ -9,7 +9,7 @@
       tmux-scratch-terminal
     ];
     shellAliases = {
-      cdp = "tv projects";
+      cdp = "tv project";
     };
   };
   programs.tmux = {

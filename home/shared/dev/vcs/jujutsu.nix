@@ -166,7 +166,7 @@ _: {
           ui.paginate = "never";
         }
         {
-          "--when".repositories = [ "~/Developer/zhaw" ];
+          "--when".repositories = [ "~/Projects/zhaw" ];
           remotes.origin.auto-track-bookmarks = "deaa/* | main | master";
           templates.git_push_bookmark = ''"deaa/" ++ change_id.short()'';
           signing = {

@@ -14,11 +14,7 @@
     userDirs = {
       enable = true;
       createDirectories = true;
-      extraConfig = {
-        DEVELOPER = "${config.home.homeDirectory}/Developer";
-        MOVIES = "${config.home.homeDirectory}/Movies";
-      };
-      projects = "${config.home.homeDirectory}/Developer";
+      extraConfig.MOVIES = "${config.home.homeDirectory}/Movies";
       setSessionVariables = true;
       videos = "${config.home.homeDirectory}/Movies";
     };
