@@ -1,8 +1,7 @@
 {
+  config,
   lib,
   osConfig,
-  pkgs,
-  zen-browser,
   ...
 }:
 lib.mkIf osConfig.system.gui.enable {
@@ -20,13 +19,13 @@ lib.mkIf osConfig.system.gui.enable {
           };
         })
         [
-          "${zen-browser.default}/Applications/Zen Browser (Beta).app"
-          "${pkgs.protonmail-desktop}/Applications/Proton Mail.app"
-          "${pkgs.proton-pass}/Applications/Proton Pass.app"
+          "${config.home.homeDirectory}/Applications/Home Manager Apps/Zen Browser (Beta).app"
+          "${config.home.homeDirectory}/Applications/Home Manager Apps/Proton Mail.app"
+          "${config.home.homeDirectory}/Applications/Home Manager Apps/Proton Pass.app"
           "/System/Applications/Music.app"
           "/Applications/Things3.app"
-          "${pkgs.obsidian}/Applications/Obsidian.app"
-          "${pkgs.ghostty-bin}/Applications/Ghostty.app"
+          "${config.home.homeDirectory}/Applications/Home Manager Apps/Obsidian.app"
+          "${config.home.homeDirectory}/Applications/Home Manager Apps/Ghostty.app"
         ];
     show-recents = false;
     showhidden = true;
