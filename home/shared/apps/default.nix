@@ -15,9 +15,9 @@
     with pkgs;
     [ qmk ]
     ++ lib.optionals osConfig.system.gui.enable [
-      # blender
+      (if pkgs.stdenv.hostPlatform.isDarwin then blender-bin else blender)
       discord
       signal-desktop
-      # kicad
+      (if pkgs.stdenv.hostPlatform.isDarwin then kicad-bin else kicad)
     ];
 }

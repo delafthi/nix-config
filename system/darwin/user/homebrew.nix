@@ -16,11 +16,8 @@
         })
         (
           lib.optionals config.system.gui.enable [
-            "blender" # broken on darwin
             "gog-galaxy" # not in nixpkgs
             "karabiner-elements" # broken see https://github.com/nix-darwin/nix-darwin/issues/1041
-            "kicad" # broken on darwin
-            "proton-drive" # not in nixpkgs
             "steam" # only as a nixos module
             "wacom-tablet" # only for linux as (wacomtablet)
           ]

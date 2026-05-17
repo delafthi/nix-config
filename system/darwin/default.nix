@@ -1,6 +1,7 @@
 {
   imports = [
     ./hardware
+    ./programs
     ./security
     ./settings
     ./user
