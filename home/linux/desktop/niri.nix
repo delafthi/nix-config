@@ -128,6 +128,8 @@ lib.mkIf osConfig.system.gui.enable {
 
       // Window management
       Mod+Q { close-window; }
+      Mod+Ctrl+N { focus-column-right; }
+      Mod+Ctrl+P { focus-column-left; }
       Mod+Ctrl+C { toggle-window-floating; }
       Mod+Ctrl+F { maximize-column; }
       Mod+Shift+F { fullscreen-window; }
