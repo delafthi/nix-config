@@ -2,7 +2,7 @@
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
-    matchBlocks = {
+    settings = {
       "clt-dsk-t-6006" = {
         hostname = "clt-dsk-t-6006";
         user = "deaa";
