@@ -35,8 +35,8 @@
         controlPersist = "no";
         forwardAgent = false;
         hashKnownHosts = false;
-        serverAliveInterval = 0;
-        serverAliveCountMax = 3;
+        serverAliveInterval = 30;
+        serverAliveCountMax = 6;
         userKnownHostsFile = "~/.ssh/known_hosts";
       };
     };
