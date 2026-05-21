@@ -21,6 +21,7 @@
     secrets = {
       "api-keys/context7" = { };
       "api-keys/openrouter" = { };
+      "ssh/clt-dsk-t-6006/public".path = "${config.home.homeDirectory}/.ssh/id_clt-dsk-t-6006.pub";
       "ssh/codeberg.org/public".path = "${config.home.homeDirectory}/.ssh/id_codeberg.org.pub";
       "ssh/deaa/public".path = "${config.home.homeDirectory}/.ssh/id_deaa.pub";
       "ssh/github.com/public".path = "${config.home.homeDirectory}/.ssh/id_github.com.pub";

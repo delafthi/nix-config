@@ -3,6 +3,12 @@
     enable = true;
     enableDefaultConfig = false;
     matchBlocks = {
+      "clt-dsk-t-6006" = {
+        hostname = "clt-dsk-t-6006";
+        user = "deaa";
+        identityFile = "~/.ssh/id_clt-dsk-t-6006.pub";
+        identitiesOnly = true;
+      };
       "codeberg.org" = {
         hostname = "codeberg.org";
         user = "git";
