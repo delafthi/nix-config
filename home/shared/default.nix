@@ -2,6 +2,7 @@
   imports = [
     ./apps
     ./dev
+    ./networking
     ./security
     ./settings
     ./nix.nix

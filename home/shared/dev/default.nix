@@ -20,7 +20,6 @@
     ./pueue.nix
     ./podman.nix
     ./ripgrep.nix
-    ./ssh.nix
     ./tealdeer.nix
     ./tmux.nix
     ./yazi.nix

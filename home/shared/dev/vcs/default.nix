@@ -5,5 +5,6 @@
     ./git-cliff.nix
     ./git.nix
     ./jujutsu.nix
+    ./signing.nix
   ];
 }

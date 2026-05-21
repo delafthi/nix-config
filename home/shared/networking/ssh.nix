@@ -1,5 +1,4 @@
 {
-  home.file.".ssh/allowed_signers".source = ./allowed-signers;
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
