@@ -5,9 +5,6 @@
 }:
 {
   home = {
-    packages = with pkgs; [
-      tmux-scratch-terminal
-    ];
     shellAliases = {
       cdp = "tv project";
     };
@@ -47,7 +44,6 @@
         display-message "Sourced '~/.config/tmux/tmux.conf'"
       bind -N "Split the pane into two, top and bottom" s split-window -v
       bind -N "Select a new session for the attached client interactively" S popup -h 90% -w 90% -E "tv tmux-sessions"
-      bind -N "Open scratch terminal" t run-shell "tmux-scratch-terminal"
       bind -N "Change session working directory" u \
         attach-session -t . -c '#{pane_current_path}' \; \
         display-message "Changed session working directory to '#{pane_current_path}'"
