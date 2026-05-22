@@ -1,5 +1,8 @@
 { pkgs, ... }:
 {
+  home.shellAliases = {
+    oc = "opencode";
+  };
   programs.opencode = {
     enable = true;
     enableMcpIntegration = true;
