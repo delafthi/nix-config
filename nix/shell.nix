@@ -7,7 +7,7 @@
   config,
 }:
 mkShell {
-  name = "dotfiles";
+  name = "default";
   inputsFrom = [ config.treefmt.build.devShell ];
   packages = [
     age
