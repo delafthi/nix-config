@@ -11,7 +11,9 @@ in
   imports = [
     ./claude-code
     ./opencode
-    ./mcp.nix
+  ];
+  home.packages = with pkgs; [
+    ctx7
   ];
   programs = {
     bash.initExtra = ''

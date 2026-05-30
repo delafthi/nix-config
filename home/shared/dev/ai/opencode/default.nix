@@ -5,7 +5,6 @@
   };
   programs.opencode = {
     enable = true;
-    enableMcpIntegration = true;
     context = ''
       Terse like caveman. Technical substance exact. Only fluff die.
       Drop: articles, filler (just/really/basically), pleasantries, hedging.
@@ -76,6 +75,7 @@
     };
     skills = {
       caveman = "${pkgs.caveman}/skills/caveman";
+      context7-cli = "${pkgs.ctx7}/skills/context7-cli";
       diagnose = "${pkgs.mattpocock-skills}/skills/engineering/diagnose";
       grill-with-docs = "${pkgs.mattpocock-skills}/skills/engineering/grill-with-docs";
       improve-codebase-architecture = "${pkgs.mattpocock-skills}/skills/engineering/improve-codebase-architecture";
