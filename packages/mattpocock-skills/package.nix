@@ -8,6 +8,9 @@ stdenvNoCC.mkDerivation (_finalAttrs: {
   pname = "mattpocock-skills";
   version = "0-unstable-2026-05-26";
 
+  __structuredAttrs = true;
+  strictDeps = true;
+
   src = fetchFromGitHub {
     owner = "mattpocock";
     repo = "skills";

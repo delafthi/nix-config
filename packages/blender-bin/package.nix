@@ -15,6 +15,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "blender-bin";
   version = "5.1.2";
 
+  __structuredAttrs = true;
+  strictDeps = true;
+
   src =
     finalAttrs.passthru.sources.${stdenvNoCC.hostPlatform.system}
       or (throw "Unsupported system: ${stdenvNoCC.hostPlatform.system}");

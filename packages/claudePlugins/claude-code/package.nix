@@ -21,6 +21,9 @@ let
       pname = "claude-code-${name}";
       inherit version src;
 
+      __structuredAttrs = true;
+      strictDeps = true;
+
       installPhase = ''
         cp -r plugins/${name} $out
       '';

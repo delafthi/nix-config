@@ -8,6 +8,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "caveman";
   version = "1.8.2";
 
+  __structuredAttrs = true;
+  strictDeps = true;
+
   src = fetchFromGitHub {
     owner = "JuliusBrussee";
     repo = "caveman";

@@ -15,6 +15,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "kicad-bin";
   version = "10.0.3";
 
+  __structuredAttrs = true;
+  strictDeps = true;
+
   src =
     finalAttrs.passthru.sources.${stdenvNoCC.hostPlatform.system}
       or (throw "Unsupported system: ${stdenvNoCC.hostPlatform.system}");

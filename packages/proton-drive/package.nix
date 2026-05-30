@@ -13,6 +13,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "proton-drive";
   version = "2.11.5";
 
+  __structuredAttrs = true;
+  strictDeps = true;
+
   src = finalAttrs.passthru.sources.${stdenvNoCC.hostPlatform.system};
 
   sourceRoot = ".";
