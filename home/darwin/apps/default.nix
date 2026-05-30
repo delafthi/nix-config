@@ -13,6 +13,7 @@
     lib.optionals osConfig.system.gui.enable [
       alcove
       aldente
+      crossover
       iina
       lunar
       meetingbar
