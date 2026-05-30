@@ -15,14 +15,14 @@ Commit current changes. $ARGUMENTS
 !`jj log --limit 20`
 !`jj diff`
 
-Use existing project style when clear. Else use Conventional Commits.
+Use existing project style when clear. Else use scoped commits.
 
 If no working-copy changes, stop and report: nothing to commit.
 
 ## Commit message format
 
 ```text
-<type>(<scope>): <description>
+<scope>: <description>
 
 [optional body]
 
