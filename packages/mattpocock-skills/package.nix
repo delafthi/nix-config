@@ -6,7 +6,7 @@
 }:
 stdenvNoCC.mkDerivation (_finalAttrs: {
   pname = "mattpocock-skills";
-  version = "0-unstable-2026-05-26";
+  version = "0-unstable-2026-06-07";
 
   __structuredAttrs = true;
   strictDeps = true;
@@ -14,8 +14,8 @@ stdenvNoCC.mkDerivation (_finalAttrs: {
   src = fetchFromGitHub {
     owner = "mattpocock";
     repo = "skills";
-    rev = "b8be62ffacb0118fa3eaa29a0923c87c8c11985c";
-    sha256 = "sha256-Qwuu27f95xgAJ4hdv/4TNahHhprCMIxl1H9f9ymEsno=";
+    rev = "be55a7970319ede7965edbb02b5e41cba1ca82c9";
+    sha256 = "sha256-7CjfMl1xwTIiz2wPxikV+f84r3f9xKm/BC+cJ3Gfzcw=";
   };
 
   installPhase = ''
