@@ -9,7 +9,6 @@ let
 in
 {
   imports = [
-    ./claude-code
     ./opencode
   ];
   home.packages = with pkgs; [
