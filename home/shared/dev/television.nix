@@ -162,7 +162,7 @@
                     fi
                     printf "%s" "$ns"
                   }
-                  if echo "$input" | grep -qE "^(git@|https?://)"; then
+                  if echo "$input" | grep -qE "^(git@|https?://|ssh?://)"; then
                     proj=$(echo "$input" | sed -E "s|.*/||; s|\.git$||")
                     ns=$(pick_ns "$proj") || exit 0
                     mkdir -p "$XDG_PROJECTS_DIR/$ns"
