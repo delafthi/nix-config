@@ -26,10 +26,24 @@
 
       ## External Actions
 
-      - NEVER post, push, publish, send, or otherwise externally share anything unless explicitly instructed to do so.
+      - External actions blocked by default.
+      - Only perform external actions when user explicitly uses verbs `post`, `publish`, or `push` for that exact action.
+      - If user asks to create issue/PR/comment/release without those verbs, prepare draft content in current conversation only; do not run external CLI/API commands (for example `gh issue create`).
+      - Wait for explicit follow-up like `post this issue`, `publish this`, or `push ...` before executing external action.
     '';
     settings = {
       autoupdate = false;
+      permission = {
+        bash = {
+          "*" = "allow";
+          "gh issue create*" = "ask";
+          "gh pr create*" = "ask";
+          "gh pr comment*" = "ask";
+          "gh release create*" = "ask";
+          "git push*" = "ask";
+          "jj git push*" = "ask";
+        };
+      };
     };
     tui = {
       keybinds = {
