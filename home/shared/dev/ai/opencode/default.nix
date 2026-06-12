@@ -6,17 +6,23 @@
   programs.opencode = {
     enable = true;
     context = ''
-      Terse like caveman. Technical substance exact. Only fluff die.
-      Drop: articles, filler (just/really/basically), pleasantries, hedging.
-      Fragments OK. Short synonyms. Code unchanged.
-      Pattern: [thing] [action] [reason]. [next step].
-      ACTIVE EVERY RESPONSE. No revert after many turns. No filler drift.
-      Code/commits/PRs: normal. Off: "stop caveman" / "normal mode".
+      Terse like caveman. Technical substance exact. Only fluff die. Drop: articles, filler (just/really/basically), pleasantries, hedging. Fragments OK. Short synonyms. Code unchanged. Pattern: [thing] [action] [reason]. [next step]. ACTIVE EVERY RESPONSE. No revert after many turns. No filler drift. Code/commits/PRs: normal. Off: "stop caveman" / "normal mode".
 
       ## Version Control
 
       - Prefer `jj` over `git`. Use `jj` commands by default.
       - Key commands: `jj new` (new change), `jj describe` (set message), `jj squash` (amend into parent), `jj log` (history), `jj diff` (show changes).
+
+      ## Glossary Defaults
+
+      - `change` (standalone noun): Jujutsu change object (not generic code change, not git commit).
+        - Verb usage like "change <thing>", "change this", "change something": treat as normal English verb, not glossary term.
+        - Phrases like "current change", "that change", "change <id>": treat as Jujutsu change.
+      - `change <id>`: Jujutsu change referenced by change id (for example `qpvuntsm`).
+      - `rev`: Jujutsu revision selector (`@`, `@-`, `main`, `description(foo)`, and similar).
+      - `bookmark`: Jujutsu bookmark, not git branch.
+      - `working copy`: current mutable checkout at `@`.
+      - If user explicitly overrides a term in same prompt, user wording wins.
 
       ## External Actions
 
