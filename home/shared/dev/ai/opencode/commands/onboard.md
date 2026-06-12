@@ -12,7 +12,6 @@ Analyze the project and provide a concise onboarding introduction to help get st
 ## Check
 
 - Build/runtime files: `flake.nix`, `justfile`, `package.json`, `Cargo.toml`, `pyproject.toml`, `go.mod`, `Makefile`
-- VCS: `.jj/` or `.git/`
 - Top-level structure and entry points
 - Docs: `README.md`, `CONTRIBUTING.md`, `AGENTS.md`
 - Common commands: setup, build, run, test, lint/format

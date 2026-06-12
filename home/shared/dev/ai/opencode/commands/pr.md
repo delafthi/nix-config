@@ -7,7 +7,7 @@ template: Create a pull request from the current branch.
 
 # Create pull request
 
-Create a pull request from the current branch. $ARGUMENTS
+Create a pull request from the change. $ARGUMENTS
 
 ## Check
 

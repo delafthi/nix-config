@@ -9,7 +9,9 @@ template: Add or update documentation to all functions, class, and modules in th
 
 Add or update docs for files $ARGUMENTS or current changes.
 
-Use existing project doc style. If unclear, use language standard.
+Check repo guidance docs (for example `CONTRIBUTING.md`) and follow documented
+conventions or use existing project doc style. If unclear, use language
+standard.
 
 ## Requirements
 
