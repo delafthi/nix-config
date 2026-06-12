@@ -33,16 +33,48 @@
     '';
     settings = {
       autoupdate = false;
+      share = "disabled";
       permission = {
         bash = {
-          "*" = "allow";
+          "*" = "ask";
+          "ls" = "allow";
+          "ls *" = "allow";
+          "pwd" = "allow";
+          "which *" = "allow";
+          "jj status*" = "allow";
+          "jj log*" = "allow";
+          "jj diff*" = "allow";
+          "jj git push*" = "ask";
+          "jj show*" = "allow";
+          "jj root*" = "allow";
+          "git status*" = "allow";
+          "git diff*" = "allow";
+          "git push*" = "ask";
           "gh issue create*" = "ask";
           "gh pr create*" = "ask";
           "gh pr comment*" = "ask";
           "gh release create*" = "ask";
-          "git push*" = "ask";
-          "jj git push*" = "ask";
         };
+        read = {
+          "*" = "allow";
+          "*.env" = "deny";
+          "*.env.*" = "deny";
+          "*.env.example" = "allow";
+          "*.key" = "deny";
+          "*.pem" = "deny";
+          "*.p12" = "deny";
+          "*.pfx" = "deny";
+          "*.p8" = "deny";
+          "*.kdbx" = "deny";
+          "*.agekey" = "deny";
+          ".netrc" = "deny";
+          "id_*" = "deny";
+          "~/.ssh/**" = "deny";
+          "~/.gnupg/**" = "deny";
+          "~/.config/sops/**" = "deny";
+        };
+        webfetch = "ask";
+        websearch = "ask";
       };
     };
     tui = {
