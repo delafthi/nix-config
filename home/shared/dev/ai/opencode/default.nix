@@ -40,33 +40,6 @@
     commands = {
       codedocs = ./commands/codedocs.md;
       commit = ./commands/commit.md;
-      diagnose = ''
-        ---
-        description: Diagnose a bug or performance regression
-        agent: investigator
-        ---
-        $ARGUMENTS
-
-        @~/.config/opencode/skills/diagnose/SKILL.md
-      '';
-      grill-with-docs = ''
-        ---
-        description: Stress-test a plan against the domain model and documented decisions
-        agent: investigator
-        ---
-        $ARGUMENTS
-
-        @~/.config/opencode/skills/grill-with-docs/SKILL.md
-      '';
-      improve-codebase-architecture = ''
-        ---
-        description: Find and apply architecture improvements in the codebase
-        agent: build
-        ---
-        $ARGUMENTS
-
-        @~/.config/opencode/skills/improve-codebase-architecture/SKILL.md
-      '';
       onboard = ./commands/onboard.md;
       pr = ./commands/pr.md;
       readme = ./commands/readme.md;
@@ -76,9 +49,6 @@
     skills = {
       caveman = "${pkgs.caveman}/skills/caveman";
       context7-cli = "${pkgs.ctx7}/skills/context7-cli";
-      diagnose = "${pkgs.mattpocock-skills}/skills/engineering/diagnose";
-      grill-with-docs = "${pkgs.mattpocock-skills}/skills/engineering/grill-with-docs";
-      improve-codebase-architecture = "${pkgs.mattpocock-skills}/skills/engineering/improve-codebase-architecture";
       jj = ./skills/jj;
     };
   };
