@@ -73,8 +73,8 @@
           "~/.gnupg/**" = "deny";
           "~/.config/sops/**" = "deny";
         };
-        webfetch = "ask";
-        websearch = "ask";
+        webfetch = "allow";
+        websearch = "allow";
       };
     };
     tui = {
@@ -84,10 +84,6 @@
         session_child_cycle = "<leader>n";
         session_child_cycle_reverse = "<leader>p";
       };
-    };
-    agents = {
-      investigator = ./agents/investigator.md;
-      reviewer = ./agents/reviewer.md;
     };
     commands = {
       codedocs = ./commands/codedocs.md;

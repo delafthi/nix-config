@@ -1,6 +1,6 @@
 ---
 description: Onboard to a project
-agent: investigator
+agent: explore
 subtask: false
 template: Analyze the project and provide a concise onboarding introduction to help get started quickly.
 ---

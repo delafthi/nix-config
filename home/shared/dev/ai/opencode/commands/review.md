@@ -1,6 +1,6 @@
 ---
 description: Review code
-agent: reviewer
+agent: plan
 subtask: false
 template: Provide a structured code review for the provided files or current changes.
 ---
