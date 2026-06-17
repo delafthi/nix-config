@@ -1,8 +1,6 @@
 [global]
 respect-gitignore = true
-exclude = [
-  ".forgejo"
-]
+exclude = [".forgejo"]
 
 [MD013]
 line-length = 200
