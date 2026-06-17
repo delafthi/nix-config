@@ -74,6 +74,10 @@ _: {
           "::"
         ];
         n = [ "new" ];
+        nxt = [
+          "next"
+          "--edit"
+        ];
         p = [
           "git"
           "push"
@@ -102,6 +106,10 @@ _: {
             echo "gh pr create --base $base --head $head --fill --editor"
             gh pr create --base $base --head $head --fill --editor
           ''
+        ];
+        prv = [
+          "previous"
+          "--edit"
         ];
         P = [
           "git"
