@@ -2,39 +2,59 @@
 description: Write tests
 agent: build
 subtask: true
-template: Create comprehensive, high-quality test cases for the provided files or current changes.
 ---
 
 # Write tests
 
-Create comprehensive, high-quality test cases for the files $ARGUMENTS or the current changes.
+Create tests for files in `$ARGUMENTS`; if empty, cover current working-copy changes (`@`).
 
-## Check
+## Workflow
 
-- Existing test framework, layout, and naming
-- Related tests for target files
-- Test config and helper fixtures
+1. Detect test stack, folder layout, naming conventions, fixtures/helpers.
+2. Map changed behavior and risk areas before writing tests.
+3. Add or extend tests in existing structure; create new test files only when needed.
+4. Prefer fast unit tests; use integration tests for critical boundaries.
+5. Run narrowest relevant test command first, then broader suite if needed.
 
-Use project test stack and conventions.
+## Coverage targets
 
-## Cover
-
-- Happy path
-- Edge cases/boundaries
-- Error handling/invalid input
-- Integration boundaries (mock external systems as needed)
+- Happy path and expected outputs
+- Edge cases and boundaries
+- Invalid input and error handling
+- Integration boundaries (mock/stub external systems as needed)
 
 ## Rules
 
-- Deterministic, isolated, readable tests
-- One behavior per test
-- Prefer behavior over implementation details
-- Use specific assertions
-- Add comments only for non-obvious setup/logic
+- Deterministic, isolated, readable
+- One behavior per test case
+- Assert observable behavior, not internals
+- Specific assertions over snapshot-only checks
+- Comments only for non-obvious setup/logic
 - Skip trivial getters/setters, generated code, third-party internals
+- Avoid network, clock, randomness unless controlled
 
 ## Output
 
-- Produce runnable test files in existing structure
-- Include required imports/setup only
-- Keep tests minimal and concise
+- Runnable test files in project layout
+- Required imports/setup only
+- Keep suite concise while covering meaningful risk
+
+## Output consistency
+
+- Return one final summary with: test files changed, behaviors covered, and command used to run tests.
+
+Use this output shape:
+
+```text
+## Summary
+- Scope: ...
+- Actions: ...
+
+## Blockers
+- <none|details>
+
+## Result
+- Test files changed: ...
+- Behaviors covered: ...
+- Test command: ...
+```

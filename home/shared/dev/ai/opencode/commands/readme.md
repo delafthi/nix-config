@@ -2,38 +2,54 @@
 description: Create or update README.md
 agent: build
 subtask: true
-template: Generate or improve the project's README.md.
 ---
 
 # Create or update README.md
 
-Generate or improve the project's README.md.
+Generate or improve `README.md` based on verified project behavior.
 
-## Check
+## Workflow
 
-- Whether `README.md` exists
-- Project metadata (`package.json`, `pyproject.toml`, `Cargo.toml`, etc.)
-- Actual setup/run/test commands
-
-## Approach
-
-- If `README.md` exists: keep good structure, fix stale/broken/missing parts
-- If missing: create minimal README
-- Keep content aligned with current project behavior
+1. Gather facts from source of truth: project manifests, scripts, task runners, and existing docs.
+2. Verify setup/run/test commands from real config (do not invent commands).
+3. Update existing README in place when possible; preserve good sections and headings.
+4. If missing, create focused README with only relevant sections.
+5. Keep examples minimal and executable.
 
 ## Recommended sections
 
-- Title + short description
-- Installation
+- Title + one-line purpose
+- Installation / Setup
 - Usage
-- Development (if contributor-focused)
-- Configuration (if needed)
-- License
+- Development (only if contributor workflows exist)
+- Configuration (only if user-set options exist)
+- License (if known)
 
-Include only relevant sections. Keep examples runnable and concise.
+## Quality bar
 
-## Rules
+- Keep final README section order stable unless project has established order.
+- Factual, concise, no marketing copy
+- Commands/examples runnable and copy-paste safe
+- Explain non-obvious prerequisites
+- Remove stale instructions and dead links when found
+- Prefer relative links for in-repo docs
 
-- Be factual; no marketing or placeholders
-- Use code blocks for commands/examples
-- Keep text minimal and readable
+## Output format
+
+- Return short change summary: added, removed, and corrected sections.
+
+Use this output shape:
+
+```text
+## Summary
+- Scope: ...
+- Actions: ...
+
+## Blockers
+- <none|details>
+
+## Result
+- Sections added: ...
+- Sections corrected: ...
+- Sections removed: ...
+```

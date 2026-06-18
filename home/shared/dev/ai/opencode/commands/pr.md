@@ -1,57 +1,72 @@
 ---
-description: Create pull request
+description: Create or update PR for current change
 agent: build
 subtask: false
-template: Create a pull request from the current branch.
 ---
 
 # Create pull request
 
-Create a pull request from the change. $ARGUMENTS
+Create or update PR for current change (`@`). Use `$ARGUMENTS` as optional hints (title/body/base/bookmark).
 
-## Check
+## Workflow
+
+1. Inspect local state:
 
 !`jj bookmark list`
 !`jj log -l 10`
 !`jj status`
 
-Infer:
+2. Infer:
 
-- current change id and description (`@`)
-- target base bookmark (prefer `main`)
-- current head bookmark name (must exist for push/PR)
+- current change id + description
+- base bookmark (prefer `main` unless repo uses another default)
+- head bookmark for current change
+- intended PR title/body from change summary and `$ARGUMENTS`
 
-Ensure current change has bookmark. Create/set if needed:
+3. Ensure current change has bookmark; create/set if missing:
 
 ```bash
 jj bookmark create <bookmark-name>
 jj bookmark set <bookmark-name>
 ```
 
-Push when bookmark not on remote:
+4. If remote missing latest bookmark state, push:
 
 ```bash
 jj git push
 ```
 
-## Existing PR
+5. Check for existing open PR from current head bookmark.
+6. If PR exists, update it. If not, create it.
+7. If external action is blocked by policy, prepare final PR title/body and exact command(s) only.
 
-Find open PR for current head bookmark.
+## Parallelization (conditional)
 
-- If PR exists, update title/body to match current commit range.
-- If no PR, create new one.
+- For larger changes, use at most 2 subagents in parallel:
+  - Lane A: diff summary, risk/test signal extraction
+  - Lane B: PR metadata/template/related-issue checks
+- Primary agent writes final title/body and performs create-or-update action.
 
-## Create PR
+## PR content
 
-Use PR template if repo has one.
-
-```bash
-gh pr create --title "title" --body "description"
-```
-
-When PR exists, edit instead of creating a duplicate.
-
-- Title: imperative, concise, <100 chars
-- Body: minimal by default; explain why; add sections only for large/complex changes
+- Use repo PR template when available
+- Title concise, imperative, <100 chars
+- Body minimal by default: what changed, why, risks/testing
 - Reference related issues when relevant
-- Report PR number + URL in final output
+- Avoid duplicate PRs for same head bookmark
+- Preserve manually provided hints from `$ARGUMENTS` when valid
+
+## Output format
+
+Use this output shape:
+
+```text
+<title> (#<number>)
+
+<description>
+
+<url>
+
+## Blockers
+- <none|details>
+```

@@ -1,61 +1,34 @@
 ---
-description: Create a commit with description
+description: Set current change description from diff
 agent: build
 subtask: false
-template: Commit the current changes.
 ---
 
 # Create commit with description
 
-Commit the files $ARGUMENTS or the current changes
+Generate message for current working-copy change and set description on current Jujutsu change (`@`).
 
-## Check context
+## Workflow
+
+1. Inspect state:
 
 `jj status`
 `jj log --limit 20`
 `jj diff`
 
-Use existing project style when clear. Else use scoped commits.
+2. If no changes in working copy, stop and report `nothing to commit`.
+3. Identify scope from touched area (module/package/domain).
+4. Build message from repo conventions; if unclear, use `<scope>: <description>`.
+5. Set message on current change with `jj describe`.
+6. Do not create new change, squash, or push.
 
-If no working-copy changes, stop and report: nothing to commit.
-
-## Create change
-
-- If $ARGUMENTS provided (file/dir paths), run:
-
-`jj split -m <commit message> $ARGUMENTS`
-
-or multiline:
+## Commands
 
 ```bash
-jj split -m "$(cat <<'EOF'
-<scope>: <description>
-
-[optional body]
-
-[optional footer(s)]
-EOF
-)" $ARGUMENTS
+jj describe -m "<commit message>"
 ```
 
-- If no $ARGUMENTS provided, run:
-
-`jj describe -m <commit message>`
-
-or multiline:
-
-```bash
-jj describe -m "$(cat <<'EOF'
-<scope>: <description>
-
-[optional body]
-
-[optional footer(s)]
-EOF
-)"
-```
-
-## Commit message format
+## Message format
 
 ```text
 <scope>: <description>
@@ -65,7 +38,21 @@ EOF
 [optional footer(s)]
 ```
 
-- Subject: imperative, lowercase, no period, <=100 chars, English
-- Body: only when needed, explain why, <=100 chars/line
-- Footer: only when relevant (`BREAKING CHANGE:`, `Fixes #`, `Closes #`, `Resolves #`, `Related to #`)
-- Keep message minimal
+- Subject imperative, lowercase, no period, <=100 chars
+- Body only when needed; explain why, <=100 chars/line
+- Footer only when relevant (`BREAKING CHANGE:`, `Fixes #`, `Closes #`, `Resolves #`, `Related to #`)
+- Keep message minimal and specific
+- Avoid generic subjects like `update`, `fix stuff`, `changes`
+
+## Output format
+
+- Return one final result with commit message only.
+
+Use this output shape:
+
+```text
+<full message>
+
+## Blockers
+- <none|details>
+```
