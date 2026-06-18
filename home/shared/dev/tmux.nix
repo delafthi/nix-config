@@ -38,7 +38,7 @@
       # bind -N "Open file browser" e popup -h 90% -w 90% -E "yazi"
       bind -N "Toggle maximize window" f resize-pane -Z
       bind -N "Leave the copy-mode" -T copy-mode-vi i send -X cancel
-      bind -N "Open projects" k popup -h 90% -w 90% -E "tv projects"
+      bind -N "Switch project" k popup -h 90% -w 90% -E "tv project"
       bind -N "Source the tmux config file" r \
         source-file '~/.config/tmux/tmux.conf' \; \
         display-message "Sourced '~/.config/tmux/tmux.conf'"
