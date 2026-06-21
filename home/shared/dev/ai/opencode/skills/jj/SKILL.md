@@ -5,7 +5,15 @@ description: Prevent common Git-vs-Jujutsu mistakes.
 
 # jj
 
-Common actions:
+Use Jujutsu-native workflow. Prevent git-habit errors.
+
+## Use When
+
+- Operating in repositories managed with `jj`.
+- Translating git intent into `jj` commands.
+- Fixing mistakes caused by commit-first git habits.
+
+## Common Commands
 
 - Status/log/diff: `jj st`, `jj log`, `jj diff`
 - New change/edit current: `jj new`, `jj edit <rev>`
@@ -15,17 +23,22 @@ Common actions:
 - Manage bookmarks: `jj bookmark list`, `jj bookmark create <name>`, `jj bookmark set <name>`
 - Push bookmark: `jj git push --bookmark <name>`
 
-Workflow (jj vs git):
+## Canonical Flow
 
-jj workflow: create change first, then make edits, then describe/commit.
+Create change first, then edit, then describe.
 
 - `jj new` → make changes → `jj describe -m "..."` (or `jj commit -m "..."` to also create next change)
-- Do NOT make changes then commit like git — that leads to overusing `jj squash` and `jj split`.
+- Avoid git flow "edit then commit"; pattern causes avoidable `jj squash`/`jj split` cleanup.
 - `jj commit` = `jj describe` + `jj new` in one step; use it to close current change and start fresh.
 
-Gotchas:
+## Guardrails
 
 - Use `bookmark`, not `branch`.
 - `@` means current working-copy revision.
-- `git checkout` maps to `jj new` (usually) or `jj edit`.
-- Do not guess git-only flags; check `jj help <command>`.
+- Map `git checkout` intent to `jj new` (usually) or `jj edit`.
+- Verify unfamiliar flags with `jj help <command>`.
+
+## Recovery
+
+- Use `jj undo` after mistaken operation.
+- Use `jj log` to inspect graph before destructive history edits.
