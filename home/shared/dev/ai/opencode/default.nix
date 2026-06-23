@@ -97,6 +97,7 @@
       pr = ./commands/pr.md;
       readme = ./commands/readme.md;
       review = ./commands/review.md;
+      review-embedded = ./commands/review-embedded.md;
       write-tests = ./commands/write-tests.md;
     };
     skills = {
