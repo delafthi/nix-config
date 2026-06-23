@@ -47,6 +47,11 @@
           "jj git push*" = "ask";
           "jj show*" = "allow";
           "jj root*" = "allow";
+          "jj bookmark list*" = "allow";
+          "jj git remote list*" = "allow";
+          "gh pr diff*" = "allow";
+          "gh pr list*" = "allow";
+          "gh pr view*" = "allow";
           "git status*" = "allow";
           "git diff*" = "allow";
           "git push*" = "ask";
