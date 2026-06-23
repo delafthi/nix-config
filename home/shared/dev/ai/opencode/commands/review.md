@@ -116,7 +116,7 @@ Use this output shape:
 - <missing path / missing diff>
 
 ## Issues
-- [SEVERITY][Confidence][Category] `path/to/file:line` - problem, impact, fix, verification
+- [SEVERITY] [Confidence] [Category] `path/to/file:line` - problem, impact, fix, verification
 
 ## Residual Risk
 - <what was not fully validated>
