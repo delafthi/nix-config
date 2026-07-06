@@ -41,7 +41,7 @@
       # https://github.com/mas-cli/mas/issues/321)
       # AnyConnect = 1135064690;
       # MeteoSwiss = 589772015;
-      # "Organic Maps" = 1567437057;
+      # CoMaps = 6747180809;
       # "SAC-CAS" = 1592646841;
       # Swisstopo = 1505986543;
     };
