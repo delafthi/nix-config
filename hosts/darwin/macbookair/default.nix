@@ -25,6 +25,7 @@ in
             inherit user;
             sops = inputs.sops-nix.packages.${system};
             zen-browser = inputs.zen-browser.packages.${system};
+            strace-macos = inputs.strace-macos.packages.${system};
           };
 
           useGlobalPkgs = true;

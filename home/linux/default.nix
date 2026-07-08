@@ -1,3 +1,4 @@
+{ pkgs, ... }:
 {
   imports = [
     ./apps
@@ -6,4 +7,5 @@
     ./create-para-dirs.nix
     ./reload-systemd.nix
   ];
+  home.packages = with pkgs; [ strace ];
 }

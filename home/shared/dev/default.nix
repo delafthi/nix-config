@@ -25,31 +25,36 @@
     ./yazi.nix
     ./zoxide.nix
   ];
-  home.packages = with pkgs; [
-    asciinema
-    charm-freeze
-    clipboard-jh
-    curl
-    dust
-    glow
-    gnutar
-    gum
-    hexyl
-    hyperfine
-    just
-    ouch
-    p7zip
-    procs
-    sd
-    silicon
-    svu
-    tesseract
-    tokei
-    unrar
-    unzip
-    usbutils
-    vhs
-    watch
-    zip
-  ];
+  home = {
+    packages = with pkgs; [
+      asciinema
+      charm-freeze
+      clipboard-jh
+      curl
+      dust
+      glow
+      gnutar
+      gum
+      hexyl
+      hyperfine
+      just
+      ouch
+      p7zip
+      procs
+      sd
+      silicon
+      svu
+      tesseract
+      tokei
+      unrar
+      unzip
+      usbutils
+      vhs
+      watch
+      zip
+    ];
+    shellAliases = {
+      strace = "strace -yy";
+    };
+  };
 }

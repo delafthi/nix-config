@@ -24,6 +24,10 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     sops-nix.url = "github:Mic92/sops-nix";
+    strace-macos.inputs.flake-parts.follows = "flake-parts";
+    strace-macos.inputs.nixpkgs.follows = "nixpkgs";
+    strace-macos.inputs.treefmt-nix.follows = "treefmt-nix";
+    strace-macos.url = "github:Mic92/strace-macos";
     treefmt-nix.url = "github:numtide/treefmt-nix";
     zen-browser.inputs.home-manager.follows = "home-manager";
     zen-browser.inputs.nixpkgs.follows = "nixpkgs";

@@ -150,6 +150,7 @@
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs",
         "sops-nix": "sops-nix",
+        "strace-macos": "strace-macos",
         "treefmt-nix": "treefmt-nix",
         "zen-browser": "zen-browser"
       }
@@ -171,6 +172,32 @@
       "original": {
         "owner": "Mic92",
         "repo": "sops-nix",
+        "type": "github"
+      }
+    },
+    "strace-macos": {
+      "inputs": {
+        "flake-parts": [
+          "flake-parts"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "treefmt-nix": [
+          "treefmt-nix"
+        ]
+      },
+      "locked": {
+        "lastModified": 1779471242,
+        "narHash": "sha256-ENOax7psVfL7h+lIxJT17MI6G/GxhYfnk+LcXH3f2h8=",
+        "owner": "Mic92",
+        "repo": "strace-macos",
+        "rev": "230e26093372f8c9ec261cb7fb9191fa3d58fc8b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Mic92",
+        "repo": "strace-macos",
         "type": "github"
       }
     },
