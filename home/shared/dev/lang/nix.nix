@@ -1,6 +1,9 @@
 { pkgs, ... }:
 {
-  home.packages = [ pkgs.manix ];
+  home.packages = with pkgs; [
+    manix
+    nix-output-monitor
+  ];
   nix.registry.templates = {
     from = {
       type = "indirect";
