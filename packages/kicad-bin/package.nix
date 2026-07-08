@@ -13,7 +13,7 @@
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "kicad-bin";
-  version = "10.0.3";
+  version = "10.0.4";
 
   __structuredAttrs = true;
   strictDeps = true;
@@ -52,7 +52,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     sources = {
       "aarch64-darwin" = fetchurl {
         url = "https://s3.cern.ch/kicad-downloads/osx/stable/kicad-unified-universal-${finalAttrs.version}.dmg";
-        hash = "sha256-BlNEvpErEh56/YU6IeopUmI0gwZh4bent98EIWPmzQE=";
+        hash = "sha256-+oe6oUaUtsEsQtoSMLRzusicA7eDp02JxKBjGeXKv/4=";
       };
       "x86_64-darwin" = finalAttrs.passthru.sources."aarch64-darwin";
     };
