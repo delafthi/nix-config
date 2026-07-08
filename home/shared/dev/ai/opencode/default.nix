@@ -23,28 +23,56 @@
 
       Boundaries: code/commits/PRs written normal.
 
-      ## Version Control
+      ## Glossary
 
-      - Prefer `jj` over `git`. Use `jj` commands by default.
-      - Key commands: `jj new` (new change), `jj describe` (set message), `jj squash` (amend into parent), `jj log` (history), `jj diff` (show changes).
-
-      ## Glossary Defaults
-
-      - `change` (standalone noun): Jujutsu change object (not generic code change, not git commit).
-        - Verb usage like "change <thing>", "change this", "change something": treat as normal English verb, not glossary term.
-        - Phrases like "current change", "that change", "change <id>": treat as Jujutsu change.
-      - `change <id>`: Jujutsu change referenced by change id (for example `qpvuntsm`).
-      - `rev`: Jujutsu revision selector (`@`, `@-`, `main`, `description(foo)`, and similar).
+      - `change`: Jujutsu change object (verb usage = normal English).
+      - `rev`: Jujutsu revision selector (`@`, `@-`, `main`, `description(foo)`).
       - `bookmark`: Jujutsu bookmark, not git branch.
       - `working copy`: current mutable checkout at `@`.
-      - If user explicitly overrides a term in same prompt, user wording wins.
+      - User wording wins when explicitly overridden.
+
+      ## Preferred tools
+
+      - `fd` over `find`, `rg` over `grep`, `bat` over `cat`, `delta` over `diff`, `eza` over `ls`
+      - `jq` for JSON, `tokei` for metrics, `hyperfine` for benchmarks, `ouch` for archives
+
+      ## Version Control
+
+      - Prefer `jj` over `git`. Key commands: `jj new`, `jj describe`, `jj squash`, `jj log`, `jj diff`.
+
+      ## Scratch
+
+      - `/tmp/opencode` for scratch work outside workspace.
+
+      ## Search
+
+      - Reference projects in `~/Projects/ref` — prefer local source over web search.
+
+      ## Nix
+
+      - Nix manages dev environment. Projects not necessarily Nix projects.
+      - Check `flake.nix` before assuming tool is unavailable.
+      - `nix-locate` installed — find packages for missing binaries/libraries.
+      - `nix run nixpkgs#<tool>` for one-off access.
+
+      ## Workflow
+
+      - Read existing patterns before writing code.
+      - Confirm understanding before implementing. Restate what you think, wait for yes.
+      - Use `todowrite` to track multi-step tasks. Update as you go.
+      - Don't duplicate — check if something exists before creating it.
+      - Complex work: delegate to subagents, track progress, summarize results.
+      - Stuck after a few attempts? Ask rather than guess — saves time for both.
+
+      ## Conventions
+
+      - Check `CONTRIBUTING.md`, lint configs, style guides before editing.
+      - Mirror existing code style. Don't re-litigate conventions.
 
       ## External Actions
 
-      - External actions blocked by default.
-      - Only perform external actions when user explicitly uses verbs `post`, `publish`, or `push` for that exact action.
-      - If user asks to create issue/PR/comment/release without those verbs, prepare draft content in current conversation only; do not run external CLI/API commands (for example `gh issue create`).
-      - Wait for explicit follow-up like `post this issue`, `publish this`, or `push ...` before executing external action.
+      - Blocked by default. Only `post`, `publish`, `push` when explicitly requested.
+      - If asked to create issue/PR/comment/release without those verbs, prepare draft only.
     '';
     settings = {
       autoupdate = false;
@@ -92,6 +120,10 @@
           "~/.ssh/**" = "deny";
           "~/.gnupg/**" = "deny";
           "~/.config/sops/**" = "deny";
+          "~/Projects/ref/**" = "allow";
+        };
+        external_directory = {
+          "/tmp/opencode/**" = "allow";
         };
         webfetch = "allow";
         websearch = "allow";
@@ -108,6 +140,7 @@
     commands = {
       codedocs = ./commands/codedocs.md;
       commit = ./commands/commit.md;
+      improve-architecture = ./commands/improve-architecture.md;
       onboard = ./commands/onboard.md;
       pr = ./commands/pr.md;
       readme = ./commands/readme.md;
@@ -116,9 +149,14 @@
       write-tests = ./commands/write-tests.md;
     };
     skills = {
+      architecture-design = ./skills/architecture-design;
       caveman = "${pkgs.caveman}/skills/caveman";
       context7-cli = "${pkgs.ctx7}/skills/context7-cli";
+      debugging-and-error-investigation = ./skills/debugging-and-error-investigation;
+      interview-me = ./skills/interview-me;
       jj = ./skills/jj;
+      nix = ./skills/nix;
+      pueue = ./skills/pueue;
     };
   };
 }
