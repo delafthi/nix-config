@@ -1,6 +1,6 @@
 ---
 name: jj
-description: Prevent common Git-vs-Jujutsu mistakes.
+description: Prevent common Git-vs-Jujutsu mistakes. Use when operating in Jujutsu-managed repos.
 ---
 
 # jj
@@ -38,7 +38,18 @@ Create change first, then edit, then describe.
 - Map `git checkout` intent to `jj new` (usually) or `jj edit`.
 - Verify unfamiliar flags with `jj help <command>`.
 
+## Merge Conflicts
+
+- Try `jj resolve` first (invokes `mergiraf`). Verify with `jj diff`.
+- If `mergiraf` leaves conflicts, resolve manually:
+  - Check history and conflicting files.
+  - Read commit messages, PRs, tickets to understand original intent.
+  - Preserve both intents where possible. If incompatible, pick the one matching the merge's goal and note the trade-off.
+  - Run automated checks (typecheck, tests, format). Fix anything the merge broke.
+  - If rebasing, continue the rebase until all commits are rebased.
+
 ## Recovery
 
 - Use `jj undo` after mistaken operation.
+- Use `jj restore` to discard working copy changes.
 - Use `jj log` to inspect graph before destructive history edits.
