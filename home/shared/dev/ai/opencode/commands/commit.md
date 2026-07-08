@@ -19,13 +19,13 @@ Generate message for current working-copy change and set description on current 
 2. If no changes in working copy, stop and report `nothing to commit`.
 3. Identify scope from touched area (module/package/domain).
 4. Build message from repo conventions; if unclear, use `<scope>: <description>`.
-5. Set message on current change with `jj describe`.
+5. Set message on current change with `jj commit`.
 6. Do not create new change, squash, or push.
 
 ## Commands
 
 ```bash
-jj describe -m "<commit message>"
+jj commit -m "<commit message>"
 ```
 
 ## Message format
