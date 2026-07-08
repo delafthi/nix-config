@@ -8,6 +8,16 @@ subtask: false
 
 Provide structured, evidence-based review for target from `$ARGUMENTS`.
 
+## Before You Start
+
+Check for existing context:
+
+- `CONTEXT.md` at root — domain terms and boundaries
+- `docs/` — architecture decisions in the area you're touching
+- Component `README.md` or codedocs — patterns, decisions
+
+Use established language. Don't re-litigate ADRs.
+
 ## Target selection
 
 Use this order:
@@ -107,7 +117,7 @@ Reject speculative findings without evidence from code or diff.
 
 Use this output shape:
 
-```text
+```md
 ## Summary
 - Total issues: X
 - Main risks: ...

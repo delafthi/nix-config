@@ -8,6 +8,11 @@ subtask: false
 
 Create or update PR for current change (`@`). Use `$ARGUMENTS` as optional hints (title/body/base/bookmark).
 
+## Conventions
+
+- Check `CONTRIBUTING.md` and PR templates before writing title/body.
+- Mirror existing PR style in the repo.
+
 ## Workflow
 
 1. Inspect local state:
@@ -60,7 +65,7 @@ jj git push
 
 Use this output shape:
 
-```text
+```md
 <title> (#<number>)
 
 <description>

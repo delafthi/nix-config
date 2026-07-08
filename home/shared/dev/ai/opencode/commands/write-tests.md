@@ -8,6 +8,18 @@ subtask: true
 
 Create tests for files in `$ARGUMENTS`; if empty, cover current working-copy changes (`@`).
 
+## Before You Start
+
+Check for existing context:
+
+- `CONTRIBUTING.md` — contribution guidelines and style guide
+- `.editorconfig`, lint configs — formatting conventions
+- `CONTEXT.md` at root — domain terms and boundaries
+- `docs/` — architecture decisions in the area you're touching
+- Component `README.md` or codedocs — patterns, decisions
+
+Use established language. Don't re-litigate ADRs. Mirror existing test style.
+
 ## Workflow
 
 1. Detect test stack, folder layout, naming conventions, fixtures/helpers.
@@ -45,7 +57,7 @@ Create tests for files in `$ARGUMENTS`; if empty, cover current working-copy cha
 
 Use this output shape:
 
-```text
+```md
 ## Summary
 - Scope: ...
 - Actions: ...

@@ -8,6 +8,16 @@ subtask: false
 
 Find bad designs in C/C++ embedded projects within `$ARGUMENTS`. Reference embedded design knowledge from theEmbeddedNewTestament and MISRA C++ guidelines.
 
+## Before You Start
+
+Check for existing context:
+
+- `CONTEXT.md` at root — domain terms and boundaries
+- `docs/` — architecture decisions in the area you're touching
+- Component `README.md` or codedocs — patterns, decisions
+
+Use established language. Don't re-litigate ADRs.
+
 ## Target selection
 
 1. If `$ARGUMENTS` empty, use current directory.
@@ -295,7 +305,7 @@ Reject speculative findings without evidence from code.
 
 Use this output shape:
 
-```text
+```md
 ## Summary
 - Total issues: X
 - Critical: X

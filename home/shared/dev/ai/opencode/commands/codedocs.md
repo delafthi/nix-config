@@ -8,6 +8,18 @@ subtask: true
 
 Add or update docs for files in `$ARGUMENTS`; if empty, use files changed in current working copy (`@`).
 
+## Before You Start
+
+Check for existing context:
+
+- `CONTRIBUTING.md` — contribution guidelines and doc style
+- `.editorconfig`, lint configs — formatting conventions
+- `CONTEXT.md` at root — domain terms and boundaries
+- `docs/` — architecture decisions in the area you're touching
+- Component `README.md` or codedocs — patterns, decisions
+
+Use established language. Don't re-litigate ADRs. Mirror existing doc style.
+
 ## Workflow
 
 1. Resolve target paths from `$ARGUMENTS`; expand directories to concrete files.
@@ -50,7 +62,7 @@ Add or update docs for files in `$ARGUMENTS`; if empty, use files changed in cur
 
 Use this output shape:
 
-```text
+```md
 ## Summary
 - Scope: ...
 - Actions: ...

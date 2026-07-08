@@ -8,6 +8,11 @@ subtask: false
 
 Generate message for current working-copy change and set description on current Jujutsu change (`@`).
 
+## Conventions
+
+- Check `CONTRIBUTING.md` and commit message conventions in the repo.
+- Mirror existing commit message style (scope, format, capitalization).
+
 ## Workflow
 
 1. Inspect state:
@@ -50,7 +55,7 @@ jj commit -m "<commit message>"
 
 Use this output shape:
 
-```text
+```md
 <full message>
 
 ## Blockers

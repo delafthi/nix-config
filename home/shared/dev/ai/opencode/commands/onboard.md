@@ -8,6 +8,16 @@ subtask: false
 
 Analyze repository and produce concise onboarding brief for fast first contribution.
 
+## Before You Start
+
+Check for existing context:
+
+- `CONTEXT.md` at root — domain terms and boundaries
+- `docs/` — architecture decisions in the area you're touching
+- Component `README.md` or codedocs — patterns, decisions
+
+Use established language. Don't re-litigate ADRs.
+
 ## Workflow
 
 1. Detect stack/runtime from root config files (`flake.nix`, `justfile`, `package.json`, `Cargo.toml`, `pyproject.toml`, `go.mod`, `Makefile`, etc.).
@@ -31,7 +41,7 @@ Analyze repository and produce concise onboarding brief for fast first contribut
 
 Use this output shape:
 
-```text
+```md
 # Project: <name>
 Overview: <what project does>
 

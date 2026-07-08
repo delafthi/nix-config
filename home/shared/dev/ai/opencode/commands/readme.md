@@ -8,6 +8,16 @@ subtask: true
 
 Generate or improve `README.md` based on verified project behavior.
 
+## Before You Start
+
+Check for existing context:
+
+- `CONTEXT.md` at root — domain terms and boundaries
+- `docs/` — architecture decisions in the area you're touching
+- Component `README.md` or codedocs — patterns, decisions
+
+Use established language. Don't re-litigate ADRs.
+
 ## Workflow
 
 1. Gather facts from source of truth: project manifests, scripts, task runners, and existing docs.
@@ -40,7 +50,7 @@ Generate or improve `README.md` based on verified project behavior.
 
 Use this output shape:
 
-```text
+```md
 ## Summary
 - Scope: ...
 - Actions: ...
