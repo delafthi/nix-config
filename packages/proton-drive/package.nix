@@ -11,7 +11,7 @@
 
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "proton-drive";
-  version = "2.11.5";
+  version = "3.0.0";
 
   __structuredAttrs = true;
   strictDeps = true;
@@ -35,7 +35,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     sources = {
       "aarch64-darwin" = fetchurl {
         url = "https://proton.me/download/drive/macos/${finalAttrs.version}/ProtonDrive-${finalAttrs.version}.dmg";
-        hash = "sha256-+sl3pexI1EcqO7Djw57k69jz1/doSnNAgHXi5qQp0n8=";
+        hash = "sha256-uMK4uGucUmwCwye9J9JbJ5zmDtlhVPTtMEQC8ukRZH8=";
       };
       "x86_64-darwin" = finalAttrs.passthru.sources."aarch64-darwin";
     };
