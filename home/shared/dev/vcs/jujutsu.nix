@@ -108,7 +108,7 @@ _: {
           ''
         ];
         prv = [
-          "previous"
+          "prev"
           "--edit"
         ];
         P = [
