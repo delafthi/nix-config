@@ -128,6 +128,9 @@
         webfetch = "allow";
         websearch = "allow";
       };
+      plugin = [
+        "${pkgs.caveman}/src/plugins/opencode"
+      ];
     };
     tui = {
       keybinds = {
