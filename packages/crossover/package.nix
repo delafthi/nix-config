@@ -12,7 +12,7 @@
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "crossover";
-  version = "26.2.0";
+  version = "26.3.0";
 
   __structuredAttrs = true;
   strictDeps = true;
@@ -38,7 +38,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     sources = {
       "aarch64-darwin" = fetchurl {
         url = "https://media.codeweavers.com/pub/crossover/cxmac/demo/crossover-${finalAttrs.version}.zip";
-        hash = "sha256-qzloCSeg2cMTytJ/7TPdFaeZvkDJO/xDK+9wUYrxCqQ=";
+        hash = "sha256-hojghIxOX3nxzDUctS0yRH2gDGwAz9O0uy0WTURYmiY=";
       };
       "x86_64-darwin" = finalAttrs.passthru.sources."aarch64-darwin";
     };
