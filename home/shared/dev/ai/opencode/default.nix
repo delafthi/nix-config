@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 {
   home.shellAliases = {
     oc = "opencode";
@@ -46,7 +46,7 @@
 
       ## Search
 
-      - Reference projects in `~/Projects/ref` — prefer local source over web search.
+      - Clone reference projects to `${config.home.homeDirectory}/Projects/ref` — prefer local source over web search.
 
       ## Nix
 
@@ -117,10 +117,10 @@
           "*.agekey" = "deny";
           ".netrc" = "deny";
           "id_*" = "deny";
-          "~/.ssh/**" = "deny";
-          "~/.gnupg/**" = "deny";
-          "~/.config/sops/**" = "deny";
-          "~/Projects/ref/**" = "allow";
+          "${config.home.homeDirectory}/.ssh/**" = "deny";
+          "${config.home.homeDirectory}/.gnupg/**" = "deny";
+          "${config.home.homeDirectory}/.config/sops/**" = "deny";
+          "${config.home.homeDirectory}/Projects/ref/**" = "allow";
         };
         external_directory = {
           "/tmp/opencode/**" = "allow";
