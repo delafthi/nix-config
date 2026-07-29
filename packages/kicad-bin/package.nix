@@ -13,14 +13,15 @@
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "kicad-bin";
-  version = "10.0.4";
+  version = "10.0.5";
 
   __structuredAttrs = true;
   strictDeps = true;
 
-  src =
-    finalAttrs.passthru.sources.${stdenvNoCC.hostPlatform.system}
-      or (throw "Unsupported system: ${stdenvNoCC.hostPlatform.system}");
+  src = fetchurl {
+    url = "https://s3.cern.ch/kicad-downloads/osx/stable/kicad-unified-universal-${finalAttrs.version}.dmg";
+    hash = "sha256-k5nhhgnGuU5wizdbuIRVuUxVZT7EJ7gQI9ca5CIX1oE=";
+  };
 
   sourceRoot = ".";
 
@@ -49,13 +50,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   '';
 
   passthru = {
-    sources = {
-      "aarch64-darwin" = fetchurl {
-        url = "https://s3.cern.ch/kicad-downloads/osx/stable/kicad-unified-universal-${finalAttrs.version}.dmg";
-        hash = "sha256-+oe6oUaUtsEsQtoSMLRzusicA7eDp02JxKBjGeXKv/4=";
-      };
-      "x86_64-darwin" = finalAttrs.passthru.sources."aarch64-darwin";
-    };
     updateScript = writeShellScript "kicad-bin-update-script" ''
       set -euo pipefail
       export PATH="${
@@ -81,8 +75,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
       for platform in ${lib.escapeShellArgs finalAttrs.meta.platforms}; do
         update-source-version "kicad-bin" "$new_version" \
-          --ignore-same-version \
-          --source-key="sources.$platform"
+          --ignore-same-version
       done
     '';
   };
@@ -93,7 +86,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     changelog = "https://www.kicad.org/blog/categories/Release-Notes/";
     license = lib.licenses.gpl3Plus;
     maintainers = [ lib.maintainers.delafthi ];
-    platforms = builtins.attrNames finalAttrs.passthru.sources;
+    platforms = lib.platforms.darwin;
     sourceProvenance = [ lib.sourceTypes.binaryNativeCode ];
     mainProgram = "kicad";
   };
