@@ -63,7 +63,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       }"
 
       new_version=$(curl -s "https://s3.cern.ch/kicad-downloads/?list-type=2&prefix=osx/stable/kicad-unified-universal-" \
-        | grep -oE 'kicad-unified-universal-[0-9.]+\.dmg' \
+        | grep -oE 'kicad-unified-universal-[0-9]+\.[0-9]+\.[0-9]+\.dmg' \
         | sed -E 's/kicad-unified-universal-(.*)\.dmg/\1/' \
         | sort -V \
         | tail -n1)
@@ -73,10 +73,8 @@ stdenvNoCC.mkDerivation (finalAttrs: {
         exit 0
       fi
 
-      for platform in ${lib.escapeShellArgs finalAttrs.meta.platforms}; do
-        update-source-version "kicad-bin" "$new_version" \
-          --ignore-same-version
-      done
+      update-source-version "kicad-bin" "$new_version" \
+        --ignore-same-version
     '';
   };
 

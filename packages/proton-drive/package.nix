@@ -16,7 +16,10 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   __structuredAttrs = true;
   strictDeps = true;
 
-  src = finalAttrs.passthru.sources.${stdenvNoCC.hostPlatform.system};
+  src = fetchurl {
+    url = "https://proton.me/download/drive/macos/${finalAttrs.version}/ProtonDrive-${finalAttrs.version}.dmg";
+    hash = "sha256-uMK4uGucUmwCwye9J9JbJ5zmDtlhVPTtMEQC8ukRZH8=";
+  };
 
   sourceRoot = ".";
 
@@ -31,33 +34,27 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     runHook postInstall
   '';
 
-  passthru = {
-    sources = {
-      "aarch64-darwin" = fetchurl {
-        url = "https://proton.me/download/drive/macos/${finalAttrs.version}/ProtonDrive-${finalAttrs.version}.dmg";
-        hash = "sha256-uMK4uGucUmwCwye9J9JbJ5zmDtlhVPTtMEQC8ukRZH8=";
-      };
-      "x86_64-darwin" = finalAttrs.passthru.sources."aarch64-darwin";
-    };
-    updateScript = writeShellScript "update-proton-drive" ''
-      set -o errexit
-      export PATH="${
-        lib.makeBinPath [
-          curl
-          jq
-          common-updater-scripts
-        ]
-      }"
-      NEW_VERSION=$(curl --silent https://proton.me/download/drive/macos/version.json | jq -r '[.Releases[] | select(.CategoryName == "Stable")] | first | .Version')
-      if [[ "${finalAttrs.version}" = "$NEW_VERSION" ]]; then
-          echo "The new version is the same as the old version."
-          exit 0
-      fi
-      for platform in ${lib.escapeShellArgs finalAttrs.meta.platforms}; do
-        update-source-version "proton-drive" "$NEW_VERSION" --ignore-same-version --source-key="sources.$platform"
-      done
-    '';
-  };
+  passthru.updateScript = writeShellScript "update-proton-drive" ''
+    set -euo pipefail
+    export PATH="${
+      lib.makeBinPath [
+        curl
+        jq
+        common-updater-scripts
+      ]
+    }"
+
+    new_version=$(curl --silent https://proton.me/download/drive/macos/version.json \
+      | jq -r '[.Releases[] | select(.CategoryName == "Stable")] | first | .Version')
+
+    if [[ "${finalAttrs.version}" = "$new_version" ]]; then
+        echo "proton-drive is already at the latest version $new_version."
+        exit 0
+    fi
+
+    update-source-version "proton-drive" "$new_version" \
+      --ignore-same-version
+  '';
 
   meta = {
     description = "Official Proton Drive app for macOS";
