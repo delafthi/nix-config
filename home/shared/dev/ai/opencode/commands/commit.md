@@ -47,6 +47,7 @@ jj commit -m "<commit message>"
 - Body only when needed; explain why, <=100 chars/line
 - Footer only when relevant (`BREAKING CHANGE:`, `Fixes #`, `Closes #`, `Resolves #`, `Related to #`)
 - Keep message minimal and specific
+- Add an AI disclosure when requested in `CONTIRUBUTING.md` or `AI_POLICY.md`
 - Avoid generic subjects like `update`, `fix stuff`, `changes`
 
 ## Output format
