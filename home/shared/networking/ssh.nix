@@ -3,12 +3,6 @@
     enable = true;
     enableDefaultConfig = false;
     settings = {
-      "clt-dsk-t-6006" = {
-        hostname = "clt-dsk-t-6006";
-        user = "deaa";
-        identityFile = "~/.ssh/id_clt-dsk-t-6006.pub";
-        identitiesOnly = true;
-      };
       "codeberg.org" = {
         hostname = "codeberg.org";
         user = "git";
@@ -19,12 +13,6 @@
         hostname = "github.com";
         user = "git";
         identityFile = "~/.ssh/id_github.com.pub";
-        identitiesOnly = true;
-      };
-      "github.zhaw.ch" = {
-        hostname = "github.zhaw.ch";
-        user = "git";
-        identityFile = "~/.ssh/id_github.zhaw.ch.pub";
         identitiesOnly = true;
       };
       "git.krampf.ch" = {

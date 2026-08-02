@@ -52,7 +52,6 @@
         prune = true;
         pruneTags = true;
       };
-      gpg.ssh.allowedSignersFile = "~/.ssh/allowed_signers";
       help.autocorrect = "prompt";
       init.defaultBranch = "main";
       merge = {

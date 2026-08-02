@@ -39,7 +39,6 @@
       XCode = 497799835;
       # Apps designed for iPad. Not supported by MAS (see
       # https://github.com/mas-cli/mas/issues/321)
-      # AnyConnect = 1135064690;
       # MeteoSwiss = 589772015;
       # CoMaps = 6747180809;
       # "SAC-CAS" = 1592646841;

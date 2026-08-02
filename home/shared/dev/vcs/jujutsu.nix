@@ -156,7 +156,6 @@ _: {
         backend = "gpg";
         behavior = "drop";
         key = "00926686981863CB";
-        backends.ssh.allowed-signers = "~/.ssh/allowed_signers";
       };
       snapshot.autoupdate-stale = true;
       template-aliases."format_timestamp(timestamp)" = "timestamp.ago()";
@@ -173,16 +172,6 @@ _: {
         {
           "--when".commands = [ "status" ];
           ui.paginate = "never";
-        }
-        {
-          "--when".repositories = [ "~/Projects/zhaw" ];
-          remotes.origin.auto-track-bookmarks = "deaa/* | main | master";
-          templates.git_push_bookmark = ''"deaa/" ++ change_id.short()'';
-          signing = {
-            backend = "ssh";
-            key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGQ+Mydcr20/iHD3M0eLG56t336qydjGBwSBoCIYozy+";
-          };
-          user.email = "deaa@zhaw.ch";
         }
       ];
     };

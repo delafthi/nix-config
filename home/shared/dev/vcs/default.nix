@@ -6,6 +6,5 @@
     ./git.nix
     ./jujutsu.nix
     ./mergiraf.nix
-    ./signing.nix
   ];
 }
