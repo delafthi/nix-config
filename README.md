@@ -13,7 +13,7 @@ Prerequisites:
 Clone the repo:
 
 ```bash
-git clone https://codeberg.org/delafthi/dotfiles.git
+git clone https://github.com/delafthi/dotfiles.git
 cd dotfiles
 ```
 

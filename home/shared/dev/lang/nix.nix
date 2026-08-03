@@ -10,8 +10,9 @@
       id = "templates";
     };
     to = {
-      type = "tarball";
-      url = "https://codeberg.org/delafthi/nix-templates/archive/main.tar.gz";
+      type = "github";
+      owner = "delafthi";
+      repo = "nix-templates";
     };
   };
 }
