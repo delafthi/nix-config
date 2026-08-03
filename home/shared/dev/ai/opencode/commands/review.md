@@ -32,15 +32,22 @@ Rules:
 - In PR mode, ignore extra non-flag tokens and report warning in output.
 - In file mode, if path missing/unreadable, report as blocker and continue with valid paths.
 - Never expand scope to full repository.
-- Do not mutate code during review.
+- PR mode does a temporary working-copy checkout only; restore local state after review (see PR mode).
 
 ## PR mode
 
 For PR review mode:
 
-- Scope: review PR diff and metadata (title/description), focus on code impact.
-- Use GitHub CLI to fetch PR title/body and full diff for the PR number.
-- Base review on fetched PR description plus diff content.
+- Check out the PR into the working copy:
+  1. Record current change: `jj log -r @ -T 'change_id.short()' --no-graph`
+  2. New change on default branch (`main`, or `master`): `jj new main` — else `gh pr checkout` fails, git sees current change as lost.
+  3. `gh pr checkout <number>`
+  4. Review working copy: read changed files, `jj diff --git -r @`, `jj log`. Fetch title/body via `gh pr view <number>`.
+- After review, restore:
+  1. List PR changes: `jj log -r 'main..@' --no-graph -T 'change_id.short()'`
+  2. `jj edit <recorded-change-id>`
+  3. `jj abandon <pr-change-ids...>`
+- Read-only review state; never commit to it.
 - If external action policy blocks remote fetch, report blocker with ready command.
 
 ## Current change mode
