@@ -1,5 +1,5 @@
 {
-  description = "delafthi's dotfiles";
+  description = "delafthi's Nix configuration";
 
   nixConfig = {
     extra-substituters = [

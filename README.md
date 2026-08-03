@@ -1,4 +1,4 @@
-# delafthi's dotfiles
+# delafthi's Nix configuration
 
 Nix flake for personal Linux and macOS configuration. It wires NixOS, nix-darwin, home-manager, sops-nix, and a small set of custom packages and apps.
 
@@ -13,8 +13,8 @@ Prerequisites:
 Clone the repo:
 
 ```bash
-git clone https://github.com/delafthi/dotfiles.git
-cd dotfiles
+git clone https://github.com/delafthi/nix-config.git
+cd nix-config
 ```
 
 Enter the dev shell:
