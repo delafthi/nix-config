@@ -1,0 +1,26 @@
+name: Update flake
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 2 * * 1"
+jobs:
+  update-flake:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@v22
+      - name: Update flake
+        uses: DeterminateSystems/update-flake-lock@v28
+        with:
+          commit-msg: "chore: update flake"
+          pr-title: "chore: update flake"
+          pr-labels: |
+            auto-merge
+            dependencies
+          token: ${{ secrets.GH_TOKEN }}

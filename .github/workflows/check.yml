@@ -1,0 +1,21 @@
+name: Check
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+jobs:
+  check-flake:
+    runs-on: macos-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@v22
+      - name: Check flake
+        run: |
+          echo "::notice::Running nix flake check..."
+          nix flake check --system aarch64-darwin --keep-going --print-build-logs
