@@ -64,10 +64,13 @@
             "spacer"
             "version-control"
           ];
-          center = [ "file-name" ];
+          center = [
+            "file-name"
+            "file-modification-indicator"
+          ];
           right = [
             "diagnostics"
-            "file-modification-indicator"
+            "spinner"
             "read-only-indicator"
             "file-type"
             "separator"
