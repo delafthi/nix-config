@@ -14,6 +14,7 @@
       rumdl
       shfmt
       tombi
+      typos-lsp
       vscode-extensions.llvm-org.lldb-vscode
       vscode-json-languageserver
       yaml-language-server
@@ -25,17 +26,32 @@
       language = [
         {
           name = "markdown";
-          language-servers = [ "rumdl" ];
+          language-servers = [
+            "rumdl"
+            "typos"
+          ];
+        }
+        {
+          name = "typst";
+          language-servers = [
+            "tinymist"
+            "typos"
+          ];
+        }
+        {
+          name = "jjdescription";
+          language-servers = [ "typos" ];
         }
       ];
       language-server = {
+        clangd.args = [
+          "--background-index"
+        ];
         rumdl = {
           command = "rumdl";
           args = [ "server" ];
         };
-        clangd.args = [
-          "--background-index"
-        ];
+        typos.command = "typos-lsp";
       };
     };
     settings = {
