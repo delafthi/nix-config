@@ -46,6 +46,7 @@
       svu
       tesseract
       tokei
+      typos
       unrar
       unzip
       usbutils
