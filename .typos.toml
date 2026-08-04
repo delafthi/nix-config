@@ -1,0 +1,4 @@
+[files]
+extend-exclude = [
+  "home/shared/security/secrets.yml",
+]
