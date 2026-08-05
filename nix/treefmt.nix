@@ -16,6 +16,5 @@
     shfmt.enable = true;
     statix.enable = true;
     typos.enable = true;
-    yamlfmt.enable = true;
   };
 }
