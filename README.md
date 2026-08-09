@@ -1,9 +1,12 @@
 # delafthi's Nix configuration
 
-Nix flake for personal Linux and macOS configuration. It wires NixOS, nix-darwin, home-manager, sops-nix, and a small set of custom packages and apps.
+Nix flake for personal Linux and macOS configuration. It wires NixOS,
+nix-darwin, home-manager, sops-nix, and a small set of custom packages and apps.
 
-System configuration lives in `system/`, split into `system/darwin` and `system/nixos`. Home-manager configuration lives in `home/`, split into `home/darwin` and `home/linux`. Hosts, modules, and
-overlays live in `hosts/`, `modules/`, and `overlays/`.
+System configuration lives in `system/`, split into `system/darwin` and
+`system/nixos`. Home-manager configuration lives in `home/`, split into
+`home/darwin` and `home/linux`. Hosts, modules, and overlays live in `hosts/`,
+`modules/`, and `overlays/`.
 
 ## Installation
 
@@ -28,7 +31,9 @@ nix develop
 
 Or, with direnv installed, `direnv allow` to load the shell automatically.
 
-The flake's `nixConfig` adds the [nix-community cachix](https://app.cachix.org/cache/nix-community) cache, so no manual setup is needed.
+The flake's `nixConfig` adds the
+[nix-community cachix](https://app.cachix.org/cache/nix-community) cache, so no
+manual setup is needed.
 
 ## Usage
 
@@ -75,7 +80,10 @@ nix flake check
 
 ## Configuration
 
-The `apply` app uses the current short hostname when no host name is passed. On Darwin it calls `sudo darwin-rebuild switch --flake ".#$HOSTNAME"`; on NixOS it calls
-`sudo nixos-rebuild switch --flake ".#$HOSTNAME"`.
+The `apply` app uses the current short hostname when no host name is passed. On
+Darwin it calls `sudo darwin-rebuild switch --flake ".#$HOSTNAME"`; on NixOS it
+calls `sudo nixos-rebuild switch --flake ".#$HOSTNAME"`.
 
-Secrets are managed with `sops-nix` and age. Files matching `secrets.{yaml,yml,json,env,ini}` are encrypted per the rules in `.sops.yaml`, and the dev shell provides `sops` and `age`.
+Secrets are managed with `sops-nix` and age. Files matching
+`secrets.{yaml,yml,json,env,ini}` are encrypted per the rules in `.sops.yaml`,
+and the dev shell provides `sops` and `age`.

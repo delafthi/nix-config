@@ -20,9 +20,11 @@ Use established language. Don't re-litigate ADRs.
 
 ## Workflow
 
-1. Gather facts from source of truth: project manifests, scripts, task runners, and existing docs.
+1. Gather facts from source of truth: project manifests, scripts, task runners,
+   and existing docs.
 2. Verify setup/run/test commands from real config (do not invent commands).
-3. Update existing README in place when possible; preserve good sections and headings.
+3. Update existing README in place when possible; preserve good sections and
+   headings.
 4. If missing, create focused README with only relevant sections.
 5. Keep examples minimal and executable.
 

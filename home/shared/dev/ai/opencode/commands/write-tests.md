@@ -6,7 +6,8 @@ subtask: true
 
 # Write tests
 
-Create tests for files in `$ARGUMENTS`; if empty, cover current working-copy changes (`@`).
+Create tests for files in `$ARGUMENTS`; if empty, cover current working-copy
+changes (`@`).
 
 ## Before You Start
 
@@ -24,7 +25,8 @@ Use established language. Don't re-litigate ADRs. Mirror existing test style.
 
 1. Detect test stack, folder layout, naming conventions, fixtures/helpers.
 2. Map changed behavior and risk areas before writing tests.
-3. Add or extend tests in existing structure; create new test files only when needed.
+3. Add or extend tests in existing structure; create new test files only when
+   needed.
 4. Prefer fast unit tests; use integration tests for critical boundaries.
 5. Run narrowest relevant test command first, then broader suite if needed.
 
@@ -53,7 +55,8 @@ Use established language. Don't re-litigate ADRs. Mirror existing test style.
 
 ## Output consistency
 
-- Return one final summary with: test files changed, behaviors covered, and command used to run tests.
+- Return one final summary with: test files changed, behaviors covered, and
+  command used to run tests.
 
 Use this output shape:
 

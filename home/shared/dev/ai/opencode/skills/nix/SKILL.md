@@ -14,9 +14,11 @@ Before assuming a tool is missing, always look for a project dev shell:
 3. Check for `.envrc` (may use `use flake`)
 4. Check for `nix/` directory
 
-If any found → `nix develop` or read what the shell provides (check `packages` attr). The tool may already be available inside the shell.
+If any found → `nix develop` or read what the shell provides (check `packages`
+attr). The tool may already be available inside the shell.
 
-If none found → tool is not in the project environment. Use `nix-locate` or `nix run nixpkgs#` below.
+If none found → tool is not in the project environment. Use `nix-locate` or
+`nix run nixpkgs#` below.
 
 ## Missing Tool Resolution
 

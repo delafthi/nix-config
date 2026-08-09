@@ -6,7 +6,8 @@ subtask: false
 
 # Create pull request
 
-Create or update PR for current change (`@`). Use `$ARGUMENTS` as optional hints (title/body/base/bookmark).
+Create or update PR for current change (`@`). Use `$ARGUMENTS` as optional hints
+(title/body/base/bookmark).
 
 ## Conventions
 
@@ -43,7 +44,8 @@ jj git push
 
 5. Check for existing open PR from current head bookmark.
 6. If PR exists, update it. If not, create it.
-7. If external action is blocked by policy, prepare final PR title/body and exact command(s) only.
+7. If external action is blocked by policy, prepare final PR title/body and
+   exact command(s) only.
 
 ## Parallelization (conditional)
 

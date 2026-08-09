@@ -40,12 +40,14 @@ Domain: <issue type — memory, timing, concurrency, etc.>
 Approach: <what you want to do — A, then B, then C>
 ```
 
-Wait for feedback. User may have domain knowledge that re-ranks or dismisses hypotheses instantly. Cheap checkpoint, big time saver.
+Wait for feedback. User may have domain knowledge that re-ranks or dismisses
+hypotheses instantly. Cheap checkpoint, big time saver.
 
 ### 3. Build Feedback Loop
 
-This is the discipline. Everything else is mechanical. If you have a **tight** pass/fail signal for the bug — one that goes red on *this* bug — you will find the cause. If you don't, no amount of
-staring at code will save you.
+This is the discipline. Everything else is mechanical. If you have a **tight**
+pass/fail signal for the bug — one that goes red on *this* bug — you will find
+the cause. If you don't, no amount of staring at code will save you.
 
 Ways to construct one:
 
@@ -62,10 +64,13 @@ Ways to construct one:
 - Sharper? Assert on specific symptom, not "didn't crash"
 - More deterministic? Pin time, seed RNG, isolate filesystem
 
-**Non-deterministic bugs:** Goal is higher reproduction rate, not clean repro. Loop 100×, add stress, narrow timing windows. 50% flake is debuggable; 1% is not — keep raising rate.
+**Non-deterministic bugs:** Goal is higher reproduction rate, not clean repro.
+Loop 100×, add stress, narrow timing windows. 50% flake is debuggable; 1% is not
+— keep raising rate.
 
-**When you cannot build a loop:** Stop. List what you tried. Ask user for: access to environment that reproduces it, a captured artifact, or permission to add temporary instrumentation. Do **not**
-proceed to hypothesise without a loop.
+**When you cannot build a loop:** Stop. List what you tried. Ask user for:
+access to environment that reproduces it, a captured artifact, or permission to
+add temporary instrumentation. Do **not** proceed to hypothesise without a loop.
 
 ### 4. Reproduce + Minimise
 
@@ -73,19 +78,25 @@ Run the loop. Watch it go red.
 
 Confirm:
 
-- Loop produces the failure mode **user** described — not a different failure nearby. Wrong bug = wrong fix.
-- Failure is reproducible across runs (or high enough rate for non-deterministic)
+- Loop produces the failure mode **user** described — not a different failure
+  nearby. Wrong bug = wrong fix.
+- Failure is reproducible across runs (or high enough rate for
+  non-deterministic)
 - Exact symptom captured for later verification
 
-**Minimise:** Shrink repro to smallest scenario that still goes red. Cut inputs, callers, config, data, steps — one at a time, re-running loop after each. Keep only load-bearing elements.
+**Minimise:** Shrink repro to smallest scenario that still goes red. Cut inputs,
+callers, config, data, steps — one at a time, re-running loop after each. Keep
+only load-bearing elements.
 
 ### 5. Hypothesise
 
-Generate **3–5 ranked hypotheses** before testing any. Single-hypothesis generation anchors on first plausible idea.
+Generate **3–5 ranked hypotheses** before testing any. Single-hypothesis
+generation anchors on first plausible idea.
 
 Each must be falsifiable:
 
-> "If <X> is the cause, then <changing Y> will make the bug disappear / <changing Z> will make it worse."
+> "If <X> is the cause, then <changing Y> will make the bug disappear /
+> <changing Z> will make it worse."
 
 If you can't state the prediction, it's a vibe — discard or sharpen.
 
@@ -97,12 +108,14 @@ Each probe maps to a specific hypothesis. **Change one variable at a time.**
 - Targeted logs at boundaries that distinguish hypotheses
 - Never "log everything and grep"
 
-Tag every debug log with unique prefix (e.g. `[DEBUG-abc1]`). Cleanup = single grep.
+Tag every debug log with unique prefix (e.g. `[DEBUG-abc1]`). Cleanup = single
+grep.
 
 ### 7. Fix + Guard
 
-Write regression test before fix — but only if a **correct seam** exists. A correct seam exercises the real bug pattern at the call site. If no correct seam exists, that itself is the finding — note
-it.
+Write regression test before fix — but only if a **correct seam** exists. A
+correct seam exercises the real bug pattern at the call site. If no correct seam
+exists, that itself is the finding — note it.
 
 If seam exists:
 
@@ -121,4 +134,5 @@ Before declaring done:
 - All debug instrumentation removed
 - Throwaway prototypes deleted
 
-**Then ask:** what would have prevented this? If answer involves architectural change, note it for improvement.
+**Then ask:** what would have prevented this? If answer involves architectural
+change, note it for improvement.

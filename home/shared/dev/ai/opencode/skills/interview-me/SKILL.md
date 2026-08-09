@@ -49,11 +49,13 @@ Above ~90%: go to restate.
 
 Use the question tool. One question per turn. Always attach your guess.
 
-If you get it wrong: update hypothesis, re-ask. Wrong guesses are productive — they narrow the space.
+If you get it wrong: update hypothesis, re-ask. Wrong guesses are productive —
+they narrow the space.
 
 ### 3. Challenge Established Terms
 
-When user uses a term that conflicts with existing `CONTEXT.md` glossary, call it out immediately:
+When user uses a term that conflicts with existing `CONTEXT.md` glossary, call
+it out immediately:
 
 > "Your glossary defines 'X' as Y, but you seem to mean Z — which is it?"
 
@@ -61,19 +63,23 @@ When user uses a term that conflicts with existing `CONTEXT.md` glossary, call i
 
 When user uses vague or overloaded terms, propose a precise canonical term:
 
-> "You're saying 'account' — do you mean the Customer or the User? Those are different things."
+> "You're saying 'account' — do you mean the Customer or the User? Those are
+> different things."
 
 ### 5. Probe Convention-Signaling
 
-When user gives a vague or buzzwordy answer ("scalable", "modern", "clean"), probe:
+When user gives a vague or buzzwordy answer ("scalable", "modern", "clean"),
+probe:
 
 > "If you didn't have to justify this to anyone, what would you actually want?"
 
 ### 6. Verify Against Code
 
-When user states how something works, check whether the code agrees. If you find a contradiction, surface it:
+When user states how something works, check whether the code agrees. If you find
+a contradiction, surface it:
 
-> "Your code cancels entire Orders, but you just said partial cancellation is possible — which is right?"
+> "Your code cancels entire Orders, but you just said partial cancellation is
+> possible — which is right?"
 
 ### 7. Propose
 
@@ -113,7 +119,8 @@ If the conversation produced decisions worth recording:
 
 - Ask user where to document: component codedocs, `docs/adr/`, or skip
 - Don't assume — not every repo needs docs, not every decision needs an ADR
-- If recorded, focus on: what was decided, alternatives considered, why this choice
+- If recorded, focus on: what was decided, alternatives considered, why this
+  choice
 - Keep it targeted — value for other engineers, not info dump
 
 Only create ADR when:
@@ -126,5 +133,5 @@ Only create ADR when:
 
 Test: can you predict the user's reaction to the next three questions?
 
-If yes → shared understanding. Stop.
-If no after several rounds → tell user: "Something foundational is missing. Want to step back?"
+If yes → shared understanding. Stop. If no after several rounds → tell user:
+"Something foundational is missing. Want to step back?"

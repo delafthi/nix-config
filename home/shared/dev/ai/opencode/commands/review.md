@@ -22,17 +22,21 @@ Use established language. Don't re-litigate ADRs.
 
 Use this order:
 
-1. If first token in `$ARGUMENTS` matches PR number (`123` or `#123`), use PR mode.
-2. Else if `$ARGUMENTS` provided, treat tokens as file paths; review only those files.
+1. If first token in `$ARGUMENTS` matches PR number (`123` or `#123`), use PR
+   mode.
+2. Else if `$ARGUMENTS` provided, treat tokens as file paths; review only those
+   files.
 3. Else review current Jujutsu change (`@`).
 
 Rules:
 
 - In PR mode, strip leading `#` before CLI usage.
 - In PR mode, ignore extra non-flag tokens and report warning in output.
-- In file mode, if path missing/unreadable, report as blocker and continue with valid paths.
+- In file mode, if path missing/unreadable, report as blocker and continue with
+  valid paths.
 - Never expand scope to full repository.
-- PR mode does a temporary working-copy checkout only; restore local state after review (see PR mode).
+- PR mode does a temporary working-copy checkout only; restore local state after
+  review (see PR mode).
 
 ## PR mode
 
@@ -40,15 +44,18 @@ For PR review mode:
 
 - Check out the PR into the working copy:
   1. Record current change: `jj log -r @ -T 'change_id.short()' --no-graph`
-  2. New change on default branch (`main`, or `master`): `jj new main` — else `gh pr checkout` fails, git sees current change as lost.
+  2. New change on default branch (`main`, or `master`): `jj new main` — else
+     `gh pr checkout` fails, git sees current change as lost.
   3. `gh pr checkout <number>`
-  4. Review working copy: read changed files, `jj diff --git -r @`, `jj log`. Fetch title/body via `gh pr view <number>`.
+  4. Review working copy: read changed files, `jj diff --git -r @`, `jj log`.
+     Fetch title/body via `gh pr view <number>`.
 - After review, restore:
   1. List PR changes: `jj log -r 'main..@' --no-graph -T 'change_id.short()'`
   2. `jj edit <recorded-change-id>`
   3. `jj abandon <pr-change-ids...>`
 - Read-only review state; never commit to it.
-- If external action policy blocks remote fetch, report blocker with ready command.
+- If external action policy blocks remote fetch, report blocker with ready
+  command.
 
 ## Current change mode
 
@@ -78,7 +85,8 @@ Review in this order:
 
 ## Severity rubric
 
-- `CRITICAL`: active exploit, data loss/corruption, auth bypass, or production outage likely
+- `CRITICAL`: active exploit, data loss/corruption, auth bypass, or production
+  outage likely
 - `HIGH`: serious user/business impact with plausible path to trigger
 - `MEDIUM`: correctness/maintainability risk with limited blast radius
 - `LOW`: minor risk or narrow edge case
@@ -100,7 +108,8 @@ Reject speculative findings without evidence from code or diff.
 
 - Deduplicate equivalent findings from multiple lanes.
 - Resolve conflicts by stronger evidence and higher severity.
-- If two findings share root cause, keep one issue and mention affected locations.
+- If two findings share root cause, keep one issue and mention affected
+  locations.
 - Preserve priority ordering from highest risk to lowest.
 
 ## Per issue
@@ -133,7 +142,8 @@ Use this output shape:
 - <missing path / missing diff>
 
 ## Issues
-- [SEVERITY] [Confidence] [Category] `path/to/file:line` - problem, impact, fix, verification
+- [SEVERITY] [Confidence] [Category] `path/to/file:line` - problem, impact, fix,
+  verification
 
 ## Residual Risk
 - <what was not fully validated>

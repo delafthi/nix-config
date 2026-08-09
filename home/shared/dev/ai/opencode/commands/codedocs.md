@@ -6,7 +6,8 @@ subtask: true
 
 # Generate code documentation
 
-Add or update docs for files in `$ARGUMENTS`; if empty, use files changed in current working copy (`@`).
+Add or update docs for files in `$ARGUMENTS`; if empty, use files changed in
+current working copy (`@`).
 
 ## Before You Start
 
@@ -24,7 +25,8 @@ Use established language. Don't re-litigate ADRs. Mirror existing doc style.
 
 1. Resolve target paths from `$ARGUMENTS`; expand directories to concrete files.
 2. If no arguments, derive targets from current working-copy diff.
-3. Read project doc guidance (`CONTRIBUTING.md`, `README.md`, language/style docs) and mirror existing style.
+3. Read project doc guidance (`CONTRIBUTING.md`, `README.md`, language/style
+   docs) and mirror existing style.
 4. Document only APIs consumed by users or other modules.
 5. Keep docs behavior-accurate; fix stale docs found in touched files.
 
@@ -58,7 +60,8 @@ Use established language. Don't re-litigate ADRs. Mirror existing doc style.
 ## Output consistency
 
 - Return one final summary from primary agent only.
-- Include: files updated, APIs documented, stale docs fixed, missing/unreadable paths.
+- Include: files updated, APIs documented, stale docs fixed, missing/unreadable
+  paths.
 
 Use this output shape:
 

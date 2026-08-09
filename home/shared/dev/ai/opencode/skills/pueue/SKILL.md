@@ -25,6 +25,7 @@ pueue log --lines 50 "$id"
 
 ## Guardrails
 
-- Always quote entire command passed to `pueue add` to preserve argument quoting.
+- Always quote entire command passed to `pueue add` to preserve argument
+  quoting.
 - Use `--lines` flag in `pueue log` (not `tail`) to retain full log.
 - Check `pueue status` before adding tasks to avoid overwhelming queue.

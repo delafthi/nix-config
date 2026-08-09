@@ -20,16 +20,20 @@ Use Jujutsu-native workflow. Prevent git-habit errors.
 - Set change message: `jj describe -m "<message>"`
 - Fold/split work: `jj squash`, `jj new`
 - Undo operation: `jj undo`
-- Manage bookmarks: `jj bookmark list`, `jj bookmark create <name>`, `jj bookmark set <name>`
+- Manage bookmarks: `jj bookmark list`, `jj bookmark create <name>`,
+  `jj bookmark set <name>`
 - Push bookmark: `jj git push --bookmark <name>`
 
 ## Canonical Flow
 
 Create change first, then edit, then describe.
 
-- `jj new` → make changes → `jj describe -m "..."` (or `jj commit -m "..."` to also create next change)
-- Avoid git flow "edit then commit"; pattern causes avoidable `jj squash`/`jj split` cleanup.
-- `jj commit` = `jj describe` + `jj new` in one step; use it to close current change and start fresh.
+- `jj new` → make changes → `jj describe -m "..."` (or `jj commit -m "..."` to
+  also create next change)
+- Avoid git flow "edit then commit"; pattern causes avoidable
+  `jj squash`/`jj split` cleanup.
+- `jj commit` = `jj describe` + `jj new` in one step; use it to close current
+  change and start fresh.
 
 ## Guardrails
 
@@ -44,8 +48,10 @@ Create change first, then edit, then describe.
 - If `mergiraf` leaves conflicts, resolve manually:
   - Check history and conflicting files.
   - Read commit messages, PRs, tickets to understand original intent.
-  - Preserve both intents where possible. If incompatible, pick the one matching the merge's goal and note the trade-off.
-  - Run automated checks (typecheck, tests, format). Fix anything the merge broke.
+  - Preserve both intents where possible. If incompatible, pick the one matching
+    the merge's goal and note the trade-off.
+  - Run automated checks (typecheck, tests, format). Fix anything the merge
+    broke.
   - If rebasing, continue the rebase until all commits are rebased.
 
 ## Recovery

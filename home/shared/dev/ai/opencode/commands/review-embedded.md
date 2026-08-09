@@ -6,7 +6,8 @@ subtask: false
 
 # Review embedded project
 
-Find bad designs in C/C++ embedded projects within `$ARGUMENTS`. Reference embedded design knowledge from theEmbeddedNewTestament and MISRA C++ guidelines.
+Find bad designs in C/C++ embedded projects within `$ARGUMENTS`. Reference
+embedded design knowledge from theEmbeddedNewTestament and MISRA C++ guidelines.
 
 ## Before You Start
 
@@ -22,7 +23,8 @@ Use established language. Don't re-litigate ADRs.
 
 1. If `$ARGUMENTS` empty, use current directory.
 2. Else treat tokens as paths; scan each recursively.
-3. Skip non-C/C++ source files unless they contribute to architecture understanding.
+3. Skip non-C/C++ source files unless they contribute to architecture
+   understanding.
 4. If path missing/unreadable, report as blocker and continue with valid paths.
 5. Never mutate code during review.
 
@@ -30,7 +32,9 @@ Use established language. Don't re-litigate ADRs.
 
 Use following knowledge bases as ground truth for what constitutes bad design:
 
-- theEmbeddedNewTestament (github.com/theEmbeddedGeorge/theEmbeddedNewTestament.github.io) - embedded C programming, memory, RTOS, performance, security
+- theEmbeddedNewTestament
+  (github.com/theEmbeddedGeorge/theEmbeddedNewTestament.github.io) - embedded C
+  programming, memory, RTOS, performance, security
 - MISRA C/C++ guidelines for safety-critical code
 - CERT C secure coding standards
 - AUTOSAR C++14 guidelines for automotive
@@ -39,28 +43,49 @@ Use following knowledge bases as ground truth for what constitutes bad design:
 
 Use up to 9 subagents with independent lanes:
 
-- **Lane A — Memory**: dynamic allocation in ISR/RT paths, leaks, fragmentation, stack overflow, no pool allocator, missing NULL checks after alloc, use-after-free, double-free, large stack frames, no
-  volatile on MMIO, uninitialized locals
-- **Lane B — Real-Time & Determinism**: priority inversion (no inheritance), deadlock (inconsistent lock order), infinite waits (portMAX_DELAY), long critical sections, nested locks, no timeout on
-  acquisition, ISR doing blocking calls (printf/malloc), non-deterministic timing paths
-- **Lane C — Performance**: cache-unfriendly access patterns (column-major), premature optimization, clever code defeating compiler opts, missing -Os/-O2 flag selection, no profiling before
-  optimization, function-like macros instead of inline, unnecessary FPU use
-- **Lane D — Safety & Security**: buffer overflow, no bounds checking, integer overflow/underflow, no watchdog, no stack canary, no fail-safe state, failing to NULL-terminate strings, type-punning via
-  unions, casting away const, no secure boot, weak crypto, key exposure, no rollback protection, debug mode in prod
-- **Lane E — Design Patterns & Architecture**: global state instead of explicit params, no HAL (hardware coupled to logic), god objects / monolithic modules, deep nested if-else (high cyclomatic
-  complexity), mixing IO/computation/policy, no module boundaries, tight coupling, fall-through switch without comment, unbounded recursion, no early-return guards
-- **Lane F — Error Handling & Logging**: swallowing errors silently, no context in logs (file/line/func), no severity levels, infinite log growth (no circular buffer), no recovery mechanism, no error
-  escalation (retry->restart->reset), logging secrets, no fail-fast
-- **Lane G — Concurrency**: shared global without mutex/lock, race conditions, missing memory barriers, no volatile on shared flags, non-reentrant functions in ISR, no atomic ops where appropriate,
-  inconsistent lock ordering across modules
-- **Lane H — Static Analysis & Standards**: no SA in CI, ignoring warnings, no MISRA deviation process, no custom rules for embedded, no coding standard enforced, no type safety (int instead of
-  stdint.h), assumes sizeof(array param) works, assumes platform endianness
-- **Lane I — Data/State Architecture**: duplicate data across modules (no single source of truth), copy-paste code duplication, inconsistent state machine patterns, no configuration management, magic
-  numbers, redundant data storage, stale/dead code
+- **Lane A — Memory**: dynamic allocation in ISR/RT paths, leaks, fragmentation,
+  stack overflow, no pool allocator, missing NULL checks after alloc,
+  use-after-free, double-free, large stack frames, no volatile on MMIO,
+  uninitialized locals
+- **Lane B — Real-Time & Determinism**: priority inversion (no inheritance),
+  deadlock (inconsistent lock order), infinite waits (portMAX_DELAY), long
+  critical sections, nested locks, no timeout on acquisition, ISR doing blocking
+  calls (printf/malloc), non-deterministic timing paths
+- **Lane C — Performance**: cache-unfriendly access patterns (column-major),
+  premature optimization, clever code defeating compiler opts, missing -Os/-O2
+  flag selection, no profiling before optimization, function-like macros instead
+  of inline, unnecessary FPU use
+- **Lane D — Safety & Security**: buffer overflow, no bounds checking, integer
+  overflow/underflow, no watchdog, no stack canary, no fail-safe state, failing
+  to NULL-terminate strings, type-punning via unions, casting away const, no
+  secure boot, weak crypto, key exposure, no rollback protection, debug mode in
+  prod
+- **Lane E — Design Patterns & Architecture**: global state instead of explicit
+  params, no HAL (hardware coupled to logic), god objects / monolithic modules,
+  deep nested if-else (high cyclomatic complexity), mixing
+  IO/computation/policy, no module boundaries, tight coupling, fall-through
+  switch without comment, unbounded recursion, no early-return guards
+- **Lane F — Error Handling & Logging**: swallowing errors silently, no context
+  in logs (file/line/func), no severity levels, infinite log growth (no circular
+  buffer), no recovery mechanism, no error escalation (retry->restart->reset),
+  logging secrets, no fail-fast
+- **Lane G — Concurrency**: shared global without mutex/lock, race conditions,
+  missing memory barriers, no volatile on shared flags, non-reentrant functions
+  in ISR, no atomic ops where appropriate, inconsistent lock ordering across
+  modules
+- **Lane H — Static Analysis & Standards**: no SA in CI, ignoring warnings, no
+  MISRA deviation process, no custom rules for embedded, no coding standard
+  enforced, no type safety (int instead of stdint.h), assumes sizeof(array
+  param) works, assumes platform endianness
+- **Lane I — Data/State Architecture**: duplicate data across modules (no single
+  source of truth), copy-paste code duplication, inconsistent state machine
+  patterns, no configuration management, magic numbers, redundant data storage,
+  stale/dead code
 
 ## Pattern examples
 
-Illustrative anchors — not exhaustive. Search for all patterns listed in lane descriptions above, plus structurally similar variants.
+Illustrative anchors — not exhaustive. Search for all patterns listed in lane
+descriptions above, plus structurally similar variants.
 
 ### Memory (Lane A)
 
@@ -246,7 +271,8 @@ Link findings to specific MISRA rules when applicable. Key rules by domain:
 Primary agent merges all lane findings into one report:
 
 - Deduplicate equivalent findings from multiple lanes.
-- If two findings share root cause, keep one issue and mention all affected locations.
+- If two findings share root cause, keep one issue and mention all affected
+  locations.
 - Resolve conflicts by stronger evidence and higher severity.
 - Preserve priority ordering from highest risk to lowest.
 
@@ -265,7 +291,8 @@ Primary agent merges all lane findings into one report:
 
 ## Severity rubric
 
-- `CRITICAL`: active exploit, data loss/corruption, safety violation, or crash likely
+- `CRITICAL`: active exploit, data loss/corruption, safety violation, or crash
+  likely
 - `HIGH`: serious reliability/security impact with plausible trigger path
 - `MEDIUM`: correctness/maintainability risk with limited blast radius
 - `LOW`: minor risk or narrow edge case
@@ -287,7 +314,9 @@ Reject speculative findings without evidence from code.
 
 - Severity: `CRITICAL | HIGH | MEDIUM | LOW | SUGGESTION`
 - Confidence: `HIGH | MEDIUM | LOW`
-- Category: `memory | realtime | performance | safety | security | design | error-handling | concurrency | static-analysis | architecture`
+- Category:
+  `memory | realtime | performance | safety | security | design | error-handling
+  | concurrency | static-analysis | architecture`
 - Location: `file:line`
 - Problem
 - Impact
@@ -319,7 +348,8 @@ Use this output shape:
 - <missing path / failure details>
 
 ## Issues
-- [SEVERITY] [Confidence] [Category] `path/to/file:line` - problem, impact, fix, reference, verification
+- [SEVERITY] [Confidence] [Category] `path/to/file:line` - problem, impact, fix,
+  reference, verification
 
 ## Residual Risk
 - <what was not fully validated>
