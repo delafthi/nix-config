@@ -1,6 +1,7 @@
 {
   imports = [
     ./control-center.nix
+    ./controller.nix
     ./dock.nix
     ./finder.nix
     ./gui.nix
