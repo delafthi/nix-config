@@ -11,10 +11,19 @@ architecture-design vocabulary. Drill into chosen candidate with interview-me.
 
 ## Target selection
 
+**Scope before you scan — YAGNI.** Deepening a module pays off by making
+future changes to it easier, so put extra weight on the parts that have
+recently changed. Decide where to look before you look.
+
 1. If `$ARGUMENTS` is a file path — use that file and its direct
    imports/exports.
 2. If `$ARGUMENTS` is a module or class name — resolve to file(s) via grep/glob.
-3. If `$ARGUMENTS` empty — use current working-copy diff (`@`).
+3. If `$ARGUMENTS` empty — walk a good stretch of history (`jj log --no-graph
+   -r '::@'`) and inspect what recent changes touched (`jj diff -r <rev>
+   --name-only` over the last few dozen changes) to find hot spots — files and
+   areas that keep coming up. Let those paths pull your attention first. If
+   changes are scattered with no clear hot spot, widen the net. Fall back to
+   the working-copy diff (`@`) if still ambiguous.
 4. If resolution fails — report blocker, stop.
 
 ## Before You Start
@@ -59,6 +68,8 @@ Use established language. Don't re-litigate ADRs.
 ```
 
 5. List candidates strongest-first. End with **Top recommendation**.
+   Do NOT propose interfaces yet — the cards describe friction, not a design.
+   The interface is settled by the interview that follows.
 6. Ask: "Which of these would you like to explore?"
 7. Use interview-me to walk the design tree — constraints, dependencies,
    deepened module shape, what sits behind the seam, what tests survive.

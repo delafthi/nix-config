@@ -21,15 +21,45 @@ seam, testable through that interface.
 - User wants a quick fix, not a design pass
 - Code is glue with no meaningful behaviour
 
-## Before You Start
+## Workflow
 
-Check for existing context:
+1. **Gather context.** Read `CONTEXT.md`, `docs/`, component READMEs. Use
+   established language. Don't re-litigate ADRs.
+2. **Interview first, plan last.** Run interview-me to walk the design tree.
+   The branches are the Design Questions below. Do not produce a plan while
+   any question is still open — an early draft is waste.
+3. **Generate the plan once.** When the frontier is empty and the user has
+   confirmed shared understanding, write the plan in full in one turn: the
+   module, its interface, what hides behind it, where the seam sits, the
+   adapters, and the testing strategy.
 
-- `CONTEXT.md` at root — domain terms and boundaries
-- `docs/` — architecture decisions in the area you're touching
-- Component `README.md` or codedocs — patterns, decisions
+## Design It Twice
 
-Use established language. Don't re-litigate ADRs.
+When the user wants to explore alternative interfaces for a deepening
+candidate, your first idea is unlikely to be the best. Spawn 3+ sub-agents in
+parallel, each designing a **radically different** interface:
+
+- Agent 1: "Minimize the interface — 1–3 entry points max. Maximise leverage
+  per entry point."
+- Agent 2: "Maximise flexibility — support many use cases and extension."
+- Agent 3: "Optimise for the most common caller — make the default case
+  trivial."
+- Agent 4 (if applicable): "Design around ports & adapters for cross-seam
+  dependencies."
+
+Give each agent a technical brief: file paths, coupling details, dependency
+category (see [DEEPENING.md](DEEPENING.md)), what sits behind the seam. Use
+this skill's vocabulary and the project's `CONTEXT.md` language in every brief
+so all designs name things consistently. Each agent outputs: interface (types,
+methods, params, invariants, error modes), a usage example, what the
+implementation hides, dependency strategy and adapters, and trade-offs.
+
+Show the user a problem-space framing first (constraints, dependency
+categories, a rough illustrative sketch — not a proposal), then run the
+sub-agents while they read it. Present the designs one at a time, compare by
+**depth**, **locality**, and **seam placement**, then recommend — including a
+hybrid if elements from different designs combine well. Be opinionated: the
+user wants a strong read, not a menu.
 
 ## Glossary
 
@@ -40,7 +70,6 @@ Use these terms exactly. Don't substitute "component," "service," "API," or
   function, class, package, tier-spanning slice.
 - **Interface** — everything a caller must know: type signature, invariants,
   ordering constraints, error modes, config, performance characteristics.
-- **Implementation** — what's inside a module.
 - **Depth** — leverage at the interface: behaviour exercised per unit of
   interface learned. Deep = lots of behaviour, small interface. Shallow =
   interface nearly as complex as implementation.
@@ -53,35 +82,18 @@ Use these terms exactly. Don't substitute "component," "service," "API," or
 - **Locality** — maintainers get change, bugs, knowledge, verification
   concentrated in one place. Fix once, fixed everywhere.
 
-## Deep vs shallow
-
-Deep: small interface, lots of implementation.
-
-```text
-┌─────────────────────┐
-│   Small Interface   │  ← Few methods, simple params
-├─────────────────────┤
-│                     │
-│  Deep Implementation│  ← Complex logic hidden
-│                     │
-└─────────────────────┘
-```
-
-Shallow: large interface, little implementation. Avoid.
-
-```text
-┌─────────────────────────────────┐
-│       Large Interface           │  ← Many methods, complex params
-├─────────────────────────────────┤
-│  Thin Implementation            │  ← Just passes through
-└─────────────────────────────────┘
-```
-
 ## Design Questions
 
-- Can I reduce the number of methods?
-- Can I simplify the parameters?
-- Can I hide more complexity inside?
+These are the branches interview-me walks:
+
+- **Scope** — can I reduce the number of methods? Can I simplify the
+  parameters?
+- **Depth** — can I hide more complexity inside?
+- **Seam** — where does the interface live?
+- **Dependency category** — in-process, local-substitutable, remote-but-owned,
+  or true external? (see [DEEPENING.md](DEEPENING.md))
+- **Adapters** — what concretely satisfies the interface, and how many?
+- **Test surface** — which tests survive a deepen, which get deleted?
 
 ## Principles
 
