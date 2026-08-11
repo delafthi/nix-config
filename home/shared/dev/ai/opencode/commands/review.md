@@ -85,12 +85,12 @@ Review in this order:
 
 ## Severity rubric
 
-- `CRITICAL`: active exploit, data loss/corruption, auth bypass, or production
-  outage likely
-- `HIGH`: serious user/business impact with plausible path to trigger
-- `MEDIUM`: correctness/maintainability risk with limited blast radius
-- `LOW`: minor risk or narrow edge case
-- `SUGGESTION`: improvement with no clear defect
+- 🔴 `CRITICAL`: active exploit, data loss/corruption, auth bypass, or
+  production outage likely
+- 🟠 `HIGH`: serious user/business impact with plausible path to trigger
+- 🟡 `MEDIUM`: correctness/maintainability risk with limited blast radius
+- 🟢 `LOW`: minor risk or narrow edge case
+- 💡 `SUGGESTION`: improvement with no clear defect
 
 ## Evidence rule
 
@@ -111,6 +111,8 @@ Reject speculative findings without evidence from code or diff.
 - If two findings share root cause, keep one issue and mention affected
   locations.
 - Preserve priority ordering from highest risk to lowest.
+- If multiple files were reviewed, order by file first, followed by
+  risk severity.
 
 ## Per issue
 
@@ -125,7 +127,10 @@ Reject speculative findings without evidence from code or diff.
 
 ## Output format
 
-- List highest-risk issues first.
+- Number every issue I1, I2, ... sequentially across the report for easy
+  reference.
+- With multiple files: group issues by file under a file subtitle; single
+  file: plain flat list (still numbered).
 - Deduplicate equivalent issues.
 - Default cap: 10 detailed issues; summarize remainder briefly.
 - If zero actionable issues, state: `No actionable issues found`.
@@ -142,8 +147,14 @@ Use this output shape:
 - <missing path / missing diff>
 
 ## Issues
-- [SEVERITY] [Confidence] [Category] `path/to/file:line` - problem, impact, fix,
-  verification
+### <path/to/file>
+I1. 🔴 category: `:line` — short description (max 60 chars)
+    Problem, impact, fix, verification detail.
+    Confidence: HIGH
+I2. ...
+
+### <path/to/other/file>
+I3. ...
 
 ## Residual Risk
 - <what was not fully validated>

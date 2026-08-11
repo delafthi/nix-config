@@ -275,6 +275,8 @@ Primary agent merges all lane findings into one report:
   locations.
 - Resolve conflicts by stronger evidence and higher severity.
 - Preserve priority ordering from highest risk to lowest.
+- If multiple files were reviewed, order by file first, within each file by
+  risk severity.
 
 ## Priority
 
@@ -291,12 +293,12 @@ Primary agent merges all lane findings into one report:
 
 ## Severity rubric
 
-- `CRITICAL`: active exploit, data loss/corruption, safety violation, or crash
-  likely
-- `HIGH`: serious reliability/security impact with plausible trigger path
-- `MEDIUM`: correctness/maintainability risk with limited blast radius
-- `LOW`: minor risk or narrow edge case
-- `SUGGESTION`: improvement with no clear defect
+- 🔴 `CRITICAL`: active exploit, data loss/corruption, safety violation, or
+  crash likely
+- 🟠 `HIGH`: serious reliability/security impact with plausible trigger path
+- 🟡 `MEDIUM`: correctness/maintainability risk with limited blast radius
+- 🟢 `LOW`: minor risk or narrow edge case
+- 💡 `SUGGESTION`: improvement with no clear defect
 
 ## Evidence rule
 
@@ -326,7 +328,10 @@ Reject speculative findings without evidence from code.
 
 ## Output format
 
-- List highest-risk issues first.
+- Number every issue I1, I2, ... sequentially across the report for easy
+  reference.
+- With multiple files: group issues by file under a file subtitle; single
+  file: plain flat list (still numbered).
 - Deduplicate equivalent issues.
 - Default cap: 20 detailed issues; summarize remainder briefly.
 - If zero actionable issues, state: `No embedded design issues found`.
@@ -348,8 +353,14 @@ Use this output shape:
 - <missing path / failure details>
 
 ## Issues
-- [SEVERITY] [Confidence] [Category] `path/to/file:line` - problem, impact, fix,
-  reference, verification
+### <path/to/file>
+I1. 🔴 category: `:line` — short description (max 60 chars)
+    Problem, impact, fix, reference, verification detail.
+    Confidence: HIGH
+I2. ...
+
+### <path/to/other/file>
+I3. ...
 
 ## Residual Risk
 - <what was not fully validated>
