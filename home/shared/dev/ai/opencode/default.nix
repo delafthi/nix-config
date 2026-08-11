@@ -96,10 +96,6 @@
           "gh pr list" = "allow";
           "gh pr list *" = "allow";
           "gh pr view *" = "allow";
-          "git diff" = "allow";
-          "git diff *" = "allow";
-          "git status" = "allow";
-          "git status *" = "allow";
           "head *" = "allow";
           "hyperfine *" = "allow";
           "jj bookmark list" = "allow";
@@ -165,6 +161,7 @@
       plugin = [
         "${pkgs.caveman}/src/plugins/opencode"
         "${./plugins/control-freak.ts}"
+        "${./plugins/jj-blackbelt.ts}"
       ];
     };
     tui = {
