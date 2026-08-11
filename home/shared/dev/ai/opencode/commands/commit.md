@@ -31,7 +31,7 @@ Jujutsu change (`@`).
 
 ## Commands
 
-```bash
+```console
 jj commit -m "<commit message>"
 ```
 

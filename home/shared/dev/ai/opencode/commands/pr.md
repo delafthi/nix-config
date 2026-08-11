@@ -31,14 +31,14 @@ Create or update PR for current change (`@`). Use `$ARGUMENTS` as optional hints
 
 3. Ensure current change has bookmark; create/set if missing:
 
-```bash
+```console
 jj bookmark create <bookmark-name>
 jj bookmark set <bookmark-name>
 ```
 
 4. If remote missing latest bookmark state, push:
 
-```bash
+```console
 jj git push
 ```
 

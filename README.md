@@ -18,14 +18,14 @@ Prerequisites:
 
 Clone the repo:
 
-```bash
+```console
 git clone https://github.com/delafthi/nix-config.git
 cd nix-config
 ```
 
 Enter the dev shell:
 
-```bash
+```console
 nix develop
 ```
 
@@ -39,19 +39,19 @@ manual setup is needed.
 
 Apply the current host config (requires `sudo`):
 
-```bash
+```console
 nix run .#apply
 ```
 
 Apply a specific host:
 
-```bash
+```console
 nix run .#apply -- my-hostname
 ```
 
 Pass extra rebuild args through to `darwin-rebuild` or `nixos-rebuild`:
 
-```bash
+```console
 EXTRA_ARGS="--show-trace" nix run .#apply
 # or
 nix run .#apply -- -- --show-trace
@@ -59,7 +59,7 @@ nix run .#apply -- -- --show-trace
 
 Other apps in the flake:
 
-```bash
+```console
 nix run .#setup-yubico-pam
 nix run .#test-yubico-pam
 ```
@@ -68,13 +68,13 @@ nix run .#test-yubico-pam
 
 Format the tree with `treefmt-nix`:
 
-```bash
+```console
 nix fmt
 ```
 
 Validate the flake (the same check CI runs on `aarch64-darwin`):
 
-```bash
+```console
 nix flake check
 ```
 

@@ -22,7 +22,7 @@ If none found → tool is not in the project environment. Use `nix-locate` or
 
 ## Missing Tool Resolution
 
-```bash
+```console
 nix-locate 'bin/<name>'                  # find which package provides it
 nix run nixpkgs#<package> -- --help      # run without installing
 ```
@@ -31,7 +31,7 @@ nix run nixpkgs#<package> -- --help      # run without installing
 
 Only relevant when building Nix derivations (flake builds, nix-build, etc.):
 
-```bash
+```console
 nix build --show-trace --print-build-logs    # first step for any failure
 nix log /nix/store/xxxx | rg <keyword>       # inspect build logs
 nix build --debugger                         # interactive debugger on eval failure
@@ -40,7 +40,7 @@ nix build --repair                           # fix corrupted store paths
 
 If `nix build` output is truncated or cached failure, delete eval cache:
 
-```bash
+```console
 rm -rf ~/.cache/nix/eval-cache-*
 ```
 
@@ -48,7 +48,7 @@ rm -rf ~/.cache/nix/eval-cache-*
 
 Inspect Nix expressions interactively:
 
-```bash
+```console
 nix repl
 :l .          # load current flake
 :p <attr>     # print attribute
