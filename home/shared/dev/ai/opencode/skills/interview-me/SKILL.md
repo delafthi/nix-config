@@ -137,7 +137,7 @@ Here's what I now think you want:
 - Out of scope: <one line — what we're explicitly not doing>
 ```
 
-Use the question tool to confirm. Wait for explicit yes.
+Never use the question tool. Wait for explicit yes.
 
 ### 7. Plan gate
 
