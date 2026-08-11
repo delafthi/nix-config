@@ -164,6 +164,7 @@
       };
       plugin = [
         "${pkgs.caveman}/src/plugins/opencode"
+        "${./plugins/control-freak.ts}"
       ];
     };
     tui = {
