@@ -13,7 +13,7 @@
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "blender-bin";
-  version = "5.1.2";
+  version = "5.2.0";
 
   __structuredAttrs = true;
   strictDeps = true;
@@ -43,7 +43,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     sources = {
       "aarch64-darwin" = fetchurl {
         url = "https://download.blender.org/release/Blender${lib.versions.majorMinor finalAttrs.version}/blender-${finalAttrs.version}-macos-arm64.dmg";
-        hash = "sha256-8QT/7iumruMjKOXCA7fkYI2KF0X3u88nZvO5d36Pvhc=";
+        hash = "sha256-7U2DkBZt7F6gooE6A9tiIfIGzgFkQr5/WfQddglyVoo=";
       };
     };
     updateScript = writeShellScript "blender-bin-update-script" ''
