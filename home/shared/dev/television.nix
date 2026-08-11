@@ -15,9 +15,12 @@
       settings = {
         history_size = 500;
         ui = {
+          input_bar.border_type = "plain";
+          preview_panel.border_type = "plain";
+          status_bar.hidden = true;
+          results_panel.border_type = "plain";
           use_nerd_font_icons = true;
           ui_scale = 100;
-          status_bar.hidden = true;
         };
         shell_integration.channel_triggers = {
           "brew-packages" = [ "brew install" ];
