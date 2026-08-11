@@ -20,42 +20,36 @@
           status_bar.hidden = true;
         };
         shell_integration.channel_triggers = {
-          # Filesystem
+          "brew-packages" = [ "brew install" ];
           "dirs" = [
             "cd"
             "exa"
+            "lla"
             "ls"
             "rmdir"
-          ]; # override to exclude z/c
-          "zoxide" = [
-            "c"
-            "z"
           ];
-          "ssh-hosts" = [
-            "ssh"
-            "scp"
-            "rsync"
+          "files" = [
+            "cat"
+            "bat"
+            "less"
+            "hx"
+            "rm"
+            "mv"
+            "cp"
+            "touch"
+            "open"
           ];
-
-          # Processes
-          "procs" = [ "kill" ];
-
-          # Manual pages
-          "man-pages" = [ "man" ];
-          "tldr" = [ "tldr" ];
-
-          # Build systems
-          "just-recipes" = [ "just" ];
-          "make-targets" = [ "make" ];
-
-          # Containers
-          "podman-images" = [
-            "podman run"
-            "podman rmi"
-            "podman pull"
+          "gh-issues" = [
+            "gh issue view"
+            "gh issue edit"
+            "gh issue close"
           ];
-
-          # Git
+          "gh-prs" = [
+            "gh pr checkout"
+            "gh pr view"
+            "gh pr review"
+            "gh pr merge"
+          ];
           "git-branch" = [
             "git checkout"
             "git switch"
@@ -63,14 +57,14 @@
             "git rebase"
             "git branch"
           ];
-          "git-log" = [
-            "git show"
-            "git log"
-          ];
           "git-files" = [
             "git add"
             "git restore"
             "git diff"
+          ];
+          "git-log" = [
+            "git show"
+            "git log"
           ];
           "git-stash" = [
             "git stash pop"
@@ -78,18 +72,83 @@
             "git stash show"
           ];
           "git-worktrees" = [ "git worktree" ];
-
-          # GitHub CLI
-          "gh-prs" = [
-            "gh pr checkout"
-            "gh pr view"
-            "gh pr review"
-            "gh pr merge"
+          "jj-log" = [
+            "jj log"
+            "jj show"
+            "jj edit"
+            "jj describe"
+            "jj new"
+            "jj abandon"
+            "jj squash"
+            "jj rebase"
+            "jj revert"
+            "jj metaedit"
+            "jj e"
+            "jj d"
+            "jj n"
+            "jj i"
+            "jj a"
           ];
-          "gh-issues" = [
-            "gh issue view"
-            "gh issue edit"
-            "gh issue close"
+          "jj-bookmark" = [
+            "jj bookmark set"
+            "jj bookmark delete"
+            "jj b s"
+            "jj b d"
+            "jj b r"
+            "jj b f"
+            "jj b t"
+            "jj b untrack"
+          ];
+          "jj-workspaces" = [
+            "jj workspace"
+          ];
+          "jj-diff" = [
+            "jj diff"
+            "jj restore"
+            "jj absorb"
+            "jj split"
+          ];
+          "jj-files" = [
+            "jj l"
+            "jj file untrack"
+          ];
+          "jj-op-log" = [
+            "jj op restore"
+            "jj op revert"
+            "jj operation restore"
+            "jj operation revert"
+          ];
+          "just-recipes" = [ "just" ];
+          "launchd-services" = [ "launchctl" ];
+          "make-targets" = [ "make" ];
+          "man-pages" = [ "man" ];
+          "nix-search-tv" = [
+            "nix shell nixpkgs#"
+            "nix run nixpkgs#"
+          ];
+          "npm-scripts" = [
+            "npm run"
+            "pnpm run"
+          ];
+          "podman-images" = [
+            "podman run"
+            "podman rmi"
+            "podman pull"
+          ];
+          "procs" = [ "kill" ];
+          "ssh-hosts" = [
+            "ssh"
+            "scp"
+            "rsync"
+          ];
+          "tldr" = [ "tldr" ];
+          "tmux-sessions" = [
+            "tmux attach-session"
+            "tmux attach"
+          ];
+          "zoxide" = [
+            "c"
+            "z"
           ];
         };
       };
