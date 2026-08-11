@@ -1,10 +1,11 @@
 {
   mkShell,
+  config,
   age,
   age-plugin-yubikey,
+  bashInteractive,
   nixd,
   sops,
-  config,
 }:
 mkShell {
   name = "default";
@@ -12,6 +13,7 @@ mkShell {
   packages = [
     age
     age-plugin-yubikey
+    bashInteractive
     nixd
     sops
   ];
