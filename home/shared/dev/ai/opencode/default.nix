@@ -1,7 +1,10 @@
 { config, pkgs, ... }:
 {
-  home.shellAliases = {
-    oc = "opencode";
+  home = {
+    packages = with pkgs; [ plannotator ];
+    shellAliases = {
+      oc = "opencode";
+    };
   };
   programs.opencode = {
     enable = true;
@@ -160,6 +163,7 @@
       };
       plugin = [
         "${pkgs.caveman}/src/plugins/opencode"
+        "${pkgs.plannotator}/plugins/opencode"
         "${./plugins/control-freak.ts}"
         "${./plugins/jj-blackbelt.ts}"
       ];
@@ -177,6 +181,9 @@
       commit = ./commands/commit.md;
       improve-architecture = ./commands/improve-architecture.md;
       onboard = ./commands/onboard.md;
+      plannotator-annotate = "${pkgs.plannotator}/commands/opencode/plannotator-annotate.md";
+      plannotator-last = "${pkgs.plannotator}/commands/opencode/plannotator-last.md";
+      plannotator-review = "${pkgs.plannotator}/commands/opencode/plannotator-review.md";
       pr = ./commands/pr.md;
       readme = ./commands/readme.md;
       review = ./commands/review.md;
