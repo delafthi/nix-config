@@ -129,15 +129,6 @@ _: {
           "track"
           "glob:*@*"
         ];
-        t = [ "tug" ];
-        tug = [
-          "bookmark"
-          "move"
-          "--from"
-          "heads(::@- & bookmarks())"
-          "--to"
-          "@-"
-        ];
         workspaces = [
           "util"
           "exec"
