@@ -199,6 +199,7 @@
       jj = ./skills/jj;
       nix = ./skills/nix;
       pueue = ./skills/pueue;
+      unslop = "${pkgs.cursor-plugins}/pstack/skills/unslop";
     };
   };
 }
