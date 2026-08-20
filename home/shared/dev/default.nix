@@ -40,6 +40,7 @@
       just
       ouch
       p7zip
+      pv
       procs
       sd
       silicon
