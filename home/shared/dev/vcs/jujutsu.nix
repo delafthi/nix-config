@@ -138,14 +138,17 @@ _: {
         ];
       };
       colors."diff token".underline = false;
-      git.sign-on-push = true;
+      git = {
+        private-commits = "description('wip:*') | description('private:*')";
+        sign-on-push = true;
+      };
       remotes = {
         origin.auto-track-bookmarks = "*";
         upstream.auto-track-bookmarks = "delafthi/* | main | master";
       };
       revset-aliases = {
         "closest_pushable(to)" = {
-          definition = ''heads(::to & mutable() & ~empty() & description(regex:".+"))'';
+          definition = "heads(::to & mutable() & ~empty() & description(regex:'.+'))";
           doc = "Closest mutable, non-empty, described commits at or behind 'to'";
         };
       };
