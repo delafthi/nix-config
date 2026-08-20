@@ -143,6 +143,15 @@ _: {
         origin.auto-track-bookmarks = "*";
         upstream.auto-track-bookmarks = "delafthi/* | main | master";
       };
+      revset-aliases = {
+        "closest_pushable(to)" = {
+          definition = ''heads(::to & mutable() & ~empty() & description(regex:".+"))'';
+          doc = "Closest mutable, non-empty, described commits at or behind 'to'";
+        };
+      };
+      revsets = {
+        bookmark-advance-to = "closest_pushable(@)";
+      };
       signing = {
         backend = "gpg";
         behavior = "drop";
