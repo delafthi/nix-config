@@ -11,14 +11,14 @@
 
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "proton-drive";
-  version = "3.0.2";
+  version = "3.0.3";
 
   __structuredAttrs = true;
   strictDeps = true;
 
   src = fetchurl {
     url = "https://proton.me/download/drive/macos/${finalAttrs.version}/ProtonDrive-${finalAttrs.version}.dmg";
-    hash = "sha256-xuYgBT4U5JLuQEHec78GvUippeon1Z/+rDyjc5NiOcI=";
+    hash = "sha256-6JxGdjKpGBXV7azhCRf42xmnEtfETbzA2/FnsnTmOVE=";
   };
 
   sourceRoot = ".";
