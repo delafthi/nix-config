@@ -7,7 +7,7 @@
 }:
 stdenvNoCC.mkDerivation (_finalAttrs: {
   pname = "cursor-plugins";
-  version = "0-unstable-2026-08-20";
+  version = "0-unstable-2026-09-04";
 
   __structuredAttrs = true;
   strictDeps = true;
@@ -25,8 +25,8 @@ stdenvNoCC.mkDerivation (_finalAttrs: {
   src = fetchFromGitHub {
     owner = "cursor";
     repo = "plugins";
-    rev = "51a96e0dd838404da19ba83dc70aa21eef71f868";
-    sha256 = "sha256-hlNeKf8vbzvzD+wseZ/IIeBJZbp+0nVzKNJRrbgAjUA=";
+    rev = "93b00b89ef425a9c1bac0d0b317dfc49c930ac99";
+    sha256 = "sha256-wA+B7ho81xzhoLgg+30fX9Cx1RvEF2N4qsQZexSZT0s=";
   };
 
   installPhase = ''
