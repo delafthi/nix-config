@@ -32,11 +32,13 @@
       clipboard-jh
       curl
       dust
+      ffmpeg
       glow
       gnutar
       gum
       hexyl
       hyperfine
+      imagemagick
       just
       ouch
       p7zip
