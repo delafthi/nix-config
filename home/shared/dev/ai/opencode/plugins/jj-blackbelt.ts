@@ -54,15 +54,19 @@ const SHELLS = new Set([
 const BOOKMARK_CREATE_RE = /-[bc]\b|--branch\b/i;
 const BOOKMARK_DELETE_RE = /-d\b|--delete\b/i;
 
-type Token = { w: string; s: number; e: number };
+type Token = { w: string; s: number; cmdStart: boolean };
 
 function tokenize(s: string): Token[] {
   const tokens: Token[] = [];
   let buf = "";
   let start = 0;
   let quote: string | null = null;
-  const flush = (end: number) => {
-    if (buf !== "") tokens.push({ w: buf, s: start, e: end });
+  let atStart = true;
+  const flush = () => {
+    if (buf !== "") {
+      tokens.push({ w: buf, s: start, cmdStart: atStart });
+      atStart = false;
+    }
     buf = "";
   };
   for (let i = 0; i < s.length; i++) {
@@ -90,17 +94,21 @@ function tokenize(s: string): Token[] {
         i++;
       }
     } else if (/\s/.test(ch)) {
-      flush(i);
-    } else if (ch === ";" || ch === "&" || ch === "|") {
-      flush(i);
+      flush();
+    } else if (ch === ";" || ch === "&" || ch === "|" || ch === "(") {
+      flush();
       if (ch === "&" && s[i + 1] === "&") i++;
       if (ch === "|" && s[i + 1] === "|") i++;
+      atStart = true;
+    } else if (ch === ")") {
+      flush();
+      atStart = false;
     } else {
       if (buf === "") start = i;
       buf += ch;
     }
   }
-  flush(s.length);
+  flush();
   return tokens;
 }
 
@@ -116,8 +124,9 @@ function unquote(w: string): string {
 }
 
 function isShell(w: string): boolean {
-  if (SHELLS.has(w)) return true;
-  const base = w.split("/").pop();
+  const word = unquote(w).toLowerCase();
+  if (SHELLS.has(word)) return true;
+  const base = word.split("/").pop();
   return base !== undefined && SHELLS.has(base);
 }
 
@@ -150,9 +159,62 @@ function gitSubcommand(
     }
   }
   if (j >= tokens.length) return undefined;
-  const sub = tokens[j].w.toLowerCase();
+  const sub = unquote(tokens[j].w).toLowerCase();
   if (!/^[a-z][a-z0-9-]*$/.test(sub)) return undefined;
   return { sub, slice: command.slice(tokens[i].s) };
+}
+
+const WRAPPERS = new Set([
+  "sudo",
+  "env",
+  "command",
+  "builtin",
+  "time",
+  "timeout",
+  "nohup",
+  "nice",
+  "stdbuf",
+  "watch",
+  "doas",
+]);
+
+const ASSIGN_RE = /^[A-Za-z_][A-Za-z0-9_]*=/;
+
+function resolveGit(
+  tokens: Token[],
+  j: number,
+  budget: number,
+): number | undefined {
+  while (j < tokens.length) {
+    const w = unquote(tokens[j].w).toLowerCase();
+    if (ASSIGN_RE.test(w)) {
+      j++;
+      continue;
+    }
+    const base = w.split("/").pop() ?? w;
+    if (base === "git") return j;
+    if (!WRAPPERS.has(base)) return undefined;
+    j++;
+    while (j < tokens.length) {
+      const flag = tokens[j].w;
+      if (
+        flag.startsWith("-") &&
+        !flag.startsWith("--") &&
+        /^-[a-zA-Z]$/.test(flag)
+      ) {
+        if (budget > 0) {
+          const asValue = resolveGit(tokens, j + 2, budget - 1);
+          if (asValue !== undefined) return asValue;
+        }
+        j++;
+      } else if (flag.startsWith("-")) {
+        j++;
+      } else {
+        break;
+      }
+    }
+  }
+  return undefined;
 }
 
 function findSuggestion(command: string): string | undefined {
@@ -162,11 +224,14 @@ function findSuggestion(command: string): string | undefined {
   }
   for (let i = 0; i < tokens.length; i++) {
     const t = tokens[i];
-    if (t.w.toLowerCase() === "git") {
-      const hit = gitSubcommand(command, tokens, i);
-      if (hit) {
-        const message = suggest(hit.sub, hit.slice);
-        if (message) return message;
+    if (t.cmdStart) {
+      const gi = resolveGit(tokens, i, 4);
+      if (gi !== undefined) {
+        const hit = gitSubcommand(command, tokens, gi);
+        if (hit) {
+          const message = suggest(hit.sub, hit.slice);
+          if (message) return message;
+        }
       }
     }
     if (isShell(t.w)) {
