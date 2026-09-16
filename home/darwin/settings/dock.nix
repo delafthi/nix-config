@@ -24,7 +24,7 @@ lib.mkIf osConfig.system.gui.enable {
           "${config.home.homeDirectory}/Applications/Home Manager Apps/Proton Pass.app"
           "/System/Applications/Music.app"
           "/Applications/Things3.app"
-          "${config.home.homeDirectory}/Applications/Home Manager Apps/Obsidian.app"
+          "/Applications/Anytype.app"
           "${config.home.homeDirectory}/Applications/Home Manager Apps/Ghostty.app"
         ];
     show-recents = false;

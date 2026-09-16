@@ -7,7 +7,6 @@
 {
   imports = [
     ./browser.nix
-    ./obsidian.nix
     ./proton.nix
     ./yubikey.nix
   ];

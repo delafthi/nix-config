@@ -16,6 +16,7 @@
         })
         (
           lib.optionals config.system.gui.enable [
+            "anytype" # broken in nixpkgs
             "gog-galaxy" # not in nixpkgs
             "karabiner-elements" # broken see https://github.com/nix-darwin/nix-darwin/issues/1041
             "steam" # only as a nixos module
