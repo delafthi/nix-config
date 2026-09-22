@@ -6,7 +6,7 @@
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "caveman";
-  version = "2.6.0";
+  version = "2.7.0";
 
   __structuredAttrs = true;
   strictDeps = true;
@@ -15,7 +15,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     owner = "JuliusBrussee";
     repo = "caveman";
     tag = "v${finalAttrs.version}";
-    sha256 = "sha256-tEQDv0sIsCzdzaq/tdUSN8nb2xmQJkmjPtq8wKChqvQ=";
+    sha256 = "sha256-dsGzPscjy7FfaovfYML2q+RmuBJwwEJ9sjeHi+Niv6Y=";
   };
 
   installPhase = ''
