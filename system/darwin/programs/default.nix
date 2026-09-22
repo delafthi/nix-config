@@ -1,5 +1,5 @@
 {
   imports = [
-    ./proton-drive.nix
+    ./proton.nix
   ];
 }
