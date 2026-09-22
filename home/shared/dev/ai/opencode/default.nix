@@ -193,7 +193,7 @@
     skills = {
       architecture-design = ./skills/architecture-design;
       caveman = "${pkgs.caveman}/skills/caveman";
-      context7-cli = "${pkgs.ctx7}/skills/context7-cli";
+      context7-cli = "${pkgs.ctx7}/share/skills/ctx7/context7-cli";
       debugging-and-error-investigation = ./skills/debugging-and-error-investigation;
       interview-me = ./skills/interview-me;
       jj = ./skills/jj;
