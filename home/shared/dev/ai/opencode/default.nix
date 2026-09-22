@@ -164,8 +164,8 @@
       plugin = [
         "${pkgs.caveman}/src/plugins/opencode"
         "${pkgs.plannotator}/plugins/opencode"
+        "${pkgs.jj-blackbelt}"
         "${./plugins/control-freak.ts}"
-        "${./plugins/jj-blackbelt.ts}"
       ];
     };
     tui = {
