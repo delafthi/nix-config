@@ -98,6 +98,8 @@
                   ) { } attrs;
               in
               flatten "" allPkgs;
+            # Mirror `pkgs` (overlay) structure: nested attrset, e.g. `nix build '.#cursorPlugins.pstack'`.
+            legacyPackages = import ./packages { inherit lib pkgs; };
             treefmt = import ./nix/treefmt.nix;
           };
       }
