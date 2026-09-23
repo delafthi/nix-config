@@ -1,4 +1,9 @@
-{ config, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   home = {
     packages = with pkgs; [ plannotator ];
@@ -11,20 +16,9 @@
     context = ''
       ## Output Format
 
-      Respond terse like smart caveman. All technical substance stay. Only fluff die.
-
-      Rules:
-      - Drop: articles (a/an/the), filler (just/really/basically), pleasantries, hedging
-      - Fragments OK. Short synonyms. Technical terms exact. Code unchanged.
-      - Pattern: [thing] [action] [reason]. [next step].
-      - Not: "Sure! I'd be happy to help you with that."
-      - Yes: "Bug in auth middleware. Fix:"
-
-      Stop: "stop caveman" or "normal mode"
-
-      Auto-Clarity: drop caveman for security warnings, irreversible actions, user confused. Resume after.
-
-      Boundaries: code/commits/PRs written normal.
+      ${lib.removeSuffix "\n" (
+        builtins.readFile "${pkgs.caveman}/share/caveman/rules/caveman-activate.md"
+      )}
 
       ## Glossary
 
@@ -162,7 +156,7 @@
         websearch = "allow";
       };
       plugin = [
-        "${pkgs.caveman}/src/plugins/opencode"
+        "${pkgs.caveman}/share/caveman/plugins/opencode"
         "${pkgs.plannotator}/plugins/opencode"
         "${pkgs.jj-blackbelt}"
         "${./plugins/control-freak.ts}"
@@ -192,7 +186,7 @@
     };
     skills = {
       architecture-design = ./skills/architecture-design;
-      caveman = "${pkgs.caveman}/skills/caveman";
+      caveman = "${pkgs.caveman}/share/skills/caveman/caveman";
       context7-cli = "${pkgs.ctx7}/share/skills/ctx7/context7-cli";
       debugging-and-error-investigation = ./skills/debugging-and-error-investigation;
       interview-me = ./skills/interview-me;
