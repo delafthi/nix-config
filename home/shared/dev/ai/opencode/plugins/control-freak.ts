@@ -1,9 +1,9 @@
 import type { Plugin } from "@opencode-ai/plugin";
 
-const NUDGE_MS = 120000;
-const NUDGE_COOLDOWN_MS = 120000;
-const STUCK_MS = 240000;
-const STUCK_COOLDOWN_MS = 300000;
+const NUDGE_MS = 60000;
+const NUDGE_COOLDOWN_MS = 60000;
+const STUCK_MS = 120000;
+const STUCK_COOLDOWN_MS = 150000;
 const MAX_SESSIONS = 100;
 
 const NUDGE_MSG = (minutes: number): string =>
@@ -16,7 +16,6 @@ type Todo = { content: string; status: string; priority: string };
 
 type SessionState = {
   lastProgressAt: number;
-  lastToolAt: number;
   lastNudgeAt: number;
   lastStuckAt: number;
   lastTodoSnapshot: string | undefined;
@@ -42,7 +41,6 @@ function getState(sessionID: string): SessionState {
     const now = Date.now();
     state = {
       lastProgressAt: now,
-      lastToolAt: now,
       lastNudgeAt: 0,
       lastStuckAt: 0,
       lastTodoSnapshot: undefined,
@@ -65,6 +63,13 @@ function minutesSince(ms: number): number {
 export const ControlFreak: Plugin = async () => {
   return {
     event: async ({ event }) => {
+      if (event.type === "message.part.updated") {
+        const part = event.properties.part;
+        if (part.type === "text" && !part.synthetic) {
+          markProgress(getState(part.sessionID));
+        }
+        return;
+      }
       if (event.type !== "todo.updated") return;
       const { sessionID, todos } = event.properties;
       if (!sessionID) return;
@@ -84,17 +89,11 @@ export const ControlFreak: Plugin = async () => {
       markProgress(getState(input.sessionID));
     },
 
-    "tool.execute.after": async (input) => {
-      if (!input.sessionID) return;
-      getState(input.sessionID).lastToolAt = Date.now();
-    },
-
     "experimental.chat.system.transform": async (input, output) => {
       if (!input.sessionID) return;
       const state = getState(input.sessionID);
       const now = Date.now();
-      const sinceActivity =
-        now - Math.max(state.lastProgressAt, state.lastToolAt);
+      const sinceActivity = now - state.lastProgressAt;
       const minutes = minutesSince(sinceActivity);
 
       if (
