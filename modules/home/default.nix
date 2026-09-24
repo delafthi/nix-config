@@ -1,5 +1,5 @@
 {
   default = {
-    imports = [ ];
+    imports = [ ./services/llama-cpp.nix ];
   };
 }
