@@ -155,6 +155,24 @@
         webfetch = "allow";
         websearch = "allow";
       };
+      provider = {
+        "llama.cpp" = {
+          npm = "@ai-sdk/openai-compatible";
+          name = "llama-server (local)";
+          options = {
+            baseURL = "http://127.0.0.1:11434/v1";
+          };
+          models = {
+            "ggml-org/gemma-4-E4B-it-GGUF:Q8_0" = {
+              name = "Gemma 4 E4B-it Q8_0 (local)";
+              limit = {
+                context = 32768;
+                output = 8192;
+              };
+            };
+          };
+        };
+      };
       plugin = [
         "${pkgs.caveman}/share/caveman/plugins/opencode"
         "${pkgs.plannotator}/plugins/opencode"

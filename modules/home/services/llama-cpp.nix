@@ -20,6 +20,12 @@ let
     formatArg = lib.generators.mkValueStringDefault { };
   }) cfg.settings;
 
+  cacheDir =
+    if pkgs.stdenv.hostPlatform.isDarwin then
+      "${config.home.homeDirectory}/Library/Caches/llama.cpp"
+    else
+      "${config.xdg.cacheHome}/llama.cpp";
+
   commandLine = lib.concatStringsSep " " (
     [ (lib.getExe' cfg.package "llama-server") ] ++ map lib.escapeShellArg args
   );
@@ -80,6 +86,8 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    home.packages = [ cfg.package ];
+
     systemd.user.services.llama-cpp = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
       Unit = {
         Description = "llama.cpp HTTP server";
@@ -91,8 +99,7 @@ in
         ExecReload = "${lib.getExe' pkgs.coreutils "kill"} -HUP $MAINPID";
         Restart = "on-failure";
         RestartSec = 300;
-        CacheDirectory = "llama-cpp";
-        Environment = [ "LLAMA_CACHE=%C/llama-cpp" ];
+        Environment = [ "LLAMA_CACHE=${cacheDir}" ];
       };
 
       Install.WantedBy = [ "default.target" ];
@@ -105,7 +112,7 @@ in
         KeepAlive = true;
         RunAtLoad = true;
         EnvironmentVariables = {
-          LLAMA_CACHE = "${config.xdg.cacheHome}/llama-cpp";
+          LLAMA_CACHE = cacheDir;
         };
         StandardOutPath = "${config.xdg.stateHome}/llama-cpp/stdout.log";
         StandardErrorPath = "${config.xdg.stateHome}/llama-cpp/stderr.log";
