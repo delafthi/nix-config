@@ -81,6 +81,7 @@
           "bat *" = "allow";
           "cut *" = "allow";
           "date" = "allow";
+          "date *" = "allow";
           "delta *" = "allow";
           "dirname *" = "allow";
           "echo *" = "allow";
@@ -191,6 +192,8 @@
     commands = {
       codedocs = ./commands/codedocs.md;
       commit = ./commands/commit.md;
+      continue = ./commands/continue.md;
+      handover = ./commands/handover.md;
       improve-architecture = ./commands/improve-architecture.md;
       onboard = ./commands/onboard.md;
       plannotator-annotate = "${pkgs.plannotator}/commands/opencode/plannotator-annotate.md";
