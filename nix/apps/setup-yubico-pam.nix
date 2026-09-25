@@ -1,6 +1,4 @@
-{
-  pkgs,
-}:
+{ pkgs }:
 let
   name = "setup-yubico-pam";
   description = "Setup Yubico PAM authentication by generating u2f_keys";

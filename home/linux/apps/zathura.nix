@@ -1,4 +1,8 @@
-{ config, osConfig, ... }:
+{
+  config,
+  osConfig,
+  ...
+}:
 {
   programs.zathura = {
     inherit (osConfig.system.gui) enable;

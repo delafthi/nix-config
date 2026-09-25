@@ -1,4 +1,8 @@
-{ config, osConfig, ... }:
+{
+  config,
+  osConfig,
+  ...
+}:
 {
   programs.imv = {
     inherit (osConfig.system.gui) enable;

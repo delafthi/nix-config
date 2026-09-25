@@ -1,7 +1,4 @@
-{
-  pkgs,
-  ...
-}:
+{ pkgs, ... }:
 {
   home.shellAliases.y = "yazi";
   programs.yazi = {

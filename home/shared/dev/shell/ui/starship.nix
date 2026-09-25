@@ -1,4 +1,8 @@
-{ lib, pkgs, ... }:
+{
+  lib,
+  pkgs,
+  ...
+}:
 {
   home.packages = with pkgs; [ nerd-fonts.symbols-only ];
   programs.starship = {

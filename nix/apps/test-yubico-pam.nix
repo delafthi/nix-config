@@ -1,6 +1,4 @@
-{
-  pkgs,
-}:
+{ pkgs }:
 let
   name = "test-yubico-pam";
   description = "Test Yubico PAM authentication configuration";

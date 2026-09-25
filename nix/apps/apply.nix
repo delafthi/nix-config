@@ -1,6 +1,4 @@
-{
-  pkgs,
-}:
+{ pkgs }:
 let
   name = "apply";
   description = "Apply the nix configuration for the current host";
