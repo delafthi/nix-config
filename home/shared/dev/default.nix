@@ -28,6 +28,7 @@
   home = {
     packages = with pkgs; [
       asciinema
+      ast-grep
       charm-freeze
       clipboard-jh
       curl
@@ -58,6 +59,7 @@
       zip
     ];
     shellAliases = {
+      sg = "ast-grep";
       strace = "strace -yy";
     };
   };
