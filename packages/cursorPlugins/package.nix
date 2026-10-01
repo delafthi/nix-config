@@ -6,13 +6,13 @@
   nix-update-script,
 }:
 let
-  version = "0-unstable-2026-09-22";
+  version = "0-unstable-2026-10-02";
 
   src = fetchFromGitHub {
     owner = "cursor";
     repo = "plugins";
-    rev = "53e579f1481697931fc44f5445171397cfa2b24b";
-    sha256 = "sha256-HR6/Y53GQVbtSqIBHWaLB9WHLLYfVdE2Sn602kgLSpw=";
+    rev = "c47b12849e43f18d5c374c7069c744cc55b0ea00";
+    sha256 = "sha256-LXdEtOTVAw6UhUeS/yYM8b3U75jxoMZOaHSX0T0AfzQ=";
   };
 
   # Auto-detect cursor plugins: top-level repo dirs that directly contain a skills/ dir.
