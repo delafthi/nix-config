@@ -214,6 +214,7 @@
       jj = ./skills/jj;
       nix = ./skills/nix;
       pueue = ./skills/pueue;
+      skill-authoring = ./skills/skill-authoring;
       unslop = "${pkgs.cursorPlugins.pstack}/share/skills/cursorPlugins-pstack/unslop";
     };
   };
