@@ -40,33 +40,20 @@ _: {
           "new"
           "--insert-before"
         ];
-        ibookmark = [
+        bookmarks = [
           "util"
           "exec"
           "--"
           "tv"
           "jj-bookmark"
         ];
-        idiff = [
+        bi = [ "bookmarks" ];
+        diffs = [
           "util"
           "exec"
           "--"
           "tv"
           "jj-diff"
-        ];
-        ilog = [
-          "util"
-          "exec"
-          "--"
-          "tv"
-          "jj-log"
-        ];
-        iop-log = [
-          "util"
-          "exec"
-          "--"
-          "tv"
-          "jj-op-log"
         ];
         jj = [ ];
         l = [
@@ -74,10 +61,24 @@ _: {
           "-r"
           "::"
         ];
+        li = [
+          "util"
+          "exec"
+          "--"
+          "tv"
+          "jj-log"
+        ];
         n = [ "new" ];
         nxt = [
           "next"
           "--edit"
+        ];
+        oli = [
+          "util"
+          "exec"
+          "--"
+          "tv"
+          "jj-op-log"
         ];
         p = [
           "git"
@@ -124,11 +125,7 @@ _: {
           "tv"
           "jj-remotes"
         ];
-        track-all = [
-          "bookmark"
-          "track"
-          "glob:*@*"
-        ];
+        r = [ "remotes" ];
         workspaces = [
           "util"
           "exec"
@@ -136,6 +133,7 @@ _: {
           "tv"
           "jj-workspaces"
         ];
+        w = [ "workspaces" ];
       };
       colors."diff token".underline = false;
       git = {
