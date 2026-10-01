@@ -1,180 +1,248 @@
 ---
 name: jj
-description: Prevent common Git-vs-Jujutsu mistakes. Use when operating in Jujutsu-managed repos.
+description: Exact jj (Jujutsu) command syntax, revsets, and undo. Use when the user asks to commit, describe, squash, rebase, split, abandon, bookmark, push, fetch, undo, or inspect history with jj, or names "jj", "jujutsu", "change ID", "commit ID", "revset", "bookmark", "@", "@-", or "trunk()". Prefer jj over git in jj repos.
 ---
 
 # jj
 
-Use Jujutsu-native workflow. Prevent git-habit errors.
+Use jj commands by exact syntax. When unsure, read `jj <cmd> --help`. Do not
+assume any local jj config or plugins exist.
 
 ## Use When
 
-- Operating in repositories managed with `jj`.
-- Translating git intent into `jj` commands.
-- Fixing mistakes caused by commit-first git habits.
+- Working in a `jj`-managed repo.
+- Turning a git intention into `jj` commands.
+- Recovering from a git-habit mistake.
 
-## Bird's Eye View
+## Read-Only Commands Need No Prompt
 
-- Working copy IS a commit. No staging area — edits are auto-amended into the
-  current change on the next `jj` command.
-- Two identities per change: stable change ID (survives rewrites; use in
-  revsets) and commit ID (content hash, same as git hash).
-- No branches. Changes stack into a DAG; bookmarks point at commits and replace
-  git branch refs. Use `bookmark`, not `branch`.
-- Rewriting is normal. Moving, folding, and splitting content between changes is
-  routine; rebasing a change auto-rebases its descendants.
-- Conflicts are recorded states, not blockers — never prevent a commit or
-  rebase.
-- Operation log records every operation, so nothing is destructive. Any mistake
-  can be rolled back.
-- Files always tracked — no `git add`.
+Every other invocation asks the user first. Use these spellings:
 
-## General Workflow
+```console
+jj status
+jj log
+jj diff
+jj show <rev>
+jj root
+jj bookmark list
+jj git remote list
+```
 
-Start a fresh change, work, then close it out — never "edit then commit".
+Write `jj status`, not the `jj st` alias: `jj st` is not allowlisted and will
+prompt. `jj new`, `jj describe`, `jj commit`, `jj squash`, and `jj git push`
+always prompt.
 
-- `jj new` → make edits (auto-snapshotted) → close the change:
-  - `jj describe -m "..."` — done, keep working on this change
-  - `jj commit -m "..."` — describe + start the next change
-- Need work split into several changes? `jj split` breaks one change in two.
-- To fold changes back down (or push edits into an earlier change):
-  - `jj squash` — merge current change into its parent
-  - `jj squash [<paths>]` — fold only specific files; `--from <rev> --into
-    <rev>` moves edits into any earlier editable (mutable) change
-  - `jj absorb [<paths>]` — auto-splits the current change and absorbs each hunk
-    into the closest mutable ancestor where that line was last touched (like
-    `git absorb`)
-  - `jj diffedit` — edit an earlier change's diff directly
+## Model
 
-Rule of thumb: prefer `jj new` + `jj squash` over `jj edit` for getting edits
-into a specific older change — UNLESS another change sits in between that edits
-nearby sections of the same files, so squashing down would diff across it (and
-risk conflicts). Then use `jj edit <rev>` to move the working copy onto that
-change and edit it directly. To resume where you were, `jj edit` back to your
-original change ID.
+- The working copy is a commit. There is no staging area: edits are
+  snapshotted into the current change by the next `jj` command. `git add` has
+  no equivalent.
+- Every change has two identities. The change ID survives rewrites, so it is
+  the right handle for revsets and for returning to a change later. The commit
+  ID is a content hash and changes on every rewrite.
+- Bookmarks replace branches: `jj bookmark create <name> -r <rev>` creates,
+  `jj bookmark set <name> -r <rev>` repoints, `jj bookmark move --to <rev>`
+  repoints by current location. There is no checkout.
+- Conflicts are recorded states, not blockers. Commits and rebases proceed with
+  conflicts still present.
+
+## Daily Workflow
+
+Start a change, edit, describe it. Never "edit then commit".
+
+```console
+jj new
+# edit files
+jj describe -m "message"    # keep working on this change
+jj commit -m "message"      # describe, then start the next change
+```
+
+`jj new` creates the change and makes it the working copy. `jj next` and
+`jj prev` (repo aliases `nxt` and `prv`) move the working copy without a new
+change.
+
+To land edits on an older change:
+
+1. Default: `jj new`, make the edit, then `jj squash --into <rev>`.
+2. Use `jj edit <rev>` instead when a change in between touches nearby lines of
+   the same file, so squashing down would diff across it.
+3. Use `jj absorb` when hunks belong to different ancestors: it splits the
+   working copy and moves each hunk to the closest mutable ancestor where those
+   lines were last modified. Hunk placement is ambiguous when the lines were
+   never modified in an ancestor; those hunks stay put.
+4. Use `jj diffedit -r <rev>` to hand-edit a change's diff. Positional arguments
+   to `jj diffedit` are filesets (paths), not revisions. When in doubt, run
+   `jj diffedit --help`.
+
+Return to the original change with `jj edit <change-id>` afterwards; the change
+ID is stable across all of these rewrites.
 
 ## Conflicts
 
-Conflicts are recorded states, not blockers — commits and rebases proceed even
-with unresolved conflicts. `jj st` lists them.
+`jj status` lists conflicted files.
 
-- Try `jj resolve` first — auto-merges with `mergiraf`.
-- If `mergiraf` leaves conflicts (or you disagree with its merge), edit the
-  conflicted files manually.
-- Verify the result with `jj diff`, then run checks (typecheck, tests, format)
-  and fix anything the merge broke.
-- Manual resolution: check history and the conflicting files; read commit
-  messages, PRs, tickets to recover original intent; preserve both intents
-  where possible — if incompatible, pick the one matching the merge's goal and
-  note the trade-off.
+1. Run `jj resolve` first: mergiraf is configured as the merge tool.
+2. For whatever mergiraf leaves, edit the files by hand. Recover the original
+   intent from the change descriptions and the linked PR or ticket, then keep
+   both intents where they are compatible. Where they conflict, match the
+   goal of the merge and record the trade-off in the change description.
+3. `jj diff` to verify, then run the project's checks (typecheck, tests,
+   format) and fix what the merge broke.
+
+Never abandon or rebase around a conflict to make it disappear.
 
 ## Command Reference
 
 ### Inspect
 
-- `jj st` — status: current change, conflicts, uncommitted edits
-- `jj log [<revset>]` — graph of current change + ancestors (or any revset)
-- `jj diff [<paths>]` — changes in current change (add `--tool` for external)
-- `jj show <rev>` — commit + its diff
+- `jj status` — current change, conflicts, snapshot state
+- `jj log [-r <revset>]` — graph; `-r` selects the revset
+- `jj diff [<paths>]` — working-copy diff; `--tool <name>`, or `--tool=:<name>`
+  for a builtin format
+- `jj show <rev>` — one change with its diff
+- `jj root` — workspace root
 - `jj obslog <rev>` — how a change evolved across rewrites
-- `jj op log` — operation history (why history looks the way it does)
-- `jj interdiff --from A --to B` — how two changes' diffs differ
-- `jj file list/show/annotate/chmod/search` — per-file inspection
+- `jj op log` — operation history
+- `jj op show <op>` / `jj op diff <op>` — what one operation changed
+- `jj interdiff --from <rev> --to <rev>` — how two changes' diffs differ
+- `jj file list|show|annotate|chmod|search` — per-file inspection
 
-### Create & Edit Changes
+### Create And Edit Changes
 
-- `jj new [<parents>]` — new empty change (multiple parents = merge)
+- `jj new [<parents>]` — new empty change as the working copy; several parents
+  make a merge
 - `jj edit <rev>` — make an existing change the working copy
-- `jj describe -m "..."` — set message; `jj commit -m "..."` = describe +
-  `jj new`
-- `jj restore [<paths>] [--from <rev>]` — discard working-copy edits (or pull
-  content from another rev)
-- `jj split` — split current change in two via diff editor
-- `jj diffedit [<rev>]` — touch up a change's diff with an editor
-- `jj new --insert-after A --insert-before D` — insert empty change into a stack
-- `jj file track/untrack` — start/stop tracking paths
+- `jj describe -m "..."` — set the message, stay on this change
+- `jj commit -m "..."` — describe, then start the next change
+- `jj new --insert-after <rev>` / `jj new --insert-before <rev>` — insert an
+  empty change into a stack; repo aliases `jj a` and `jj i`
+- `jj restore [<paths>]` — discard working-copy edits. With no arguments this
+  empties the working copy but keeps its description, unlike `jj abandon`.
+- `jj restore --from <rev> [<paths>]` — pull content in;
+  `--changes-in <rev>` undoes one change's content
+- `jj split` — split the current change in two via the diff editor
+- `jj diffedit -r <rev> [<paths>...]` — hand-edit a change's diff (use
+  `--from/--to` for a comparison edit; paths use fileset syntax)
+- `jj file track|untrack <paths>` — start or stop tracking paths
 
 ### Restructure History
 
-- `jj squash` — fold current change into its parent (limit to `[<paths>]` to
-  fold only some files)
-- `jj squash --from <rev> --into <rev>` — move changes between arbitrary changes
-- `jj absorb` — auto-absorb current change's hunks into the closest mutable
-  ancestor that last touched each line
-- `jj rebase -r <rev> -A <new-parent> [-B <new-child>]` — move a change; use
-  `-s`/`-b` for a change + descendants/ancestors
-- `jj abandon [<rev>]` — drop a change, rebasing descendants onto its parents
-- `jj parallelize` — turn a linear chain into sibling changes (merge workflow)
+- `jj squash` — move the working copy into its parent. The source is abandoned
+  when it empties out, unless `--keep-emptied`.
+- `jj squash [<paths>]` — same, limited to some paths
+- `jj squash --from <rev> --into <rev>` — move edits between any two changes;
+  `--into` is also spelled `--to`
+- `jj absorb` — split the working copy, then move each hunk into the closest
+  mutable ancestor where those lines were last modified
+- `jj rebase -r <rev> -o <parent>` — move a change onto a new parent.
+  Destination: `-o`/`--onto` reparent only, `-A`/`--insert-after` also rebase
+  the target's descendants, `-B`/`--insert-before` insert ahead of the target.
+  Source: `-r` the listed revisions only, `-s` those plus descendants, `-b` the
+  whole branch relative to the destination. With no source flag it is `-b @`.
+- `jj abandon [<rev>]` — drop a change, rebase descendants onto its parents
+- `jj parallelize [<revsets>]` — turn a chain into sibling changes
 
-### Bookmarks & Tags
+### Bookmarks And Tags
 
-- `jj bookmark list / create <name> / set <name> / move --to <rev>`
-- `jj bookmark delete / forget / rename / track / untrack / advance`
-- `jj tag list / set / delete`
+- `jj bookmark list|create <name> -r <rev>|set <name> -r <rev>`
+- `jj bookmark move --to <rev>` — repoint; `--from <rev>` selects by current
+  location
+- `jj bookmark rename` / `jj bookmark advance` — `advance` uses
+  `revsets.bookmark-advance-to`, which this repo sets to `closest_pushable(@)`
+- `jj bookmark track|untrack <pattern>`
+- `jj bookmark delete` — push the deletion; `jj bookmark forget` — drop it
+  locally
+- `jj tag list|set|delete|track|untrack`
 
-### Remotes (Git integration)
+## Remotes
 
-- `jj git remote add <name> <url> / list / remove / rename / set-url`
-- `jj git fetch [--remote <name>]` — bring in remote changes
-- `jj git push --bookmark <name>` — push one bookmark (force-with-lease style
-  safety checks)
-- `jj git push --all` — push every bookmark/tag
-- `jj git push --change <rev>` — push a change under a generated `push-*`
-  bookmark; `--named name=@` for an explicit name; `--dry-run` to preview
-- `jj git import / export` — sync with the underlying git repo
-- `jj git colocation` — manage repo colocation with git
+- `jj git fetch [--remote <name>] [--all-remotes]` — repo aliases `jj f` and
+  `jj F`
+- `jj git push --bookmark <name>` — push one bookmark; safety checks behave
+  like force-with-lease
+- `jj git push --all` — push every bookmark and tag
+- `jj git push --change <rev>` — push a change under a generated bookmark name;
+  `--named name=<rev>` picks the name, `--dry-run` previews
+- `jj git remote add|list|remove|rename|set-url`
+- `jj git import` / `jj git export` — sync with a colocated git repo
+- `jj git colocation status|enable|disable`
 
-### Workspaces
+## Workspaces
 
-- `jj workspace add <name>` — extra working copy (e.g. long build/test while
-  editing)
-- `jj workspace list / forget / rename / update-stale`
+- `jj workspace add <name>` — extra working copy, e.g. for a long build while
+  editing
+- `jj workspace list|forget|rename|update-stale`
 
-### Undo & Recovery
+## Undo And Recovery
 
-- `jj undo` — revert the last operation
-- `jj op undo <op>` / `jj op restore <op>` — surgically revert/restore a
-  specific operation from `jj op log`
-- `jj restore` — discard working-copy edits
-- `jj --at-op <op-id> <cmd>` — inspect repo as it was at an older operation
-- `jj --ignore-working-copy <cmd>` — skip snapshot for fast/scripted calls
+- `jj undo` — revert the last operation; `jj redo` — reapply it
+- `jj op log` — find the operation ID
+- `jj op revert <op>` — revert one earlier operation
+- `jj op restore <op>` — make the repo state at `<op>` current again
+- `jj --at-op <op-id> <cmd>` — inspect an older state; `--at-op` is an alias of
+  `--at-operation`, and any unambiguous operation ID prefix works
+- `jj --ignore-working-copy <cmd>` — skip the snapshot for fast or scripted
+  calls
 
 ## Revsets
 
-Most commands accept a revset: a functional expression selecting commits.
-`jj log` accepts multi-commit revsets; commands like `jj edit` require exactly
-one commit.
+Most commands take `-r <revset>`; `jj log` accepts multi-revision revsets,
+`jj edit` requires exactly one.
 
 Symbols:
 
-- `@` = current working copy; `@-` / `@+` = its parent / child; `@--` =
-  grandparent.
-- Commit ID prefix, change ID prefix, and bookmark/tag names resolve directly.
-- `trunk()` = main-line head (default bookmark of `upstream`/`origin`).
-- `bookmarks()`, `tags()`, `remote_bookmarks()` = named commit sets.
+- `@` working copy, `@-` parent, `@--` grandparent, `@+` child
+- commit ID prefix, change ID prefix, bookmark name, tag name
+- `trunk()` main-line head; `bookmarks()`, `tags()`, `remote_bookmarks()`
 
-Operators (strongest to weakest):
+Bare names resolve as tag, then bookmark, then commit ID. Force an ID with
+`commit_id(<name>)` in scripts, where the same name may later become a bookmark.
 
-- `::x` ancestors of `x` (incl. `x`); `x::` descendants; `x::y` between.
-- `x..y` ancestors of `y` not in `::x` (≈ git's `x..y`); `x..` = "not on x".
-- `~x` negation, `x & y` intersection, `x ~ y` difference, `x | y` union.
-- `x-` parents, `x+` children.
+Operators, strongest binding first:
+
+- `x::` descendants of `x`; `::x` ancestors of `x`; both include `x` itself,
+  and `::x` also includes `root()`
+- `x..y` ancestors of `y` that are not ancestors of `x`, the same as git's
+  `x..y`; `x..` means "not an ancestor of `x`"
+- `x::y` descendants of `x` that are also ancestors of `y`, which is git's
+  `--ancestry-path x..y`, not the path between `x` and `y`
+- `~x` not in `x`; `x & y` in both; `x ~ y` in `x` but not `y`; `x | y` in
+  either
+- `x-` parents; `x+` children
+
+`..` does not distribute over `|` on its left: `(a | b)..` equals `a.. & b..`,
+not `a.. | b..`.
 
 Functions:
 
-- `description(*glob*)`, `subject(...)`, `author(...)`, `mine()` — find by
-  message/author.
-- `mutable()` = commits jj rewrites; `immutable()` = the rest.
-- `latest(x, n)`, `heads(x)`, `roots(x)`, `merge_point(x)`, `fork_point(x)`.
-- String patterns: `exact:`, `glob:` (default), `regex:`, `substring:`, with
-  `-i` for case-insensitive.
+- `description(<pattern>)`, `subject()`, `author()`, `mine()`
+- `mutable()` — revisions jj rewrites; `immutable()` — the rest
+- `roots(x)`, `heads(x)`, `latest(x, n)`, `fork_point(x)`, `merge_point(x)`.
+  `fork_point` and `merge_point` take one argument.
+- `reachable(x, y)`, `empty()`, `all()`, `none()`
+- pattern kinds: `glob:` (the default), `exact:`, `substring:`, `regex:`, `p:`
+  for a pattern alias. Append `-i` for case-insensitive, as in `glob-i:"FIX*"`.
 
 Examples:
 
-- Parent of working copy: `jj log -r @-`
-- All local work not pushed: `jj log -r 'remote_bookmarks()..'`
-- Your stack: `jj log -r 'reachable(@, mutable())'`
-- By author and message: `jj log -r 'author(mine) & description(*fix*)'`
+```console
+jj log -r @-
+jj log -r 'remote_bookmarks()..'
+jj log -r 'reachable(@, mutable())'
+jj log -r 'author(mine) & description(*fix*)'
+jj log -r 'fork_point(@)'
+```
 
-Full reference: <https://docs.jj-vcs.dev/latest/revsets/> — verify unfamiliar
-symbols with `jj help revsets`.
+Keyword help is `jj help -k revsets`; `jj help revsets` is not a valid
+invocation. Full reference: <https://docs.jj-vcs.dev/latest/revsets/>
+
+## Gotchas
+
+- `jj op undo` does not exist; the subcommands are `jj op revert` and
+  `jj op restore`.
+- `jj diffedit -r <rev>`: select rev with `-r`. Positional args are
+  paths/filesets.
+- Changing a bookmark backwards needs `--allow-backwards` on `jj bookmark set`
+  and `jj bookmark move`.
+- Keep change IDs, not commit IDs, in notes, revsets, and handover messages.
+  A commit ID from a rewritten change no longer resolves.
