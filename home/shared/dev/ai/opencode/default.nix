@@ -216,6 +216,7 @@
       nix = ./skills/nix;
       pueue = ./skills/pueue;
       skill-authoring = ./skills/skill-authoring;
+      technical-writing = "${pkgs.cursorPlugins.pstack}/share/skills/cursorPlugins-pstack/technical-writing";
       unslop = "${pkgs.cursorPlugins.pstack}/share/skills/cursorPlugins-pstack/unslop";
     };
   };
