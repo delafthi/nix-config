@@ -71,7 +71,7 @@ def split_frontmatter(text):
             break
     if end is None:
         return None, text
-    return lines[1:end], "\n".join(lines[end + 1:])
+    return lines[1:end], "\n".join(lines[end + 1 :])
 
 
 def parse_frontmatter(lines):
@@ -150,37 +150,57 @@ def check_metadata(report, root, data, body_text):
                 f"invalid value {name!r}: use lowercase letters, digits, single hyphens, no leading or trailing hyphen",
             )
         if name != root.name:
-            report.error("name", f"{name!r} does not match directory name {root.name!r}")
+            report.error(
+                "name", f"{name!r} does not match directory name {root.name!r}"
+            )
 
     if not description:
         report.error("frontmatter", "description is required")
     else:
         if len(description) > DESC_MAX:
-            report.error("description", f"{len(description)} characters, limit {DESC_MAX}")
+            report.error(
+                "description", f"{len(description)} characters, limit {DESC_MAX}"
+            )
         if len(description) < DESC_MIN:
-            report.warn("description", f"only {len(description)} characters, likely too vague to trigger reliably")
+            report.warn(
+                "description",
+                f"only {len(description)} characters, likely too vague to trigger reliably",
+            )
         if "<" in description or ">" in description:
             report.error("description", "contains XML angle brackets")
         lowered = description.lower()
         if re.match(r"^\s*i\s+(can|will|help)", lowered) or "i can help" in lowered:
-            report.error("description", "written in first person, write in the third person")
+            report.error(
+                "description", "written in first person, write in the third person"
+            )
         if not re.search(r"\b(use|activate|when|triggers? on)\b", lowered):
             report.warn("description", "no activation wording, add 'Use when ...'")
-        if not re.search(r"[`\"']\w[\w -]*[\"']?", description) and "," not in description:
+        if (
+            not re.search(r"[`\"']\w[\w -]*[\"']?", description)
+            and "," not in description
+        ):
             report.warn("description", "no concrete trigger phrases or enumerations")
 
     compatibility = data.get("compatibility")
     if compatibility and len(compatibility) > COMPAT_MAX:
-        report.error("compatibility", f"{len(compatibility)} characters, limit {COMPAT_MAX}")
+        report.error(
+            "compatibility", f"{len(compatibility)} characters, limit {COMPAT_MAX}"
+        )
 
     body_lines = body_text.splitlines()
     body_tokens = len(body_text) // 4
     if len(body_lines) > BODY_MAX_LINES:
-        report.error("length", f"body is {len(body_lines)} lines, limit {BODY_MAX_LINES}; move detail to references/")
+        report.error(
+            "length",
+            f"body is {len(body_lines)} lines, limit {BODY_MAX_LINES}; move detail to references/",
+        )
     elif len(body_lines) > BODY_WARN_LINES:
         report.warn("length", f"body is {len(body_lines)} lines, target is 150-300")
     if body_tokens > BODY_WARN_TOKENS:
-        report.warn("length", f"body is roughly {body_tokens} tokens, recommended limit {BODY_WARN_TOKENS}")
+        report.warn(
+            "length",
+            f"body is roughly {body_tokens} tokens, recommended limit {BODY_WARN_TOKENS}",
+        )
 
     if not body_lines:
         report.error("body", "no instructions after frontmatter")
@@ -206,14 +226,20 @@ def check_links(report, root, body_text):
         if path.is_file() and "references" in path.parts and path.suffix == ".md":
             text = read(path)
             if len(text.splitlines()) > TOC_MIN_LINES and not has_toc(text):
-                report.warn("references", f"{target} is over {TOC_MIN_LINES} lines without a table of contents")
+                report.warn(
+                    "references",
+                    f"{target} is over {TOC_MIN_LINES} lines without a table of contents",
+                )
             nested = [
                 item
                 for item in sorted(referenced_paths(text))
                 if item.endswith(".md") and "/" in item
             ]
             for item in nested:
-                report.warn("references", f"{target} links to {item}, link reference files directly from SKILL.md instead")
+                report.warn(
+                    "references",
+                    f"{target} links to {item}, link reference files directly from SKILL.md instead",
+                )
 
 
 def check_duplication(report, root, body_text):
@@ -226,13 +252,20 @@ def check_duplication(report, root, body_text):
         return
     for path in sorted(root.rglob("*.md")):
         relative = path.relative_to(root)
-        if relative.as_posix() == "SKILL.md" or any(part in SKIP_DIRS for part in relative.parts):
+        if relative.as_posix() == "SKILL.md" or any(
+            part in SKIP_DIRS for part in relative.parts
+        ):
             continue
-        other = {line.strip() for line in read(path).splitlines() if len(line.strip()) > 40}
+        other = {
+            line.strip() for line in read(path).splitlines() if len(line.strip()) > 40
+        }
         shared = body_lines & other
         if len(shared) >= 3:
             sample = next(iter(shared))[:60]
-            report.warn("duplication", f"{len(shared)} long lines shared with {relative.as_posix()}, e.g. {sample!r}")
+            report.warn(
+                "duplication",
+                f"{len(shared)} long lines shared with {relative.as_posix()}, e.g. {sample!r}",
+            )
 
 
 def check_scripts(report, root):
@@ -243,7 +276,10 @@ def check_scripts(report, root):
         if path.is_file() and path.suffix in (".py", ".sh"):
             text = read(path)
             if len(text.splitlines()) > 400:
-                report.warn("scripts", f"{path.relative_to(root).as_posix()} is {len(text.splitlines())} lines, confirm it earns its place")
+                report.warn(
+                    "scripts",
+                    f"{path.relative_to(root).as_posix()} is {len(text.splitlines())} lines, confirm it earns its place",
+                )
             if not text.strip():
                 report.error("scripts", f"{path.relative_to(root).as_posix()} is empty")
 
