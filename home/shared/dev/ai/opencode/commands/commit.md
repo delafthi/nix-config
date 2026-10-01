@@ -1,61 +1,69 @@
 ---
-description: Set current change description from diff
+description: Set the description on the current Jujutsu change from its diff
 agent: build
 subtask: false
 ---
 
-# Create commit with description
+# Describe current change
 
-Generate message for current working-copy change and set description on current
-Jujutsu change (`@`).
+Set the description on the working-copy change (`@`) from its own diff.
 
-## Conventions
+## Before You Start
 
-- Check `CONTRIBUTING.md` and commit message conventions in the repo.
-- Mirror existing commit message style (scope, format, capitalization).
+Check for existing context:
+
+- `CONTRIBUTING.md` — message conventions, AI disclosure rules
+- `CONTEXT.md` at root — domain terms for the scope
+- `docs/` — architecture decisions behind the change
+- Recent subjects from `jj log` — scope names, format, capitalization
+
+Use established language. Mirror the style already in the log.
 
 ## Workflow
 
 1. Inspect state:
 
-`jj status`
-`jj log --limit 20`
-`jj diff`
+   ```console
+   jj status
+   jj log --limit 20
+   jj diff
+   ```
 
-2. If no changes in working copy, stop and report `nothing to commit`.
-3. Identify scope from touched area (module/package/domain).
-4. Build message from repo conventions; if unclear, use
-   `<scope>: <description>`.
-5. Set message on current change with `jj commit`.
-6. Do not create new change, squash, or push.
+2. If the working copy is empty, stop and report `nothing to commit`.
+3. Derive the scope from the touched path, using the scopes already in `jj log`.
+4. Write the message. Add an AI disclosure if `CONTRIBUTING.md` or
+   `AI_POLICY.md` requires one.
+5. Set the description with `jj describe -m "<message>"`. Not `jj commit`:
+   that creates a new change on top, which this command does not do.
 
-## Commands
+## Rules
 
-```console
-jj commit -m "<commit message>"
-```
+- `jj describe` sets the message and keeps `@` current. Do not run `jj new`,
+  `jj squash`, `jj edit`, or `jj git push`.
+- Push only when the user asks for it.
+- One change per logical unit. If the diff covers unrelated areas, say so and
+  let the user decide before describing.
+- When the subject or body reads like filler or generic praise, apply the
+  `unslop` skill to the message before setting it.
+- Read the jj skill for flag syntax and revsets.
 
 ## Message format
 
 ```text
 <scope>: <description>
 
-[optional body]
+[body: why, when the diff cannot explain it]
 
-[optional footer(s)]
+[footer: BREAKING CHANGE / issue refs]
 ```
 
-- Subject imperative, lowercase, no period, <=100 chars
-- Body only when needed; explain why, <=100 chars/line
-- Footer only when relevant (`BREAKING CHANGE:`, `Fixes #`, `Closes #`,
-  `Resolves #`, `Related to #`)
-- Keep message minimal and specific
-- Add an AI disclosure when requested in `CONTIRUBUTING.md` or `AI_POLICY.md`
-- Avoid generic subjects like `update`, `fix stuff`, `changes`
+- Subject: imperative, lowercase, no trailing period
+- Omit body and footer unless they carry information the subject cannot
+- No filler subjects (`update`, `fix stuff`, `changes`)
 
 ## Output format
 
-- Return one final result with commit message only.
+Return the message that was set, nothing else.
 
 Use this output shape:
 
