@@ -176,9 +176,10 @@
       };
       plugin = [
         "${pkgs.caveman}/share/caveman/plugins/opencode"
-        "${pkgs.plannotator}/plugins/opencode"
-        "${pkgs.jj-blackbelt}"
         "${./plugins/control-freak.ts}"
+        "@dietrichgebert/ponytail"
+        "${pkgs.jj-blackbelt}"
+        "${pkgs.plannotator}/plugins/opencode"
       ];
     };
     tui = {
