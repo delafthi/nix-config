@@ -118,6 +118,12 @@
           "ouch *" = "allow";
           "paste *" = "allow";
           "printf *" = "allow";
+          "pueue follow" = "allow";
+          "pueue follow *" = "allow";
+          "pueue log" = "allow";
+          "pueue log *" = "allow";
+          "pueue status" = "allow";
+          "pueue status *" = "allow";
           "pwd" = "allow";
           "realpath *" = "allow";
           "rg *" = "allow";
