@@ -47,10 +47,8 @@
 
       ## Nix
 
-      - Nix manages dev environment. Projects not necessarily Nix projects.
-      - Check `flake.nix` before assuming tool is unavailable.
-      - `nix-locate` installed — find packages for missing binaries/libraries.
-      - `nix run nixpkgs#<tool>` for one-off access.
+      - Nix manages packages and the dev environment, not `apt`/`brew`/`pip`. A missing binary is not in the profile, not unavailable — read the `nix` skill before installing anything.
+      - Projects are not necessarily Nix projects. `flake.nix`, when present, is the toolchain source of truth.
 
       ## Workflow
 
@@ -114,7 +112,19 @@
           "ls *" = "allow";
           "mkdir *" = "allow";
           "nl *" = "allow";
+          "nix config show" = "allow";
+          "nix config show *" = "allow";
+          "nix doctor" = "allow";
+          "nix doctor *" = "allow";
+          "nix eval --no-write-lock-file *" = "allow";
+          "nix flake metadata --no-write-lock-file *" = "allow";
+          "nix flake show --no-write-lock-file *" = "allow";
           "nix-locate *" = "allow";
+          "nix registry list" = "allow";
+          "nix registry list *" = "allow";
+          "nix store ls *" = "allow";
+          "nix store ping" = "allow";
+          "nix store ping *" = "allow";
           "ouch *" = "allow";
           "paste *" = "allow";
           "printf *" = "allow";
