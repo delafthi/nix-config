@@ -1,51 +1,55 @@
 ---
 name: interview-me
-description: Drill down on what the user actually wants before building. Use when a feature request is ambiguous or underspecified.
+description: Pin down what the user actually wants before building - interview them in numbered rounds, then close with a restatement they confirm. Use when a request admits several valid interpretations, when the intended outcome is unclear, when the user names only how the result should feel, or when a caller hands over an open design tree. Triggers on "help me scope this", "what exactly are we building", "requirements unclear", "not sure what you want", "more than one way to do this", "ask me until you understand", "brainstorm the design first". Also use when the user never names the problem domain and only describes the outcome they want.
 ---
 
 # Interview Me
 
 ## Use When
 
-- User asks for a feature that's underspecified
-- Multiple valid interpretations exist
-- You're below ~70% confident about what they want
+- Request admits several valid interpretations
+- Confidence in the intended outcome is under ~70%
+- User names how the result should feel, not the requirements
+- A caller hands over an open design tree (architecture-design step 2)
 
 ## Don't Use When
 
 - Request is concrete and unambiguous
-- User explicitly says "just do it" or "don't ask"
-- Already confirmed via restate
+- User says "just do it" or "don't ask"
+- Shared understanding is already confirmed via restate
+- Work restores behavior that used to work — that is
+  debugging-and-error-investigation, which defers ambiguity back here
 
 ## Before You Start
 
-Check for existing context:
+These are files in the user's project, not in this skill directory:
 
-- Domain docs — glossaries, protocol specs, API docs, architecture files
-- `CONTEXT.md` at root — project-wide domain terms and boundaries
+- The project's `CONTEXT.md` at repo root — domain terms and boundaries
 - `docs/` — architecture decision records
-- Component `README.md` or codedocs — patterns, decisions
+- The component's `README.md` or codedocs — patterns, decisions
 
-If context exists: load it. Use the established language.
-If not: note it. Terms you clarify may form the basis of one later.
+Load what exists and use the established language. No `CONTEXT.md`? Note it and
+proceed, and never create one. Terms the interview clarifies may become the
+basis of one later.
 
 ## Workflow
 
-Steer the interview. It's yours to push back on — answer "I don't know" and
-mean it, reject questions pitched beneath the fidelity you need, say when the
-scope drifts. Nodding along to every recommendation is a failure: nothing was
-actually decided, and the result carries a certainty it hasn't earned.
+Steer it. Push back, answer "I don't know" and mean it, reject questions
+pitched below the fidelity needed, call out scope drift. Agreeing with every
+recommendation is a failure: nothing got decided, and the result carries a
+certainty it has not earned.
 
 ### 1. Evaluate confidence
 
-State your guess up front:
+State the guess up front:
 
 ```text
 HYPOTHESIS: <what you think they want>
 CONFIDENCE: ~<N>% — <what's missing>
 ```
 
-Confidence below ~70%: interview. Above ~90%: go straight to Restate.
+Under ~70%: interview. Over ~90%: go straight to Restate. In between: ask the
+current frontier once, then re-score.
 
 ### 2. Ask in rounds, not one at a time
 
@@ -118,8 +122,7 @@ Use these to shape the questions:
   recommendation; the `Recommended:` line is the slot. Don't force a single
   answer — present trade-offs so the user can choose.
 
-If you get an answer wrong, update the hypothesis and re-ask. Wrong guesses
-are productive — they narrow the space.
+If a guess was wrong, update the hypothesis and re-ask.
 
 ### 6. Restate
 
@@ -147,35 +150,29 @@ draft is waste — the answers would have rewritten it. If a caller (command,
 skill) expects a plan, finish the interview first; the plan is the deliverable
 of the final turn, not a running draft.
 
-### 8. Record Decision (If Appropriate)
+### 8. Record decisions
 
-If the conversation produced decisions worth recording:
+Only when the interview actually decided something. Ask where, do not assume:
+component codedocs, `docs/adr/`, `CONTEXT.md`, or skip. Not every repo wants
+docs and not every decision earns an ADR.
 
-- Ask user where to document: component codedocs, `docs/adr/`, or skip
-- Don't assume — not every repo needs docs, not every decision needs an ADR
-- If recorded, focus on: what was decided, alternatives considered, why this
-  choice
-- Keep it targeted — value for other engineers, not info dump
-
-Only create ADR when:
-
-1. Hard to reverse
-2. Surprising without context
-3. Result of real trade-off
+Write the ADR only when all three hold: hard to reverse, surprising without
+context, the result of a real trade-off. Keep it to what was decided, the
+alternatives considered, and why this one — value for another engineer, not a
+transcript.
 
 ### 9. Stop
 
-The interview is done when the frontier is empty and the user confirms the
-understanding is shared. Then hand off to whatever the caller builds next.
+No question cap: some interviews need three questions, some fifty. Honour a
+plain "wrap up" or "accept it as it stands". Hand off to the caller once the
+restate is confirmed.
 
-There is no question cap — some interviews need three questions, some fifty.
-Steer in plain language: "wrap up" or "accept it as it stands" works. A
-session running very long usually means the scope was too big; break the work
-up and interview the pieces.
+A session running very long usually means the scope was too big — break the
+work up and interview the pieces.
 
-If after several rounds you still can't predict the user's reaction to the
-next three questions, tell them: "Something foundational is missing. Want to
-step back?"
+After several rounds, still unable to predict the user's reaction to the next
+three questions? Say so: "Something foundational is missing. Want to step
+back?"
 
 ## It's Working If
 

@@ -212,6 +212,7 @@
       continue = ./commands/continue.md;
       handover = ./commands/handover.md;
       improve-architecture = ./commands/improve-architecture.md;
+      interview-me = ./commands/interview-me.md;
       onboard = ./commands/onboard.md;
       plannotator-annotate = "${pkgs.plannotator}/commands/opencode/plannotator-annotate.md";
       plannotator-last = "${pkgs.plannotator}/commands/opencode/plannotator-last.md";
