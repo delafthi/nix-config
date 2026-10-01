@@ -1,367 +1,216 @@
 ---
-description: Review embedded project for embedded system anti-patterns
+description: Evidence-based review of C/C++ firmware for embedded anti-patterns - ISR context, RTOS, memory lifetime, MMIO, MISRA/CERT conformance. Read-only.
 agent: plan
 subtask: false
 ---
 
-# Review embedded project
+# Review embedded
 
-Find bad designs in C/C++ embedded projects within `$ARGUMENTS`. Reference
-embedded design knowledge from theEmbeddedNewTestament and MISRA C++ guidelines.
+Find embedded-specific defects in the C/C++ firmware under `$ARGUMENTS`. The
+knowledge that earns its place here: what is legal in thread context and what
+is not, memory lifetime on a constrained target, hardware coupling, and the
+MISRA/CERT rule numbers you can actually cite.
+
+Read the `code-review` skill for the lane
+threshold, the evidence rule, the severity rubric, the merge rules, and the
+output shape. It owns that machinery for `/review` too, which is why this
+command cannot restate it: a command file cannot read a sibling command.
+Everything below is the firmware delta.
 
 ## Before You Start
 
-Check for existing context:
+Read `CONTEXT.md`, `docs/`, and the component `README.md` or codedocs. Use the
+project's established terms. Don't re-litigate ADRs.
 
-- `CONTEXT.md` at root — domain terms and boundaries
-- `docs/` — architecture decisions in the area you're touching
-- Component `README.md` or codedocs — patterns, decisions
-
-Use established language. Don't re-litigate ADRs.
+Check what the project already enforces and do not report it as a gap:
+compiler warning flags, static analysis in CI, a coding standard file, a MISRA
+deviation log. Read the build files and the CI config first.
 
 ## Target selection
 
-1. If `$ARGUMENTS` empty, use current directory.
-2. Else treat tokens as paths; scan each recursively.
-3. Skip non-C/C++ source files unless they contribute to architecture
-   understanding.
-4. If path missing/unreadable, report as blocker and continue with valid paths.
-5. Never mutate code during review.
+1. `$ARGUMENTS` empty: current directory, recursive.
+2. Otherwise every token is a path; scan each recursively.
+3. Firmware scope: `.c`, `.h`, `.cpp`, `.hpp`, `.s`, plus the build files that
+   set language, warning, and optimisation flags.
+4. Enumerate before dispatching. Six lanes over an unlisted tree is noise.
 
-## Anti-pattern sources
+   ```console
+   fd -e c -e h -e cpp -e hpp -e s . <path>
+   ```
 
-Use following knowledge bases as ground truth for what constitutes bad design:
+5. A missing or unreadable path goes under `## Blockers`; review the rest.
+6. Never mutate code, never move the working copy. Read-only throughout.
 
-- theEmbeddedNewTestament
-  (github.com/theEmbeddedGeorge/theEmbeddedNewTestament.github.io) - embedded C
-  programming, memory, RTOS, performance, security
-- MISRA C/C++ guidelines for safety-critical code
-- CERT C secure coding standards
-- AUTOSAR C++14 guidelines for automotive
+## Lanes
 
-## Parallelization lanes
+Dispatch by the `code-review` skill's `## Parallelization`, with one subagent
+per lane that has hits in the enumeration, six lanes maximum. A lane with no
+hit is not dispatched; note it in Residual Risk.
 
-Use up to 9 subagents with independent lanes:
+Anchors below are `rg` patterns over the enumerated files. They find candidates,
+never findings.
 
-- **Lane A — Memory**: dynamic allocation in ISR/RT paths, leaks, fragmentation,
-  stack overflow, no pool allocator, missing NULL checks after alloc,
-  use-after-free, double-free, large stack frames, no volatile on MMIO,
-  uninitialized locals
-- **Lane B — Real-Time & Determinism**: priority inversion (no inheritance),
-  deadlock (inconsistent lock order), infinite waits (portMAX_DELAY), long
-  critical sections, nested locks, no timeout on acquisition, ISR doing blocking
-  calls (printf/malloc), non-deterministic timing paths
-- **Lane C — Performance**: cache-unfriendly access patterns (column-major),
-  premature optimization, clever code defeating compiler opts, missing -Os/-O2
-  flag selection, no profiling before optimization, function-like macros instead
-  of inline, unnecessary FPU use
-- **Lane D — Safety & Security**: buffer overflow, no bounds checking, integer
-  overflow/underflow, no watchdog, no stack canary, no fail-safe state, failing
-  to NULL-terminate strings, type-punning via unions, casting away const, no
-  secure boot, weak crypto, key exposure, no rollback protection, debug mode in
-  prod
-- **Lane E — Design Patterns & Architecture**: global state instead of explicit
-  params, no HAL (hardware coupled to logic), god objects / monolithic modules,
-  deep nested if-else (high cyclomatic complexity), mixing
-  IO/computation/policy, no module boundaries, tight coupling, fall-through
-  switch without comment, unbounded recursion, no early-return guards
-- **Lane F — Error Handling & Logging**: swallowing errors silently, no context
-  in logs (file/line/func), no severity levels, infinite log growth (no circular
-  buffer), no recovery mechanism, no error escalation (retry->restart->reset),
-  logging secrets, no fail-fast
-- **Lane G — Concurrency**: shared global without mutex/lock, race conditions,
-  missing memory barriers, no volatile on shared flags, non-reentrant functions
-  in ISR, no atomic ops where appropriate, inconsistent lock ordering across
-  modules
-- **Lane H — Static Analysis & Standards**: no SA in CI, ignoring warnings, no
-  MISRA deviation process, no custom rules for embedded, no coding standard
-  enforced, no type safety (int instead of stdint.h), assumes sizeof(array
-  param) works, assumes platform endianness
-- **Lane I — Data/State Architecture**: duplicate data across modules (no single
-  source of truth), copy-paste code duplication, inconsistent state machine
-  patterns, no configuration management, magic numbers, redundant data storage,
-  stale/dead code
+- **Lane A — Memory**: stack depth against the task stack, allocation on an ISR
+  or RTOS path, pointer lifetime past its frame, freed-then-used, uninitialised
+  locals. Anchors: `\b(malloc|calloc|realloc|free)\s*\(`,
+  `return\s+&\w`.
+- **Lane B — Concurrency, ISRs, determinism**: ISR context discipline, state
+  shared across contexts, lock order across modules, unbounded waits,
+  priority inversion, missing barrier, non-reentrant code on an interrupt path.
+  Anchors: `\bportMAX_DELAY\b`, `(\w+_Handler|IRQHandler)\s*\(`,
+  `\b(taskENTER_CRITICAL|__disable_irq|critical_section)\b`.
+- **Lane C — Safety and failure paths**: bounds on a wire-supplied length,
+  integer wrap, string termination, writes through `const` flash data,
+  watchdog and fail-safe state, debug hooks left in shipped code.
+  Anchors: `\b(strcpy|strcat|sprintf)\s*\(`,
+  `for\s*\([^)]*\b(len|size|count)\b`.
+- **Lane D — Hardware and architecture**: register access inside logic, MMIO
+  without `volatile`, globals where a parameter belongs, one configuration
+  value with three homes, stale state. Anchors:
+  `\(u?int(8|16|32)_t\s*\*\s*\)\s*0x`,
+  `^\s*#define\s+\w*(MAX|MIN|COUNT|SIZE)\w*\s`.
+- **Lane E — Error handling and logging**: swallowed status, logs with no
+  context, unbounded log buffer, secrets in logs, no escalation path from
+  retry to reset. Anchors: `\b(printf|puts|log_\w+)\s*\(`.
+- **Lane F — Types, portability, performance**: `int` width for stored or wire
+  state, `sizeof` on a parameter that already decayed, endianness assumptions,
+  `volatile` blocking an optimisation that mattered. Anchors:
+  `\bint\s+\w+\s*(=|;|\[)`, `sizeof\s*\(\s*\w+\s*\)`.
+
+Architecture findings that want a seam, not a lint fix, belong to
+`/improve-architecture`. Do not restate its vocabulary here.
 
 ## Pattern examples
 
-Illustrative anchors — not exhaustive. Search for all patterns listed in lane
-descriptions above, plus structurally similar variants.
-
-### Memory (Lane A)
+Illustrative, not exhaustive. These are the shapes that get missed in review,
+not a catalogue. Search the lane anchors first, then read for these.
 
 ```c
-// BAD: returning stack address
-uint8_t* bad_get_buffer(void) {
-    uint8_t tmp[64];
-    return tmp;  // UB — dangling pointer
-}
-
-// BAD: dynamic alloc in ISR
+// A: heap on a path that must not block, and no failure path
 void TIM2_IRQHandler(void) {
-    char *buf = malloc(256);  // non-deterministic, may sleep
-    // MISRA C:2012 Rule 21.3 — no malloc in embedded
+    char *buf = malloc(256);      // ISR context: no heap, ever
+    buf[0] = 'a';                 // and no NULL check
 }
 
-// BAD: unchecked malloc
-char *p = malloc(100);
-*p = 'a';  // NULL deref if alloc fails
-```
+// A: pointer outlives the frame it points into
+uint8_t *bad_get_buffer(void) {
+    uint8_t tmp[64];
+    return tmp;
+}
 
-### Real-Time & Determinism (Lane B)
-
-```c
-// BAD: priority inversion (low-prio holds lock, blocks high-prio)
+// B: low-priority holder blocks, so the high-priority waiter never runs
 void low_prio_task(void *pv) {
     xSemaphoreTake(mutex, portMAX_DELAY);
-    vTaskDelay(pdMS_TO_TICKS(500));  // holding lock while blocking!
+    vTaskDelay(pdMS_TO_TICKS(500));  // holds the lock while blocking
     xSemaphoreGive(mutex);
 }
 
-// BAD: inconsistent lock order (deadlock)
-void task1(void *pv) { xSemaphoreTake(A, ...); xSemaphoreTake(B, ...); }
-void task2(void *pv) { xSemaphoreTake(B, ...); xSemaphoreTake(A, ...); }  // deadlock
-```
+// B: read-modify-write on shared state, no atomic, two contexts
+int32_t shared_counter;
+void inc_counter(void) { shared_counter++; }  // torn on an 8/16-bit MCU
 
-### Performance (Lane C)
-
-```c
-// BAD: column-major access (cache-unfriendly)
-int sum_col_bad(int m[][100], int rows) {
-    int s = 0;
-    for (int j = 0; j < 100; j++)
-        for (int i = 0; i < rows; i++)
-            s += m[i][j];  // strides across rows — cache misses
-    return s;
-}
-// GOOD: row-major — sequential access
-int sum_row_good(int m[][100], int rows) {
-    int s = 0;
-    for (int i = 0; i < rows; i++)
-        for (int j = 0; j < 100; j++)
-            s += m[i][j];  // contiguous — cache hits
-    return s;
-}
-
-// BAD: function-like macro instead of inline
-#define SQUARE(x) ((x) * (x))  // no type safety, multiple eval
-```
-
-### Safety & Security (Lane D)
-
-```c
-// BAD: buffer overflow (no bounds check)
+// C: length from the frame, buffer size from the compiler
 void process_msg(uint8_t *msg, int len) {
     uint8_t buf[32];
-    for (int i = 0; i < len; i++) buf[i] = msg[i];  // len > 32 = overflow
+    for (int i = 0; i < len; i++) buf[i] = msg[i];  // len > 32 overflows
 }
 
-// BAD: casting away const (data may be in flash)
+// C: writing through a const table that lives in flash
 const int32_t lut[] = {1, 2, 3};
-*(int32_t*)lut = 42;  // UB — may write to ROM
-// MISRA C:2012 Rule 11.8 — no cast that removes const
-```
+*(int32_t*)lut = 42;                  // UB, may fault on the target
 
-### Design Patterns (Lane E)
-
-```c
-// BAD: global state + no HAL — hardware coupled to logic
+// D: register write inside business logic, no HAL, no volatile
 static uint32_t *GPIOA_ODR = (uint32_t*)0x40020014;
 void set_led(int on) {
-    if (on) *GPIOA_ODR |= (1 << 5);  // direct register access in business logic
-    else    *GPIOA_ODR &= ~(1 << 5);
+    if (on) *GPIOA_ODR |= (1 << 5);   // MMIO needs volatile and a seam
 }
 
-// BAD: deep nesting (high cyclomatic complexity)
-void handle_cmd(int cmd, int arg) {
-    if (cmd == 1) {
-        if (arg > 0) {
-            for (int i = 0; i < arg; i++) {
-                if (i % 2 == 0) { /* ... */ }
-            }
-        }
-    }  // 4 levels deep before real work
-}
-```
-
-### Error Handling (Lane F)
-
-```c
-// BAD: swallowing error silently
-int configure_timer(void) {
-    if (hw_register_set(TIM_CR1, 0x01) != OK) {
-        return -1;  // no log, no recovery, caller gets -1 with no context
-    }
-}
-
-// BAD: unbounded log growth
-void log_event(const char *msg) {
-    static char log[10000];
-    strcat(log, msg);  // grows forever until buffer overflows
-}
-```
-
-### Concurrency (Lane G)
-
-```c
-// BAD: shared global without synchronization
-int32_t shared_counter;
-void inc_counter(void) { shared_counter++; }  // non-atomic on 8/16-bit MCU
-// Both ISR and main loop access — race condition
-
-// BAD: non-reentrant function used in ISR
-int format_and_send(const char *fmt, ...) {
-    static char buf[128];  // shared buffer, not reentrant
-    vsnprintf(buf, sizeof(buf), fmt, args);
-    return uart_send(buf);
-}
-void USART_IRQHandler(void) { format_and_send("rx: %x\n", data); }  // corruption
-```
-
-### Static Analysis & Standards (Lane H)
-
-```c
-// BAD: platform-dependent types
-int counter;  // 16-bit on some, 32-bit on others — overflow risk
-// GOOD: uint32_t counter;  — fixed width, portable
-// MISRA C:2012 Rule 7.2 — use u?int*_t from <stdint.h>
-
-// BAD: assumes sizeof(array param) works
+// F: sizeof on a parameter that already decayed to a pointer
 void clear(uint8_t buf[32]) {
-    memset(buf, 0, sizeof(buf));  // sizeof(buf) == sizeof(uint8_t*), not 32
+    memset(buf, 0, sizeof(buf));      // sizeof(uint8_t*), not 32
 }
+
+// E: log grows until it overflows
+static char log[10000];
+void log_event(const char *msg) { strcat(log, msg); }
+
+// D: one configuration value, three homes
+// module_a.h: #define MAX_CONNECTIONS 5
+// module_b.h: #define MAX_CONNECTIONS 5
+// module_c.c: int max_conn = 5;
 ```
 
-### Data/State Architecture (Lane I)
+## Standards
 
-```c
-// BAD: duplicate canonical data
-// module_a.h:   #define MAX_CONNECTIONS 5
-// module_b.h:   #define MAX_CONNECTIONS 5
-// module_c.c:   int max_conn = 5;
-// — three copies of same configuration value
-// FIX: single header of record, one source of truth
+Cite a rule number only when you can name the rule's text. Otherwise cite the
+anti-pattern and say the number is unchecked — a wrong rule number is worse
+than none. Verified against the MISRA C:2012 and MISRA C++:2023 tables
+below:
 
-// BAD: magic numbers
-void uart_set_baud(int rate) {
-    UART_BRR = 16000000 / 9600;  // 9600 and 16MHz are magic
-}
-// FIX: #define F_CPU 16000000UL / named constants
-```
+| Anti-pattern | MISRA C:2012 | MISRA C++:2023 |
+|--------------|--------------|----------------|
+| Heap allocation anywhere | 21.3 | 21.6.1, 21.6.2 |
+| Cast removing `const` or `volatile` | 11.8 | 8.2.3 |
+| Recursion, direct or indirect | 17.2 | 8.2.10 |
+| Returning a pointer to an automatic local | — | 6.8.2 (mandatory) |
+| Pointer arithmetic leaving the array | 18.1 | 8.7.1 |
+| `union` used for reinterpretation | 19.2 | 12.3.1 |
+| Macro parameter used unparenthesised | 20.7 | 19.3.4 |
+| `switch` structure, `default` label | 16.3, 16.4 | 9.4.1, 9.4.2 |
+| Array parameter decay | 12.5 | 7.11.2 |
+| Plain `int` for stored or wire state | — | 6.9.2 |
+| Global mutable state | — | 6.7.2 |
+| Local `static` used as scratch | — | 6.7.1 |
+| Floating-point arithmetic | — | Dir 0.3.1 (a directive, not a rule) |
 
-## MISRA references
+CERT C covers the memory-safety rules in Lane C. AUTOSAR C++14 covers the
+automotive subset. Attach an identifier from either only when you can name it.
 
-Link findings to specific MISRA rules when applicable. Key rules by domain:
+## Severity
 
-| Area | MISRA C:2012 | MISRA C++:2023 |
-|------|-------------|----------------|
-| Dynamic allocation | Rule 21.3 — no calloc/malloc/realloc/free | Rule 18-4-1 — no dynamic heap |
-| Pointer safety | Rule 11.8 — no cast removing const/volatile | Rule 5-2-5 — no cast removing const |
-| Integer types | Rule 7.2 — use u?int*_t | Rule 3-9-2 — fixed-width types |
-| Array bounds | Rule 18.1 — pointer + offset within bounds | Rule 5-0-16 — array index within range |
-| Stack overflow | Rule 21.2 — no recursion (bounded) | Rule 7-5-4 — no recursion |
-| Unions | Rule 19.2 — no union type-punning | Rule 9-5-1 — no union member read of inactive member |
-| Switch fallthrough | Rule 16.3 — every switch has default | Rule 6-4-6 — switch must have default |
-| Side effects in macro | Rule 20.7 — macro params parenthesized | Rule 16-0-6 — function macros safe |
-| Boolean type | Rule 21.10 — bool used for boolean test | Rule 5-3-1 — operand of logical op is bool type |
-| NULL check | Rule 21.17 — pointer may be NULL | — |
-| Floating point | — | Rule 13-3-1 — FP used only where arithmetic permits |
+The five bands of the `code-review` skill, recalibrated to firmware:
 
-## Merging
-
-Primary agent merges all lane findings into one report:
-
-- Deduplicate equivalent findings from multiple lanes.
-- If two findings share root cause, keep one issue and mention all affected
-  locations.
-- Resolve conflicts by stronger evidence and higher severity.
-- Preserve priority ordering from highest risk to lowest.
-- If multiple files were reviewed, order by file first, within each file by
-  risk severity.
-
-## Priority
-
-1. Safety
-2. Security
-3. Memory
-4. Determinism
-5. Concurrency
-6. Performance
-7. Design Patterns
-8. Error Handling
-9. Architecture
-10. Static Analysis
-
-## Severity rubric
-
-- 🔴 `CRITICAL`: active exploit, data loss/corruption, safety violation, or
-  crash likely
-- 🟠 `HIGH`: serious reliability/security impact with plausible trigger path
-- 🟡 `MEDIUM`: correctness/maintainability risk with limited blast radius
-- 🟢 `LOW`: minor risk or narrow edge case
-- 💡 `SUGGESTION`: improvement with no clear defect
+- 🔴 `CRITICAL`: reachable safety violation, memory corruption, or a hang on
+  the target
+- 🟠 `HIGH`: corruption of memory or shared state with a plausible trigger
+- 🟡 `MEDIUM`: correctness risk bounded to one code path
+- 🟢 `LOW`: narrow edge case, or a portability defect on untested targets
+- 💡 `SUGGESTION`: no defect; an improvement worth making
 
 ## Evidence rule
 
-For each issue include:
+The `code-review` skill owns the two gates and the drop list. Firmware
+calibration:
 
-- concrete location (`file:line`)
-- why current code fails (condition/path)
-- expected design vs actual design
-- concise fix direction
-- minimal verification step
-
-Reject speculative findings without evidence from code.
+- A line inferred from an ISR vector table is not read, exactly as a diff hunk
+  header is not read.
+- Unreadable code here is vendor HAL, CMSIS, generated startup files, linker
+  scripts, and third-party middleware. That exclusion is the largest single
+  source of false findings in firmware review, and it is where hallucinations
+  come from.
+- Do not file a hardware or board claim with no code behind it — watchdog not
+  armed, secure boot absent, brown-out not configured. Those are a design
+  review, not this command.
+- Do not file an anti-pattern with no `file:line` inside the enumerated scope.
+- Do not file a tool or compiler diagnostic you have not opened.
 
 ## Per issue
 
-- Severity: `CRITICAL | HIGH | MEDIUM | LOW | SUGGESTION`
-- Confidence: `HIGH | MEDIUM | LOW`
-- Category:
-  `memory | realtime | performance | safety | security | design | error-handling
-  | concurrency | static-analysis | architecture`
-- Location: `file:line`
-- Problem
-- Impact
-- Fix direction
-- Reference (which anti-pattern from theEmbeddedNewTestament/MISRA/CERT)
-- Verification (test idea or command)
+Every field the `code-review` skill defines, plus the firmware fields:
+
+- Category: the lane letter and name
+- Impact on the target
+- Reference: MISRA or CERT rule, or the anti-pattern name with the number left
+  unchecked
 
 ## Output format
 
-- Number every issue I1, I2, ... sequentially across the report for easy
-  reference.
-- With multiple files: group issues by file under a file subtitle; single
-  file: plain flat list (still numbered).
-- Deduplicate equivalent issues.
-- Default cap: 20 detailed issues; summarize remainder briefly.
-- If zero actionable issues, state: `No embedded design issues found`.
-- Keep feedback actionable, objective, concise.
+No cap. Every finding that survives both gates is reported in full. The read
+gate and the drop list are what keep padding out, so nothing real is demoted or
+trimmed to fit a count.
 
-Use this output shape:
+Deltas on the report the `code-review` skill defines:
 
-```md
-## Summary
-- Total issues: X
-- Critical: X
-- High: X
-- Medium: X
-- Low: X
-- Suggestion: X
-- Categories hit: memory, realtime, ...
-
-## Blockers
-- <missing path / failure details>
-
-## Issues
-### <path/to/file>
-I1. 🔴 category: `:line` — short description (max 60 chars)
-    Problem, impact, fix, reference, verification detail.
-    Confidence: HIGH
-I2. ...
-
-### <path/to/other/file>
-I3. ...
-
-## Residual Risk
-- <what was not fully validated>
-```
+- `## Summary` adds `Lanes dispatched: <letters>`.
+- Zero issues: `No embedded design issues found`.
+- Keep it objective and concise.

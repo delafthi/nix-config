@@ -1,17 +1,24 @@
 ---
-description: Review files, current change, or PR
+description: Evidence-based review of files, the current change, or a PR; read-only
 agent: plan
 subtask: false
 ---
 
 # Review code
 
-Provide structured, evidence-based review for target from `$ARGUMENTS`.
+Structured review of the target from `$ARGUMENTS`. Every finding must trace to
+code you read. This command never moves the working copy and never writes to a
+change.
+
+Read the `code-review` skill at `skills/code-review/SKILL.md` for the lane
+threshold, the evidence rule, the severity rubric, the merge rules, and the
+output shape. It owns that machinery; do not restate it here.
 
 ## Before You Start
 
 Check for existing context:
 
+- `CONTRIBUTING.md` — conventions the review must not report as a defect
 - `CONTEXT.md` at root — domain terms and boundaries
 - `docs/` — architecture decisions in the area you're touching
 - Component `README.md` or codedocs — patterns, decisions
@@ -20,60 +27,77 @@ Use established language. Don't re-litigate ADRs.
 
 ## Target selection
 
-Use this order:
+Pick one target in this order. Do not widen it.
 
-1. If first token in `$ARGUMENTS` matches PR number (`123` or `#123`), use PR
-   mode.
-2. Else if `$ARGUMENTS` provided, treat tokens as file paths; review only those
-   files.
-3. Else review current Jujutsu change (`@`).
+1. `$ARGUMENTS` empty: current Jujutsu change (`@`). If `jj diff` reports
+   nothing, say `working copy is empty` under `## Blockers` and stop.
+2. First token is `123` or `#123`: PR mode. Strip the `#`. Tokens after the
+   number are review instructions, not paths. Confirm the number with
+   `gh pr view <number>` before anything else; if it fails, report the blocker
+   and stop. Never guess a number into PR mode.
+3. Otherwise every token is a path. A directory expands to the files under it,
+   recursive. A missing or unreadable path is a blocker: list it and keep
+   reviewing the rest.
 
-Rules:
-
-- In PR mode, strip leading `#` before CLI usage.
-- In PR mode, ignore extra non-flag tokens and report warning in output.
-- In file mode, if path missing/unreadable, report as blocker and continue with
-  valid paths.
-- Never expand scope to full repository.
-- PR mode does a temporary working-copy checkout only; restore local state after
-  review (see PR mode).
+Embedded C/C++ anti-pattern review belongs to `/review-embedded`, which owns
+the MISRA, CERT, and RTOS knowledge bases. Severity bands, merge discipline,
+and report shape are shared between the two commands, and a command file cannot
+read a sibling command, so they live in the `code-review` skill that both load.
+Do not re-derive any of it here.
 
 ## PR mode
 
-For PR review mode:
+Read the PR from the remote. Never move the working copy to reach it:
 
-- Check out the PR into the working copy:
-  1. Record current change: `jj log -r @ -T 'change_id.short()' --no-graph`
-  2. New change on default branch (`main`, or `master`): `jj new main` — else
-     `gh pr checkout` fails, git sees current change as lost.
-  3. `gh pr checkout <number>`
-  4. Review working copy: read changed files, `jj diff --git -r @`, `jj log`.
-     Fetch title/body via `gh pr view <number>`.
-- After review, restore:
-  1. List PR changes: `jj log -r 'main..@' --no-graph -T 'change_id.short()'`
-  2. `jj edit <recorded-change-id>`
-  3. `jj abandon <pr-change-ids...>`
-- Read-only review state; never commit to it.
-- If external action policy blocks remote fetch, report blocker with ready
-  command.
+```console
+gh pr view <number>
+gh pr diff <number> --name-only
+gh pr diff <number>
+```
+
+For every hunk you mean to flag, read the whole enclosing function or type.
+Take surrounding context from the base-revision files already in the tree.
+
+Never run `gh pr checkout`, `jj new`, `jj edit`, `jj abandon`, or `jj squash`
+here. The repo is colocated, so a PR checkout moves git HEAD out from under
+jj, and `main..@` then spans the user's own unpushed work — abandoning that
+set destroys it. `/pr` owns working-copy moves.
+
+Only on an explicit go-ahead, and only when a finding needs code the diff does
+not carry:
+
+- `jj git fetch`, then read the head bookmark
+- `jj workspace add`, to run the project's checks in a second working copy
+- `jj undo`, to recover anything the user changed while this review ran
+
+Read the jj skill for remote bookmark names, revsets, and undo.
 
 ## Current change mode
 
-- Review only working-copy diff (`jj diff --git -r @`).
-- Do not review unchanged files.
+Scope is the working-copy diff and nothing else:
+
+```console
+jj status
+jj diff
+```
+
+Unchanged files are out of scope. `jj status` names conflicts; report them,
+resolve none.
 
 ## Parallelization (conditional)
 
-- Use up to 4 subagents with independent lanes when scope is broad:
-  - Lane A: security and auth/secrets/data handling
-  - Lane B: correctness and core logic
-  - Lane C: architecture/performance/maintainability
-  - Lane D: tests/docs/style meaningful deviations
-- Primary agent merges all lane results into one final report.
+Dispatch rule: the `code-review` skill's `## Parallelization`. When it calls for
+subagents, one per lane, four lanes:
+
+- Lane A — security, auth, secrets, data handling
+- Lane B — correctness and core logic
+- Lane C — architecture, performance, maintainability
+- Lane D — tests, docs, meaningful style deviations
 
 ## Priority
 
-Review in this order:
+When the list is long enough that order carries information, keep the highest
+band first.
 
 1. Security
 2. Correctness
@@ -83,79 +107,21 @@ Review in this order:
 6. Documentation
 7. Style (only meaningful deviations)
 
-## Severity rubric
+## Gotchas
 
-- 🔴 `CRITICAL`: active exploit, data loss/corruption, auth bypass, or
-  production outage likely
-- 🟠 `HIGH`: serious user/business impact with plausible path to trigger
-- 🟡 `MEDIUM`: correctness/maintainability risk with limited blast radius
-- 🟢 `LOW`: minor risk or narrow edge case
-- 💡 `SUGGESTION`: improvement with no clear defect
-
-## Evidence rule
-
-For each issue, include:
-
-- concrete location (`file:line`)
-- why current code fails (condition/path)
-- expected behavior vs actual behavior
-- concise fix direction
-- minimal verification step
-
-Reject speculative findings without evidence from code or diff.
-
-## Merge rules
-
-- Deduplicate equivalent findings from multiple lanes.
-- Resolve conflicts by stronger evidence and higher severity.
-- If two findings share root cause, keep one issue and mention affected
-  locations.
-- Preserve priority ordering from highest risk to lowest.
-- If multiple files were reviewed, order by file first, followed by
-  risk severity.
-
-## Per issue
-
-- Severity: `CRITICAL | HIGH | MEDIUM | LOW | SUGGESTION`
-- Confidence: `HIGH | MEDIUM | LOW`
-- Category
-- Location: `file:line`
-- Problem
-- Impact
-- Fix
-- Verification (test idea or command)
+- `gh pr diff <number>` and `gh pr view <number>` are allowlisted;
+  `gh pr checkout` and every mutating `jj` subcommand prompt. Prefer the
+  read-only form.
+- `jj diff` already reports the working-copy diff in git format; `--git -r @`
+  adds nothing.
+- Keep change IDs, not commit IDs, in notes. Read the jj skill for revision
+  syntax, revsets, and undo.
+- `gh` unauthenticated: stop and report `gh auth login` as the ready command.
 
 ## Output format
 
-- Number every issue I1, I2, ... sequentially across the report for easy
-  reference.
-- With multiple files: group issues by file under a file subtitle; single
-  file: plain flat list (still numbered).
-- Deduplicate equivalent issues.
-- Default cap: 10 detailed issues; summarize remainder briefly.
-- If zero actionable issues, state: `No actionable issues found`.
-- Keep feedback actionable, objective, concise.
+The `code-review` skill owns the report shape, the numbering, and the
+file grouping. This command's deltas:
 
-Use this output shape:
-
-```md
-## Summary
-- Total issues: X
-- Main risks: ...
-
-## Blockers
-- <missing path / missing diff>
-
-## Issues
-### <path/to/file>
-I1. 🔴 category: `:line` — short description (max 60 chars)
-    Problem, impact, fix, verification detail.
-    Confidence: HIGH
-I2. ...
-
-### <path/to/other/file>
-I3. ...
-
-## Residual Risk
-- <what was not fully validated>
-```
+- `## Summary` Target is `<paths | @ | PR #n>`.
+- Zero issues: `No actionable issues found`.
