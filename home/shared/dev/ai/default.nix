@@ -1,8 +1,9 @@
 { pkgs, ... }:
 {
   imports = [
-    ./llama-cpp.nix
     ./opencode
+    ./agentskills.nix
+    ./llama-cpp.nix
   ];
   home.packages = with pkgs; [
     ctx7
