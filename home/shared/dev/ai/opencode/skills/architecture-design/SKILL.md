@@ -1,6 +1,6 @@
 ---
 name: architecture-design
-description: Vocabulary for designing deep modules. Use when designing or improving module interfaces, finding deepening opportunities, or deciding where seams go.
+description: Design deep modules - put behaviour behind a small interface at a clean seam, and name that design in consistent vocabulary. Use when designing or refactoring a module, class, or package interface, choosing where a seam belongs, finding shallow or pass-through modules to deepen, choosing between competing interface designs, or making code more testable. Triggers on "deep module", "shallow module", "seam", "leverage", "locality", "port and adapter", "design it twice", "where should this boundary go", "too many small functions", and "make this refactor cleaner", even when the user never says "architecture" and just asks for a refactor or a design review.
 ---
 
 # Architecture Design
@@ -10,9 +10,10 @@ seam, testable through that interface.
 
 ## Use When
 
-- Designing or refactoring a module interface
+- Designing or refactoring a module, class, or package interface
 - Deciding where a seam belongs
-- Finding shallow modules to deepen
+- Finding shallow or pass-through modules to deepen
+- Choosing between competing interface designs
 - Making code more testable or AI-navigable
 
 ## Don't Use When
@@ -23,8 +24,9 @@ seam, testable through that interface.
 
 ## Workflow
 
-1. **Gather context.** Read `CONTEXT.md`, `docs/`, component READMEs. Use
-   established language. Don't re-litigate ADRs.
+1. **Gather context.** Read the project's `CONTEXT.md` at repo root, `docs/`,
+   component READMEs. Use established language. Don't re-litigate ADRs. No
+   `CONTEXT.md`? Note it and proceed — never create one.
 2. **Interview first, plan last.** Run interview-me to walk the design tree.
    The branches are the Design Questions below. Do not produce a plan while
    any question is still open — an early draft is waste.
@@ -48,11 +50,14 @@ parallel, each designing a **radically different** interface:
   dependencies."
 
 Give each agent a technical brief: file paths, coupling details, dependency
-category (see [DEEPENING.md](DEEPENING.md)), what sits behind the seam. Use
-this skill's vocabulary and the project's `CONTEXT.md` language in every brief
-so all designs name things consistently. Each agent outputs: interface (types,
-methods, params, invariants, error modes), a usage example, what the
-implementation hides, dependency strategy and adapters, and trade-offs.
+category, what sits behind the seam. Read
+[references/deepening.md](references/deepening.md) when classifying those
+dependencies — it defines the categories and the seam discipline that follows
+from each. Use this skill's vocabulary and the project's `CONTEXT.md` language
+in every brief so all designs name things consistently. Each agent outputs:
+interface (types, methods, params, invariants, error modes), a usage example,
+what the implementation hides, dependency strategy and adapters, and
+trade-offs.
 
 Show the user a problem-space framing first (constraints, dependency
 categories, a rough illustrative sketch — not a proposal), then run the
@@ -71,55 +76,35 @@ Use these terms exactly. Don't substitute "component," "service," "API," or
 - **Interface** — everything a caller must know: type signature, invariants,
   ordering constraints, error modes, config, performance characteristics.
 - **Depth** — leverage at the interface: behaviour exercised per unit of
-  interface learned. Deep = lots of behaviour, small interface. Shallow =
-  interface nearly as complex as implementation.
-- **Seam** — where a module's interface lives. Where you can alter behaviour
-  without editing in that place.
-- **Adapter** — concrete thing that satisfies an interface at a seam. Role (what
-  slot it fills), not substance.
+  interface learned. Deep = lots of behaviour, small interface.
+- **Seam** — where a module's interface lives; the one place behaviour can be
+  altered without editing in that place.
+- **Adapter** — the slot a thing fills at a seam, not its substance.
 - **Leverage** — callers get more capability per unit of interface. One
   implementation pays back across N call sites and M tests.
-- **Locality** — maintainers get change, bugs, knowledge, verification
-  concentrated in one place. Fix once, fixed everywhere.
+- **Locality** — change, bugs, and verification concentrate in one place. Fix
+  once, fixed everywhere.
 
 ## Design Questions
 
 These are the branches interview-me walks:
 
-- **Scope** — can I reduce the number of methods? Can I simplify the
-  parameters?
-- **Depth** — can I hide more complexity inside?
+- **Scope** — can the method count or the parameter list shrink?
+- **Depth** — can more complexity hide inside?
 - **Seam** — where does the interface live?
 - **Dependency category** — in-process, local-substitutable, remote-but-owned,
-  or true external? (see [DEEPENING.md](DEEPENING.md))
+  or true external?
 - **Adapters** — what concretely satisfies the interface, and how many?
 - **Test surface** — which tests survive a deepen, which get deleted?
 
 ## Principles
 
-- **Depth is property of interface, not implementation.** Deep module can have
-  small, mockable internal parts — they aren't part of the interface.
+- **Depth is a property of the interface, not the implementation.** A deep
+  module can have small, mockable internal parts — they aren't part of the
+  interface.
 - **Deletion test.** Delete the module. Complexity vanishes → pass-through.
   Complexity reappears across N callers → earning its keep.
 - **Interface is the test surface.** If you want to test past the interface,
-  module is wrong shape.
-- **One adapter = hypothetical seam. Two adapters = real seam.** Don't introduce
-  a seam unless something varies across it.
-- **Single responsibility.** Module tracks one thing. Multiple concerns → split
-  at seams between them.
-
-## Testability
-
-1. **Accept dependencies, don't create them.**
-   `processOrder(order, paymentGateway)` good. `processOrder(order)` with
-   `new StripeGateway()` inside — bad.
-2. **Return results, don't produce side effects.**
-   `calculateDiscount(cart): Discount` good. `applyDiscount(cart): void`
-   mutating cart — bad.
-3. **Small surface area.** Fewer methods = fewer tests. Fewer params = simpler
-   setup.
-
-## Going deeper
-
-- **Deepening clusters** — see [DEEPENING.md](DEEPENING.md): dependency
-  categories, seam discipline, replace-don't-layer testing.
+  the module is the wrong shape.
+- **One adapter = hypothetical seam. Two adapters = real seam.** Don't
+  introduce a seam unless something varies across it.

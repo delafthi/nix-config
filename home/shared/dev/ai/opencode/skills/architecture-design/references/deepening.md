@@ -1,7 +1,7 @@
 # Deepening
 
 How to deepen a cluster of shallow modules safely. Assumes vocabulary in
-[SKILL.md](SKILL.md).
+[SKILL.md](../SKILL.md).
 
 ## Dependency Categories
 
@@ -31,8 +31,8 @@ provide mock adapter.
 
 ## Seam Discipline
 
-- **One adapter = hypothetical seam. Two adapters = real seam.** Don't introduce
-  port unless at least two adapters justified (production + test).
+- **One adapter = hypothetical seam. Two adapters = real seam.** Don't
+  introduce a port until two adapters are justified (production + test).
   Single-adapter seam is just indirection.
 - **Internal seams vs external seams.** Deep module can have internal seams
   (private, used by own tests) and external seam at interface. Don't expose
@@ -42,7 +42,7 @@ provide mock adapter.
 
 - Old unit tests on shallow modules become waste once deepened module interface
   tests exist — delete them.
-- Write new tests at deepened module's interface. Interface is test surface.
+- Write new tests at deepened module's interface.
 - Assert on observable outcomes through interface, not internal state.
 - Tests survive internal refactors. If test changes when implementation changes
   — it's testing past the interface.
