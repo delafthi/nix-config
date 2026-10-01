@@ -5,6 +5,7 @@
   darwin,
   fetchFromGitHub,
   git,
+  installAgentSkills,
   makeBinaryWrapper,
   nodejs,
   nix-update-script,
@@ -80,7 +81,7 @@ let
 
       dontFixup = true;
 
-      outputHash = "sha256-tbckrs/h2kyZ7JsGaVAULHVk9sGRNWw3N8/hepWp388=";
+      outputHash = "sha256-LV7yphVZ6UgYz8ux9cy43GbRBwj3yMc9iBmqC0l01/8=";
       outputHashAlgo = "sha256";
       outputHashMode = "recursive";
     };
@@ -127,7 +128,7 @@ let
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "plannotator";
-  version = "0.27.17";
+  version = "0.27.24";
 
   __structuredAttrs = true;
   strictDeps = true;
@@ -136,11 +137,12 @@ stdenv.mkDerivation (finalAttrs: {
     owner = "backnotprop";
     repo = "plannotator";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-c8jDrwqFqOwFEmXpxk4ikUc54u7UBN+NVDcBRD4yllU=";
+    hash = "sha256-bMZhTKrp02jD3WPDuet3mj7sN542Pai4yTjPG+61VjA=";
   };
 
   nativeBuildInputs = [
     bun
+    installAgentSkills
     nodejs
     makeBinaryWrapper
     writableTmpDirAsHomeHook
@@ -172,6 +174,8 @@ stdenv.mkDerivation (finalAttrs: {
     runHook postBuild
   '';
 
+  dontInstallAgentSkills = true;
+
   installPhase = ''
     runHook preInstall
 
@@ -181,43 +185,20 @@ stdenv.mkDerivation (finalAttrs: {
         lib.makeBinPath [
           git
           nodejs
+          sem
         ]
-      }:$out/optionals/sem/bin
+      }
 
-    # OpenCode plugin: the built @plannotator/opencode package.
-    install -Dm644 apps/opencode-plugin/package.json $out/plugins/opencode/package.json
-    install -Dm644 apps/opencode-plugin/README.md $out/plugins/opencode/README.md
-    install -Dm644 apps/opencode-plugin/plannotator.html apps/opencode-plugin/review-editor.html $out/plugins/opencode/
-    mkdir -p $out/plugins/opencode/commands
-    install -Dm644 apps/opencode-plugin/commands/*.md $out/plugins/opencode/commands/
-    cp -r apps/opencode-plugin/dist $out/plugins/opencode/dist
+    # Skills -> $out/share/skills/plannotator/<skill>/ (agentskills layout).
+    for skill in apps/skills/{core,extra}/*/; do
+      [ -f $skill/SKILL.md ] || continue
+      installSkill $skill
+    done
 
-    # Shared skills (core prose bodies) plus per-harness variants. All
-    # references are internal to each skill directory; tests are dropped.
-    mkdir -p $out/skills
-    cp -r apps/skills/core $out/skills/core
-    cp -r apps/skills/claude $out/skills/claude
-    cp -r apps/kiro-cli/skills $out/skills/kiro
-    find $out/skills -name '*.test.ts' -delete
-
-    # Slash commands per harness.
-    mkdir -p $out/commands
-    cp -r apps/opencode-plugin/commands $out/commands/opencode
-    cp -r apps/gemini/commands $out/commands/gemini
-
-    # Optional extras skills.
-    mkdir -p $out/optionals
-    cp -r apps/skills/extra $out/optionals/extras
-    find $out/optionals/extras -name '*.test.ts' -delete
-
-    # sem sidecar binary (wrapped into PATH above so plannotator finds it).
-    install -Dm755 ${sem}/bin/sem $out/optionals/sem/bin/sem
-
-    # Hook/config templates (reference material; apply via home-manager —
-    # plannotator never writes to $HOME). Exact files from the repo.
-    install -Dm644 apps/hook/hooks/hooks.json $out/hooks/claude/hooks.json
-    install -Dm644 apps/gemini/hooks/plannotator.toml $out/hooks/gemini/plannotator.toml
-    install -Dm644 apps/gemini/hooks/settings-snippet.json $out/hooks/gemini/settings.json
+    # Plugin and commands -> $out/share/plannotator/.
+    mkdir -p $out/share/plannotator/plugins/opencode $out/share/plannotator/commands/opencode
+    cp -r "$src"/apps/opencode-plugin/.  $out/share/plannotator/plugins/opencode/
+    cp -r apps/opencode-plugin/commands $out/share/plannotator/commands/opencode
 
     runHook postInstall
   '';
@@ -233,7 +214,6 @@ stdenv.mkDerivation (finalAttrs: {
     writableTmpDirAsHomeHook
   ];
   doInstallCheck = true;
-  versionCheckProgramArg = "--version";
 
   passthru = {
     node_modules = node_modules finalAttrs;
@@ -249,7 +229,10 @@ stdenv.mkDerivation (finalAttrs: {
     description = "AI plan review with interactive visual annotation";
     homepage = "https://plannotator.ai";
     changelog = "https://github.com/backnotprop/plannotator/releases/tag/v${finalAttrs.version}";
-    license = lib.licenses.mit;
+    license = with lib.licenses; [
+      asl20
+      mit
+    ];
     maintainers = [ lib.maintainers.delafthi ];
     sourceProvenance = with lib.sourceTypes; [ fromSource ];
     platforms = [
