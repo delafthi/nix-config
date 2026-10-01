@@ -1,13 +1,26 @@
 ---
-description: Scan a module or file for architecture deepening opportunities
+description: Find architecture deepening candidates in a module, file, or recent hot spot - shallow and pass-through modules, scattered logic, leaking seams, untestable paths. Read-only - returns a ranked candidate list, never a refactor. Use /review for plain defects.
 agent: plan
 subtask: true
 ---
 
 # Improve module architecture
 
-Find deepening opportunities in target from `$ARGUMENTS`. Use
-architecture-design vocabulary. Drill into chosen candidate with interview-me.
+Find deepening opportunities in the target from `$ARGUMENTS`.
+
+Read the `architecture-design` skill at
+`skills/architecture-design/SKILL.md` for the glossary, the principles, the
+design questions, the workflow, and the `Don't Use When` list. It owns the
+method; do not restate it here. This command owns target selection, the
+evidence gate, and the report.
+
+Its `references/deepening.md` owns dependency classification and seam
+discipline. Read it before classifying a boundary leak or naming a dependency
+category.
+
+This command never edits a file, never moves the working copy, never writes to
+a change. It returns findings. The interface is settled later, with
+interview-me.
 
 ## Target selection
 
@@ -15,100 +28,185 @@ architecture-design vocabulary. Drill into chosen candidate with interview-me.
 future changes to it easier, so put extra weight on the parts that have
 recently changed. Decide where to look before you look.
 
-1. If `$ARGUMENTS` is a file path — use that file and its direct
-   imports/exports.
-2. If `$ARGUMENTS` is a module or class name — resolve to file(s) via grep/glob.
-3. If `$ARGUMENTS` empty — walk a good stretch of history (`jj log --no-graph
-   -r '::@'`) and inspect what recent changes touched (`jj diff -r <rev>
-   --name-only` over the last few dozen changes) to find hot spots — files and
-   areas that keep coming up. Let those paths pull your attention first. If
-   changes are scattered with no clear hot spot, widen the net. Fall back to
-   the working-copy diff (`@`) if still ambiguous.
-4. If resolution fails — report blocker, stop.
+1. `$ARGUMENTS` is a file path — that file plus its direct importers and
+   exports.
+2. `$ARGUMENTS` is a module, class, or type name — resolve with `rg` to the
+   defining file and its references, then narrow to the definition.
+3. `$ARGUMENTS` is empty — find hot spots in history first:
 
-## Before You Start
+   ```console
+   jj log -r '::@' --limit 50 --stat --no-graph
+   ```
 
-Check for existing context:
+   Paths that recur across those changes are the hot spots. Read the five
+   highest-churn paths, not the whole tree. No hot spot? Say so under
+   `## Blockers` and stop — a blind scan of the whole repo is not a scan.
+4. Not a jj repo? `jj` reports `There is no jj repo in "."`. History is then
+   unavailable — ask which paths to scan instead of guessing.
+5. Resolution fails — list what you tried under `## Blockers` and stop.
 
-- `CONTEXT.md` at root — domain terms and boundaries
-- `docs/` — architecture decisions in the area you're touching
-- Component `README.md` or codedocs — patterns, decisions
+Enumerate the scope before dispatching. Four lanes over an unlisted tree is
+noise.
 
-Use established language. Don't re-litigate ADRs.
+## Read gate
 
-## Workflow
+Two gates. A candidate passes both or it is not a candidate.
 
-1. Read target and surrounding code. Apply architecture-design vocabulary, look
-   for friction:
-   - **Shallow modules** — interface nearly as complex as implementation
-   - **Scattered logic** — one concept split across many small modules
-   - **Leaking seams** — tightly-coupled modules crossing boundaries
-   - **Untestable paths** — logic that can't be exercised through module's
-     interface
-   - **Pass-through modules** — deleting them moves code, doesn't concentrate it
-2. Apply **deletion test**: would deleting this concentrate complexity, or just
-   move it? "Yes, concentrates" is the signal.
-3. Present candidates as markdown cards:
+Read gate: you opened the module's interface and at least two of its call
+sites, and can name the symbols at each. An interface inferred from a filename,
+a line count, or recall is not read. Generated, vendored, or third-party code
+you could not open is a `## Residual Risk` line, never a candidate.
 
-```md
-### <Candidate name>
+Shape gate: every candidate carries all of `## Per candidate`.
 
-**Files:** `path/to/file.ts`, `path/to/other.ts`
+## What counts as a candidate
 
-**Problem:** <why current architecture causes friction>
+Line count proves nothing. A large module can be deep; a small one can be
+shallow. A candidate is real only when all four hold:
 
-**Solution:** <plain English description of what would change>
+- **Interface cost** — what a caller must learn: the symbols, the invariants,
+  the ordering constraints, the error modes. Name them from the code.
+- **Leverage shortfall** — what the caller still does itself after the call.
+  Cite the call site where it does it.
+- **Deletion test** — delete it and complexity either vanishes or reappears
+  across N callers. The skill's `## Principles` defines the test; apply it to
+  the call sites you read, in your head, without editing.
+- **Churn or coupling** — from history or from the call graph, not a vibe.
 
-**Benefits:**
-- Locality: <how change concentrates>
-- Leverage: <what callers/tests gain>
-- Testability: <how testing improves>
+Reachable shapes, all named in the skill's `## Glossary` and
+`## Design Questions`:
 
-**Recommendation:** Strong | Worth exploring | Speculative
-```
+- **Shallow** — interface nearly as complex as the implementation behind it.
+- **Pass-through** — deletion moves code instead of concentrating it.
+- **Scattered** — one concept split across modules; callers must compose them
+  in the right order every time.
+- **Leaking seam** — a caller reaches past the interface into what should sit
+  behind it. Cite the reaching call site.
+- **Untestable path** — a test must reach past the interface to exercise the
+  logic. Cite that test.
+- **Boundary leak** — a dependency that should be an injected adapter is
+  constructed inline at N call sites. Classify it with
+  `skills/architecture-design/references/deepening.md` first; its category
+  decides whether a port is warranted at all.
 
-5. List candidates strongest-first. End with **Top recommendation**.
-   Do NOT propose interfaces yet — the cards describe friction, not a design.
-   The interface is settled by the interview that follows.
-6. Ask: "Which of these would you like to explore?"
-7. Use interview-me to walk the design tree — constraints, dependencies,
-   deepened module shape, what sits behind the seam, what tests survive.
+If the skill's `## Don't Use When` matches — the module is already deep and
+well-seamed, the code is glue with no behaviour, or the user wants a quick fix
+rather than a design pass — stop and use the zero-result line in
+`## Output format`. That is a complete result, not a failure.
 
-## Context updates
+## Lanes (conditional)
 
-As decisions crystallize, keep context current — conservatively:
+- Fewer than 4 files in scope: one agent, no subagents.
+- 4 or more: one subagent per lane, at most 4. Every lane reads the same
+  enumerated scope.
+  - Lane A — interface cost and leverage shortfall
+  - Lane B — pass-through and scattered concepts
+  - Lane C — leaking seams and boundary leaks
+  - Lane D — untestable paths and test surface
+- Every lane returns the `## Per candidate` shape, each carrying a `file:line`
+  it opened.
+- This agent merges, applies `## Merge rules`, and writes the report. One
+  report. Lanes never report to the user.
 
-- **New term** not in `CONTEXT.md`? Note it. If load-bearing for domain, ask
-  user whether to add it. Don't create `CONTEXT.md` proactively.
-- **Fuzzy term sharpened**? Suggest update to `CONTEXT.md`. Wait for user
-  confirmation.
-- **User rejects with load-bearing reason?** Only if ADR criteria met (hard to
-  reverse, surprising without context, real trade-off) — ask user where to
-  record: `CONTEXT.md`, `docs/adr/`, component codedocs, or skip.
+## Merge rules
+
+- Deduplicate candidates that name the same seam or the same spread of call
+  sites.
+- Two candidates, one root cause: one candidate, every affected location
+  listed.
+- Conflicts resolve by stronger evidence, then by more call sites affected.
+- Rank by leverage lost, then by churn.
+
+## Per candidate
+
+- Files: `path/to/file:line` — the interface symbols and call sites you opened
+- Depth shortfall: what the interface costs against what it hides
+- Leverage lost: what callers do themselves, and at which call site
+- Seam: where the interface would sit
+- Dependency: `in-process | local-substitutable | remote-but-owned |
+  true-external`, per `skills/architecture-design/references/deepening.md`
+- Deletion test: complexity vanishes, or reappears across N callers
+- Recommendation: `Strong | Worth exploring | Speculative`
+- Confidence: `HIGH | MEDIUM | LOW`
+- Verification: the `rg` command that shows the call-site spread, labelled
+  `run:` with its result, or `proposed:`. Never present `proposed:` as
+  observed.
+
+## Recommendation bands
+
+- `Strong` — deletion test concentrates, three or more call sites affected,
+  and churn or a named bug lands in the seam. You read every location you
+  name.
+- `Worth exploring` — the gate passes on interface cost or on leverage
+  shortfall, not both.
+- `Speculative` — the gate rests on the deletion test alone, or on one call
+  site. Say which.
+- `Confidence: LOW` that reading did not raise is not filed.
+
+## Not this command
+
+Route elsewhere instead of filing:
+
+- A plain defect — bug, race, leak, off-by-one, missing bounds check — is
+  `/review`. This command has no severity bands and will not rank a defect
+  against a structural finding.
+- Embedded C/C++ anti-patterns — ISR context, MMIO, MISRA/CERT — are
+  `/review-embedded`, which hands back here when a finding wants a seam rather
+  than a lint fix.
+- Code already deep and well-seamed. See the skill's `## Don't Use When`.
+
+## Handoff
+
+1. Rank candidates strongest-first and end with `## Top recommendation`. Be
+   opinionated: one clear pick, not a menu.
+2. Propose no interface, no types, no signatures. A card describes friction.
+   The interface is settled in the interview that follows.
+3. Ask "Which of these should we explore?" As a subtask, return the ranked
+   list and that question to the caller; the parent agent puts it to the user.
+4. Run interview-me on the chosen candidate only. Its workflow owns the design
+   tree and its record-decisions step owns `CONTEXT.md` and ADR criteria. Do
+   not restate them; the skill's `## Design Questions` lists the branches it
+   walks.
+
+## Gotchas
+
+- `jj log --stat` reports the per-change file list in one call. Do not loop
+  `jj diff -r <rev> --name-only` over dozens of revs.
+- The read-only forms are allowlisted: `rg *`, `fd *`, `tokei *`, and the
+  read-only `jj` forms the jj skill lists. Bare `jj` is not allowlisted, and
+  neither is any mutating `jj` subcommand. Never run one from here.
+- `fd` and `tokei` are the repo's file and metrics tools. Size is a tiebreaker
+  at most, never evidence.
+- A candidate naming a file you could not open goes to `## Residual Risk`.
 
 ## Output format
 
-All output is markdown, inline in the conversation. No external files unless
-explicitly asked.
-
-Use this output shape:
+Markdown, inline in the conversation. No external files unless explicitly
+asked. When nothing survives the gates: `No deepening candidates`.
 
 ```md
 ## Summary
-- Target: ...
-- Candidates found: ...
+- Target: <paths | <name> | hot spots from history>
+- Files read: N
+- Candidates: N
+
+## Blockers
+- <none | missing path | no hot spot | not a jj repo>
 
 ## Candidates
 ### <name>
-- Files: ...
-- Problem: ...
-- Solution: ...
-- Benefits: locality, leverage, testability
+- Files: `<path:line>`, `<path:line>`
+- Depth shortfall: ...
+- Leverage lost: ... at `<path:line>`
+- Seam: ...
+- Dependency: <category>
+- Deletion test: complexity vanishes | reappears across N callers
 - Recommendation: Strong | Worth exploring | Speculative
+- Verification: run: <command> -> <result>
 
 ## Top recommendation
-- <which and why>
+- <which, and the one reason>
 
-## Blockers
-- <none|details>
+## Residual Risk
+- <code not opened, scope not scanned>
 ```
