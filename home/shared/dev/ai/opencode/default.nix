@@ -92,6 +92,7 @@
           "gh pr list" = "allow";
           "gh pr list *" = "allow";
           "gh pr view *" = "allow";
+          "grep *" = "allow";
           "head *" = "allow";
           "hyperfine *" = "allow";
           "jj bookmark list" = "allow";
