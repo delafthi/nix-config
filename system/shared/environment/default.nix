@@ -4,4 +4,5 @@
     ./fonts.nix
     ./shells.nix
   ];
+  environment.extraOutputsToInstall = [ "man" ];
 }

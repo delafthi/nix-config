@@ -26,6 +26,7 @@
     ./zoxide.nix
   ];
   home = {
+    extraOutputsToInstall = [ "man" ];
     packages = with pkgs; [
       asciinema
       ast-grep
