@@ -1,4 +1,4 @@
-# Ignore build outputs from performing a nix-build or `nix build` command
+# Ignore build outputs from performing a nix build
 result
 result-*
 
