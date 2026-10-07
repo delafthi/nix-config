@@ -28,18 +28,15 @@ deviation log. Read the build files and the CI config first.
 
 ## Target selection
 
-1. `$ARGUMENTS` empty: current directory, recursive.
-2. Otherwise every token is a path; scan each recursively.
-3. Firmware scope: `.c`, `.h`, `.cpp`, `.hpp`, `.s`, plus the build files that
-   set language, warning, and optimisation flags.
-4. Enumerate before dispatching. Six lanes over an unlisted tree is noise.
-
-   ```console
-   fd -e c -e h -e cpp -e hpp -e s . <path>
-   ```
-
-5. A missing or unreadable path goes under `## Blockers`; review the rest.
-6. Never mutate code, never move the working copy. Read-only throughout.
+1. The first token of `$ARGUMENTS` is a bare number (`123`) or `#` + number
+   (`#123`) — PR mode. Strip the `#`. Confirm with `gh pr view <number>` before
+   anything else; if it fails, report the blocker and stop. Never guess a number
+   into PR mode.
+2. `$ARGUMENTS` is not empty — every token is a path. A directory expands to
+   the files under it, recursive. A missing or unreadable path is a blocker:
+   list it and keep reviewing the rest.
+3. `$ARGUMENTS` is empty — current Jujutsu change (`@`). If `jj diff` reports
+   nothing, say `working copy is empty` under `## Blockers` and stop.
 
 ## Lanes
 

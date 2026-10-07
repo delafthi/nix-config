@@ -29,15 +29,15 @@ Use established language. Don't re-litigate ADRs.
 
 Pick one target in this order. Do not widen it.
 
-1. `$ARGUMENTS` empty: current Jujutsu change (`@`). If `jj diff` reports
+1. The first token of `$ARGUMENTS` is a bare number (`123`) or `#` + number
+   (`#123`) — PR mode. Strip the `#`. Confirm with `gh pr view <number>` before
+   anything else; if it fails, report the blocker and stop. Never guess a number
+   into PR mode.
+2. `$ARGUMENTS` is not empty — every token is a path. A directory expands to
+   the files under it, recursive. A missing or unreadable path is a blocker:
+   list it and keep reviewing the rest.
+3. `$ARGUMENTS` is empty — current Jujutsu change (`@`). If `jj diff` reports
    nothing, say `working copy is empty` under `## Blockers` and stop.
-2. First token is `123` or `#123`: PR mode. Strip the `#`. Tokens after the
-   number are review instructions, not paths. Confirm the number with
-   `gh pr view <number>` before anything else; if it fails, report the blocker
-   and stop. Never guess a number into PR mode.
-3. Otherwise every token is a path. A directory expands to the files under it,
-   recursive. A missing or unreadable path is a blocker: list it and keep
-   reviewing the rest.
 
 Embedded C/C++ anti-pattern review belongs to `/review-embedded`, which owns
 the MISRA, CERT, and RTOS knowledge bases. Severity bands, merge discipline,
