@@ -35,6 +35,7 @@
       curl
       dust
       ffmpeg
+      fq
       glow
       gnutar
       gum
