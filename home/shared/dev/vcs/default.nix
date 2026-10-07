@@ -1,3 +1,4 @@
+{ pkgs, ... }:
 {
   imports = [
     ./delta.nix
@@ -7,4 +8,5 @@
     ./jujutsu.nix
     ./mergiraf.nix
   ];
+  home.packages = [ pkgs.flirt ];
 }

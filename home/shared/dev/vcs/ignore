@@ -141,6 +141,7 @@ cscope.po.out
 venv
 
 # Other directories and files I don't want included
+.flirt
 .git
 .helix
 .jj
