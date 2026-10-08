@@ -164,6 +164,11 @@ _: {
       ui = {
         default-command = "log";
         diff-editor = ":builtin";
+        editor = [
+          "hx"
+          "+$line"
+          "$path"
+        ];
       };
       user = {
         email = "delafthi@pm.me";
