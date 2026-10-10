@@ -19,6 +19,7 @@
             "anytype" # broken in nixpkgs
             "gog-galaxy" # not in nixpkgs
             "karabiner-elements" # broken see https://github.com/nix-darwin/nix-darwin/issues/1041
+            "raycast" # currently, there is no way to disable auto-update
             "steam" # only as a nixos module
             "wacom-tablet" # only for linux as (wacomtablet)
           ]

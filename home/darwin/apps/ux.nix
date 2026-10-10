@@ -9,6 +9,7 @@
     with pkgs;
     lib.optionals osConfig.system.gui.enable [
       ice-bar
-      raycast
+      # Currently, there is no way to disable auto-update
+      # raycast
     ];
 }
