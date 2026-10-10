@@ -9,7 +9,6 @@
       gnugrep
       gnused
       gnutar
-      procps
       uutils-coreutils-noprefix
       uutils-diffutils
       uutils-findutils

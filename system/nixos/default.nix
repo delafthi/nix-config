@@ -1,3 +1,4 @@
+{ pkgs, ... }:
 {
   imports = [
     ./bootloader
@@ -10,4 +11,8 @@
     ./settings
     ./nix.nix
   ];
+  environment.systemPackages = with pkgs; [
+    procps
+  ];
+
 }
