@@ -50,11 +50,14 @@ let
           --frozen-lockfile \
           --filter ./ \
           --filter ./apps/hook \
+          --filter ./apps/inbox \
           --filter ./apps/review \
           --filter ./apps/opencode-plugin \
           --filter ./packages/ai \
           --filter ./packages/core \
           --filter ./packages/editor \
+          --filter ./packages/guide-viewer \
+          --filter ./packages/inbox \
           --filter ./packages/review-editor \
           --filter ./packages/server \
           --filter ./packages/shared \
@@ -81,7 +84,7 @@ let
 
       dontFixup = true;
 
-      outputHash = "sha256-LV7yphVZ6UgYz8ux9cy43GbRBwj3yMc9iBmqC0l01/8=";
+      outputHash = "sha256-GMxCkOaYBPRNdu5qPBiENI33H5zzV3cqOicZRqnIqFU=";
       outputHashAlgo = "sha256";
       outputHashMode = "recursive";
     };
@@ -128,7 +131,7 @@ let
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "plannotator";
-  version = "0.27.24";
+  version = "0.28.19";
 
   __structuredAttrs = true;
   strictDeps = true;
@@ -137,7 +140,7 @@ stdenv.mkDerivation (finalAttrs: {
     owner = "backnotprop";
     repo = "plannotator";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-bMZhTKrp02jD3WPDuet3mj7sN542Pai4yTjPG+61VjA=";
+    hash = "sha256-vxGRw4Nrm7sWMl/AZZoUcR6g2cMqyIYgTgg0HGRE0A4=";
   };
 
   nativeBuildInputs = [
@@ -170,6 +173,8 @@ stdenv.mkDerivation (finalAttrs: {
     bun build apps/hook/server/index.ts --compile --no-compile-autoload-bunfig \
       --define "__CLI_VERSION__=\"${finalAttrs.version}\"" \
       --outfile plannotator
+    bun build apps/paste-service/targets/bun.ts --compile --no-compile-autoload-bunfig \
+      --outfile plannotator-paste
 
     runHook postBuild
   '';
@@ -188,6 +193,7 @@ stdenv.mkDerivation (finalAttrs: {
           sem
         ]
       }
+    install -Dm755 plannotator-paste $out/bin/plannotator-paste
 
     # Skills -> $out/share/skills/plannotator/<skill>/ (agentskills layout).
     for skill in apps/skills/{core,extra}/*/; do
@@ -205,6 +211,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   postInstall = lib.optionalString stdenv.hostPlatform.isDarwin ''
     codesign --force --sign - $out/bin/.plannotator-wrapped
+    codesign --force --sign - $out/bin/plannotator-paste
   '';
 
   dontStrip = true;
