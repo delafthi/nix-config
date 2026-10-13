@@ -31,7 +31,6 @@
       asciinema
       ast-grep
       charm-freeze
-      clipboard-jh
       curl
       dust
       ffmpeg
