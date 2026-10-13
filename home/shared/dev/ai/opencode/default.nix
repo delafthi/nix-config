@@ -35,7 +35,9 @@
 
       ## Version Control
 
-      - Prefer `jj` over `git`. Key commands: `jj new`, `jj describe`, `jj squash`, `jj log`, `jj diff`.
+      - Use `jj` only, never `git`. `jj-blackbelt` blocks every `git` command,
+        so `jj status || git status`-style fallbacks always get denied.
+        Key commands: `jj new`, `jj describe`, `jj squash`, `jj log`, `jj diff`.
 
       ## Scratch
 
