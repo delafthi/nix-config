@@ -8,13 +8,13 @@
 }:
 rustPlatform.buildRustPackage (_finalAttrs: {
   pname = "flirt";
-  version = "0-unstable-2026-10-07";
+  version = "0-unstable-2026-10-13";
 
   src = fetchFromCodeberg {
     owner = "flirt";
     repo = "flirt";
-    rev = "3f48ae5227ff0b3993fc0446caacc195eb30444d";
-    hash = "sha256-OG4Uv23HVAQC68QpqluWrVlegqqqzWogHGu7J9hy8ug=";
+    rev = "a93a2d3632b1789e659fcbe503ecfe0e05597728";
+    hash = "sha256-731Ae0hmWcV5QLjN3qJVW/+J9JaJ74XH3A9eBY8Kass=";
     # `.git/HEAD` is required during build to get the commit id of HEAD
     leaveDotGit = true;
   };
