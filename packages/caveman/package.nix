@@ -7,7 +7,7 @@
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "caveman";
-  version = "3.0.0";
+  version = "3.2.0";
 
   __structuredAttrs = true;
   strictDeps = true;
@@ -16,7 +16,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     owner = "JuliusBrussee";
     repo = "caveman";
     tag = "v${finalAttrs.version}";
-    sha256 = "sha256-XtrZSxw1Hv2+YAm+zMZSBY4uumLDSsRR0LgYwd6jKlg=";
+    sha256 = "sha256-GfC8e+EGL7kotZQfZ9kD7ZEWJfhmXujHOHpMxeU3bEo=";
   };
 
   # installSkill() is provided by installAgentSkills; dontInstallAgentSkills
