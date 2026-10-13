@@ -13,14 +13,14 @@
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "kicad-bin";
-  version = "10.0.6";
+  version = "10.0.7";
 
   __structuredAttrs = true;
   strictDeps = true;
 
   src = fetchurl {
     url = "https://s3.cern.ch/kicad-downloads/osx/stable/kicad-unified-universal-${finalAttrs.version}.dmg";
-    hash = "sha256-703NQnjEbT780oyNsnPVlX1o79oCj2v3m0gR/FMC3Gg=";
+    hash = "sha256-+8J0GbhBqaKosUO1h1qHuL2UP/z0h9U8eKj7bSTFnic=";
   };
 
   sourceRoot = ".";
