@@ -1,6 +1,5 @@
 {
   config,
-  lib,
   pkgs,
   ...
 }:
@@ -14,12 +13,6 @@
   programs.opencode = {
     enable = true;
     context = ''
-      ## Output Format
-
-      ${lib.removeSuffix "\n" (
-        builtins.readFile "${pkgs.caveman}/share/caveman/rules/caveman-activate.md"
-      )}
-
       ## Glossary
 
       - `change`: Jujutsu change object (verb usage = normal English).
@@ -194,7 +187,6 @@
         };
       };
       plugin = [
-        "${pkgs.caveman}/share/caveman/plugins/opencode"
         "${./plugins/control-freak.ts}"
         "@dietrichgebert/ponytail"
         "${pkgs.jj-blackbelt}"
