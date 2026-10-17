@@ -187,7 +187,6 @@
         };
       };
       plugin = [
-        "${./plugins/control-freak.ts}"
         "@dietrichgebert/ponytail"
         "${pkgs.jj-blackbelt}"
         "${pkgs.plannotator}/plugins/opencode"
