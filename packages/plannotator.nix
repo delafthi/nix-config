@@ -5,7 +5,6 @@
   darwin,
   fetchFromGitHub,
   git,
-  installAgentSkills,
   makeBinaryWrapper,
   nodejs,
   nix-update-script,
@@ -52,16 +51,7 @@ let
           --filter ./apps/hook \
           --filter ./apps/inbox \
           --filter ./apps/review \
-          --filter ./apps/opencode-plugin \
-          --filter ./packages/ai \
-          --filter ./packages/core \
-          --filter ./packages/editor \
-          --filter ./packages/guide-viewer \
-          --filter ./packages/inbox \
-          --filter ./packages/review-editor \
-          --filter ./packages/server \
-          --filter ./packages/shared \
-          --filter ./packages/ui \
+          --filter ./packages \
           --ignore-scripts \
           --no-progress \
           --os="*"
@@ -145,7 +135,6 @@ stdenv.mkDerivation (finalAttrs: {
 
   nativeBuildInputs = [
     bun
-    installAgentSkills
     nodejs
     makeBinaryWrapper
     writableTmpDirAsHomeHook
@@ -169,7 +158,6 @@ stdenv.mkDerivation (finalAttrs: {
 
     bun run build:review
     bun run build:hook
-    bun run build:opencode
     bun build apps/hook/server/index.ts --compile --no-compile-autoload-bunfig \
       --define "__CLI_VERSION__=\"${finalAttrs.version}\"" \
       --outfile plannotator
@@ -178,8 +166,6 @@ stdenv.mkDerivation (finalAttrs: {
 
     runHook postBuild
   '';
-
-  dontInstallAgentSkills = true;
 
   installPhase = ''
     runHook preInstall
@@ -194,17 +180,6 @@ stdenv.mkDerivation (finalAttrs: {
         ]
       }
     install -Dm755 plannotator-paste $out/bin/plannotator-paste
-
-    # Skills -> $out/share/skills/plannotator/<skill>/ (agentskills layout).
-    for skill in apps/skills/{core,extra}/*/; do
-      [ -f $skill/SKILL.md ] || continue
-      installSkill $skill
-    done
-
-    # Plugin and commands -> $out/share/plannotator/.
-    mkdir -p $out/share/plannotator/plugins/opencode $out/share/plannotator/commands/opencode
-    cp -r "$src"/apps/opencode-plugin/.  $out/share/plannotator/plugins/opencode/
-    cp -r apps/opencode-plugin/commands $out/share/plannotator/commands/opencode
 
     runHook postInstall
   '';
