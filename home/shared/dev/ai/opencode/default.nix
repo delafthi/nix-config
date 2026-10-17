@@ -204,9 +204,10 @@
       codedocs = ./commands/codedocs.md;
       commit = ./commands/commit.md;
       continue = ./commands/continue.md;
+      grill-me = ./commands/grill-me.md;
+      grill-with-docs = ./commands/grill-with-docs.md;
       handover = ./commands/handover.md;
-      improve-architecture = ./commands/improve-architecture.md;
-      interview-me = ./commands/interview-me.md;
+      improve-codebase-architecture = ./commands/improve-codebase-architecture.md;
       onboard = ./commands/onboard.md;
       plannotator-annotate = "${pkgs.plannotator}/commands/opencode/plannotator-annotate.md";
       plannotator-last = "${pkgs.plannotator}/commands/opencode/plannotator-last.md";
@@ -215,7 +216,6 @@
       readme = ./commands/readme.md;
       review = ./commands/review.md;
       review-embedded = ./commands/review-embedded.md;
-      write-tests = ./commands/write-tests.md;
     };
   };
 }
