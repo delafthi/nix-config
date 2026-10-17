@@ -3,17 +3,27 @@
   pkgs,
 }:
 let
-  readPackages =
+  discoverPackages =
     dir:
-    lib.mapAttrs (
-      name: _:
-      let
-        sub = dir + "/${name}";
-      in
-      if builtins.pathExists (sub + "/package.nix") then
-        pkgs.callPackage (sub + "/package.nix") { }
-      else
-        readPackages sub
-    ) (lib.filterAttrs (_: t: t == "directory") (builtins.readDir dir));
+    lib.mergeAttrsList (
+      lib.mapAttrsToList (
+        name: type:
+        let
+          path = dir + "/${name}";
+        in
+        if type == "directory" then
+          {
+            ${name} =
+              if builtins.pathExists (path + "/package.nix") then
+                pkgs.callPackage (path + "/package.nix") { }
+              else
+                discoverPackages path;
+          }
+        else if lib.hasSuffix ".nix" name && name != "default.nix" then
+          { ${lib.removeSuffix ".nix" name} = pkgs.callPackage path { }; }
+        else
+          { }
+      ) (builtins.readDir dir)
+    );
 in
-readPackages ./.
+discoverPackages ./.

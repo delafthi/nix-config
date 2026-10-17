@@ -2,7 +2,7 @@ final: prev:
 let
   inherit (prev) lib;
 
-  discover =
+  discoverModifications =
     dir:
     lib.mergeAttrsList (
       lib.mapAttrsToList (
@@ -16,7 +16,7 @@ let
               if builtins.pathExists (path + "/default.nix") then
                 import (path + "/default.nix") final prev
               else
-                discover path;
+                discoverModifications path;
           }
         else if lib.hasSuffix ".nix" name && name != "default.nix" then
           { ${lib.removeSuffix ".nix" name} = import path final prev; }
@@ -25,4 +25,4 @@ let
       ) (builtins.readDir dir)
     );
 in
-discover ./.
+discoverModifications ./.
