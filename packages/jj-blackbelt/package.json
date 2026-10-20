@@ -1,9 +1,15 @@
 {
   "name": "jj-blackbelt",
+  "version": "0.2.0",
   "type": "module",
-  "main": "./plugin.ts",
+  "exports": {
+    ".": "./index.js"
+  },
+  "scripts": {
+    "test": "bun test"
+  },
   "dependencies": {
-    "@opencode-ai/plugin": "1.18.32",
+    "@opencode/plugin": "2.0.32",
     "unbash": "4.0.11"
   }
 }

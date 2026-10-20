@@ -2,81 +2,79 @@
   lib,
   stdenvNoCC,
   bun,
+  nodejs,
   writableTmpDirAsHomeHook,
 }:
 let
-  node_modules = stdenvNoCC.mkDerivation {
-    pname = "jj-blackbelt-node_modules";
-    version = "0.1.0";
+  node_modules =
+    finalAttrs:
+    stdenvNoCC.mkDerivation {
+      pname = "${finalAttrs.pname}-node_modules";
+      inherit (finalAttrs) version src;
 
-    __structuredAttrs = true;
-    strictDeps = true;
+      __structuredAttrs = true;
+      strictDeps = true;
 
-    impureEnvVars = lib.fetchers.proxyImpureEnvVars ++ [
-      "GIT_PROXY_COMMAND"
-      "SOCKS_SERVER"
-    ];
+      impureEnvVars = lib.fetchers.proxyImpureEnvVars ++ [
+        "GIT_PROXY_COMMAND"
+        "SOCKS_SERVER"
+      ];
 
-    nativeBuildInputs = [
-      bun
-      writableTmpDirAsHomeHook
-    ];
+      nativeBuildInputs = [
+        bun
+        writableTmpDirAsHomeHook
+      ];
 
-    dontUnpack = true;
-    dontConfigure = true;
+      dontUnpack = true;
+      dontConfigure = true;
 
-    buildPhase = ''
-      runHook preBuild
+      buildPhase = ''
+        runHook preBuild
 
-      cp ${./package.json} package.json
-      cp ${./bun.lock} bun.lock
+        cp ${./package.json} package.json
+        cp ${./bun.lock} bun.lock
 
-      export BUN_INSTALL_CACHE_DIR=$(mktemp -d)
-      bun install \
-        --cpu="*" \
-        --frozen-lockfile \
-        --ignore-scripts \
-        --no-progress \
-        --os="*"
+        export BUN_INSTALL_CACHE_DIR=$(mktemp -d)
+        bun install \
+          --cpu="*" \
+          --frozen-lockfile \
+          --ignore-scripts \
+          --no-progress \
+          --os="*"
 
-      runHook postBuild
-    '';
+        runHook postBuild
+      '';
 
-    installPhase = ''
-      runHook preInstall
+      installPhase = ''
+        runHook preInstall
 
-      mkdir -p $out
-      cp -R node_modules $out/node_modules
+        mkdir -p $out
+        cp -R node_modules $out/node_modules
 
-      runHook postInstall
-    '';
+        runHook postInstall
+      '';
 
-    dontFixup = true;
+      dontFixup = true;
 
-    outputHash = "sha256-EAnytwbAJPe7zT8hYGP9F1m4EcojT7UoRpT4G2dHv2s=";
-    outputHashAlgo = "sha256";
-    outputHashMode = "recursive";
-  };
-
-  manifest = builtins.toFile "package.json" (
-    builtins.toJSON {
-      name = "jj-blackbelt";
-      type = "module";
-      main = "./dist/index.js";
-    }
-  );
+      outputHash = "sha256-rkCeuh7TgKx42zOeZWAP0Bjcv/Nsqa1jxiqTTn2l0gI=";
+      outputHashAlgo = "sha256";
+      outputHashMode = "recursive";
+    };
 in
-stdenvNoCC.mkDerivation {
+stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "jj-blackbelt";
-  version = "0.1.0";
+  inherit ((builtins.fromJSON (builtins.readFile ./package.json))) version;
 
   __structuredAttrs = true;
   strictDeps = true;
 
+  node_modules = node_modules finalAttrs;
+
   src = lib.fileset.toSource {
     root = ./.;
     fileset = lib.fileset.unions [
-      ./plugin.ts
+      ./src
+      ./test
       ./package.json
       ./bun.lock
     ];
@@ -84,13 +82,15 @@ stdenvNoCC.mkDerivation {
 
   nativeBuildInputs = [
     bun
+    nodejs
     writableTmpDirAsHomeHook
   ];
 
   configurePhase = ''
     runHook preConfigure
 
-    cp -R ${node_modules}/node_modules .
+    cp -R "$node_modules"/. .
+    patchShebangs node_modules
 
     runHook postConfigure
   '';
@@ -98,22 +98,29 @@ stdenvNoCC.mkDerivation {
   buildPhase = ''
     runHook preBuild
 
-    # unbash is bundled into the output; @opencode-ai/plugin is a type-only
-    # import and stays external so the plugin uses the host-provided package.
-    bun build plugin.ts \
-      --outfile dist/index.js \
-      --target node \
-      --external @opencode-ai/plugin
+    bun build src/index.ts \
+      --outfile index.js \
+      --target node
 
     runHook postBuild
+  '';
+
+  doCheck = true;
+
+  checkPhase = ''
+    runHook preCheck
+
+    bun test
+
+    runHook postCheck
   '';
 
   installPhase = ''
     runHook preInstall
 
-    mkdir -p $out
-    cp -R dist $out/dist
-    install -Dm644 ${manifest} $out/package.json
+    mkdir -p $out/share/plugins/opencode/jj-blackbelt
+    cp index.js $out/share/plugins/opencode/jj-blackbelt/index.js
+    install -Dm644 package.json $out/share/plugins/opencode/jj-blackbelt/package.json
 
     runHook postInstall
   '';
@@ -125,4 +132,4 @@ stdenvNoCC.mkDerivation {
     platforms = lib.platforms.all;
     sourceProvenance = [ lib.sourceTypes.fromSource ];
   };
-}
+})

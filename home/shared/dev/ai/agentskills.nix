@@ -27,6 +27,5 @@
       unslop = "${pkgs.cursorPlugins.pstack}/share/skills/cursorPlugins-pstack/unslop";
       verify-this = "${pkgs.cursorPlugins.cursor-team-kit}/share/skills/cursorPlugins-cursor-team-kit/verify-this";
     };
-
   };
 }

@@ -1,4 +1,4 @@
-import type { Plugin } from "@opencode-ai/plugin";
+import { Plugin } from "@opencode/plugin";
 import type * as U from "unbash";
 import { parse } from "unbash";
 
@@ -180,185 +180,40 @@ function checkHead(words: U.Word[]): string | undefined {
   return undefined;
 }
 
-function scanWord(word: U.Word | undefined): string | undefined {
-  if (!word) return undefined;
-  return scanParts(word.parts ?? []);
-}
-
-function scanWords(
-  words: (U.Word | undefined)[] | undefined,
-): string | undefined {
-  for (const word of words ?? []) {
-    const hit = scanWord(word);
-    if (hit) return hit;
+// Walk every node rather than each node type. unbash exposes `parts` as a lazy
+// prototype accessor, so it is not reachable through Object.values.
+function* commands(node: unknown): Generator<U.Command> {
+  if (Array.isArray(node)) {
+    for (const child of node) yield* commands(child);
+    return;
   }
-  return undefined;
-}
-
-function scanArithmetic(
-  expr: U.ArithmeticExpression | undefined,
-): string | undefined {
-  if (!expr) return undefined;
-  switch (expr.type) {
-    case "ArithmeticBinary":
-      return scanArithmetic(expr.left) ?? scanArithmetic(expr.right);
-    case "ArithmeticUnary":
-      return scanArithmetic(expr.operand);
-    case "ArithmeticTernary":
-      return (
-        scanArithmetic(expr.test) ??
-        scanArithmetic(expr.consequent) ??
-        scanArithmetic(expr.alternate)
-      );
-    case "ArithmeticGroup":
-      return scanArithmetic(expr.expression);
-    case "ArithmeticWord":
-      return scanParts(expr.parts ?? []);
-    case "ArithmeticCommandExpansion":
-      return expr.script ? scanScript(expr.script) : undefined;
+  if (!node || typeof node !== "object") return;
+  if ((node as { type?: string }).type === "Command") {
+    yield node as U.Command;
   }
-  return undefined;
+  for (const child of Object.values(node)) yield* commands(child);
+  if ("parts" in node) yield* commands((node as U.Word).parts);
 }
 
-function scanParts(parts: U.WordPart[]): string | undefined {
-  for (const part of parts) {
-    let hit: string | undefined;
-    switch (part.type) {
-      case "CommandExpansion":
-      case "ProcessSubstitution":
-        hit = part.script ? scanScript(part.script) : undefined;
-        break;
-      case "DoubleQuoted":
-      case "LocaleString":
-        hit = scanParts(part.parts);
-        break;
-      case "BraceExpansion":
-      case "ExtendedGlob":
-        hit = scanParts(part.parts ?? []);
-        break;
-      case "ParameterExpansion":
-        hit =
-          scanParts(part.indexParts ?? []) ??
-          scanWords([
-            part.operand,
-            part.slice?.offset,
-            part.slice?.length,
-            part.replace?.pattern,
-            part.replace?.replacement,
-          ]);
-        break;
-      case "ArithmeticExpansion":
-        hit = scanArithmetic(part.expression);
-        break;
-    }
-    if (hit) return hit;
-  }
-  return undefined;
-}
-
-function scanRedirects(redirects: U.Redirect[]): string | undefined {
-  // Heredoc bodies are literal content — only targets can run code.
-  return scanWords(redirects.map((r) => r.target));
-}
-
-function scanCommand(command: U.Command): string | undefined {
-  for (const prefix of command.prefix) {
-    const hit =
-      scanParts(prefix.indexParts ?? []) ??
-      scanWord(prefix.value) ??
-      scanWords(prefix.array);
-    if (hit) return hit;
-  }
-  const hit =
-    scanWords([command.name, ...command.suffix]) ??
-    scanRedirects(command.redirects);
-  if (hit) return hit;
-  if (!command.name) return undefined;
-  return checkHead([command.name, ...command.suffix]);
-}
-
-function scanCompoundList(
-  list: U.CompoundList | undefined,
-): string | undefined {
-  return scanStatements(list?.commands);
-}
-
-function scanStatements(
-  statements: U.Statement[] | undefined,
-): string | undefined {
-  for (const statement of statements ?? []) {
-    const hit = scanStatement(statement);
-    if (hit) return hit;
-  }
-  return undefined;
-}
-
-function scanNode(node: U.Node | undefined): string | undefined {
-  if (!node) return undefined;
-  switch (node.type) {
-    case "Command":
-      return scanCommand(node);
-    case "Pipeline":
-    case "AndOr":
-      for (const child of node.commands) {
-        const hit = scanNode(child);
-        if (hit) return hit;
-      }
-      return undefined;
-    case "If":
-      return (
-        scanCompoundList(node.clause) ??
-        scanCompoundList(node.then) ??
-        (node.else?.type === "If"
-          ? scanNode(node.else)
-          : scanCompoundList(node.else))
-      );
-    case "For":
-    case "Select":
-      return scanWords(node.wordlist) ?? scanCompoundList(node.body);
-    case "While":
-      return scanCompoundList(node.clause) ?? scanCompoundList(node.body);
-    case "Function":
-    case "Coproc":
-      return scanNode(node.body) ?? scanRedirects(node.redirects);
-    case "Subshell":
-    case "BraceGroup":
-      return scanCompoundList(node.body);
-    case "Case":
-      for (const item of node.items) {
-        const hit = scanWords(item.pattern) ?? scanCompoundList(item.body);
-        if (hit) return hit;
-      }
-      return scanWord(node.word);
-    case "ArithmeticFor":
-      return scanCompoundList(node.body);
-  }
-  return undefined;
-}
-
-function scanStatement(statement: U.Statement): string | undefined {
-  return scanNode(statement.command) ?? scanRedirects(statement.redirects);
-}
-
-function scanScript(script: U.ParsedScript): string | undefined {
-  return scanStatements(script.commands);
-}
-
-function findSuggestion(command: string): string | undefined {
+export function findSuggestion(command: string): string | undefined {
   if (FORFEIT_RE.test(command)) return undefined;
-  return scanScript(parse(command));
+  for (const node of commands(parse(command))) {
+    if (!node.name) continue;
+    const hit = checkHead([node.name, ...node.suffix]);
+    if (hit) return hit;
+  }
+  return undefined;
 }
 
-export const JjBlackbelt: Plugin = async () => {
-  return {
-    "tool.execute.before": async (input, output) => {
-      if (input.tool !== "bash") return;
-      const command = output.args?.command;
+export default Plugin.define({
+  id: "jj-blackbelt",
+  async setup(ctx) {
+    await ctx.tool.hook("execute.before", (event) => {
+      if (event.tool !== "bash") return;
+      const command = (event.input as { command?: unknown }).command;
       if (typeof command !== "string" || command.trim() === "") return;
       const message = findSuggestion(command);
       if (message) throw new Error(message + FORFEIT_HINT);
-    },
-  };
-};
-
-export default JjBlackbelt;
+    });
+  },
+});
