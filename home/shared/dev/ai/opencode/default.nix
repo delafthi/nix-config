@@ -3,15 +3,18 @@
   pkgs,
   ...
 }:
+let
+  rule = action: resource: effect: {
+    inherit action resource effect;
+  };
+in
 {
-  home = {
-    packages = with pkgs; [ plannotator ];
-    shellAliases = {
-      oc = "opencode";
-    };
+  home.shellAliases = {
+    oc = "opencode";
   };
   programs.opencode = {
     enable = true;
+    extraPackages = with pkgs; [ plannotator ];
     context = ''
       ## Glossary
 
@@ -65,114 +68,117 @@
       - If asked to create issue/PR/comment/release without those verbs, prepare draft only.
     '';
     settings = {
-      autoupdate = false;
+      update = "disable";
+      username = "delafthi";
       share = "disabled";
-      permission = {
-        bash = {
-          "*" = "ask";
-          "basename *" = "allow";
-          "bat *" = "allow";
-          "cut *" = "allow";
-          "date" = "allow";
-          "date *" = "allow";
-          "delta *" = "allow";
-          "dirname *" = "allow";
-          "echo *" = "allow";
-          "eza" = "allow";
-          "eza *" = "allow";
-          "fd" = "allow";
-          "fd *" = "allow";
-          "fold *" = "allow";
-          "gh pr diff *" = "allow";
-          "gh pr list" = "allow";
-          "gh pr list *" = "allow";
-          "gh pr view *" = "allow";
-          "grep *" = "allow";
-          "head *" = "allow";
-          "hyperfine *" = "allow";
-          "jj bookmark list" = "allow";
-          "jj bookmark list *" = "allow";
-          "jj diff" = "allow";
-          "jj diff *" = "allow";
-          "jj git remote list" = "allow";
-          "jj git remote list *" = "allow";
-          "jj log" = "allow";
-          "jj log *" = "allow";
-          "jj root" = "allow";
-          "jj root *" = "allow";
-          "jj show *" = "allow";
-          "jj status" = "allow";
-          "jj status *" = "allow";
-          "jq *" = "allow";
-          "ls" = "allow";
-          "ls *" = "allow";
-          "mkdir *" = "allow";
-          "nl *" = "allow";
-          "nix config show" = "allow";
-          "nix config show *" = "allow";
-          "nix doctor" = "allow";
-          "nix doctor *" = "allow";
-          "nix eval --no-write-lock-file *" = "allow";
-          "nix flake metadata --no-write-lock-file *" = "allow";
-          "nix flake show --no-write-lock-file *" = "allow";
-          "nix-locate *" = "allow";
-          "nix registry list" = "allow";
-          "nix registry list *" = "allow";
-          "nix store ls *" = "allow";
-          "nix store ping" = "allow";
-          "nix store ping *" = "allow";
-          "ouch *" = "allow";
-          "paste *" = "allow";
-          "printf *" = "allow";
-          "pueue follow" = "allow";
-          "pueue follow *" = "allow";
-          "pueue log" = "allow";
-          "pueue log *" = "allow";
-          "pueue status" = "allow";
-          "pueue status *" = "allow";
-          "pwd" = "allow";
-          "realpath *" = "allow";
-          "rg *" = "allow";
-          "seq *" = "allow";
-          "sort *" = "allow";
-          "tail *" = "allow";
-          "tokei *" = "allow";
-          "touch *" = "allow";
-          "tr *" = "allow";
-          "uniq *" = "allow";
-          "wc *" = "allow";
-          "which *" = "allow";
+      # Rules are ordered, the last matching rule wins. A " *" pattern also
+      # matches the command without arguments, so "ls *" covers "ls".
+      permissions = [
+        (rule "shell" "*" "ask")
+        (rule "shell" "basename *" "allow")
+        (rule "shell" "bat *" "allow")
+        (rule "shell" "cut *" "allow")
+        (rule "shell" "date *" "allow")
+        (rule "shell" "delta *" "allow")
+        (rule "shell" "dirname *" "allow")
+        (rule "shell" "echo *" "allow")
+        (rule "shell" "eza *" "allow")
+        (rule "shell" "fd *" "allow")
+        (rule "shell" "fold *" "allow")
+        (rule "shell" "gh pr diff *" "allow")
+        (rule "shell" "gh pr list *" "allow")
+        (rule "shell" "gh pr view *" "allow")
+        (rule "shell" "grep *" "allow")
+        (rule "shell" "head *" "allow")
+        (rule "shell" "hyperfine *" "allow")
+        (rule "shell" "jj bookmark list *" "allow")
+        (rule "shell" "jj diff *" "allow")
+        (rule "shell" "jj git remote list *" "allow")
+        (rule "shell" "jj log *" "allow")
+        (rule "shell" "jj root *" "allow")
+        (rule "shell" "jj show *" "allow")
+        (rule "shell" "jj status *" "allow")
+        (rule "shell" "jq *" "allow")
+        (rule "shell" "ls *" "allow")
+        (rule "shell" "mkdir *" "allow")
+        (rule "shell" "nl *" "allow")
+        (rule "shell" "nix config show *" "allow")
+        (rule "shell" "nix doctor *" "allow")
+        (rule "shell" "nix eval --no-write-lock-file *" "allow")
+        (rule "shell" "nix flake metadata --no-write-lock-file *" "allow")
+        (rule "shell" "nix flake show --no-write-lock-file *" "allow")
+        (rule "shell" "nix registry list *" "allow")
+        (rule "shell" "nix store ls *" "allow")
+        (rule "shell" "nix store ping *" "allow")
+        (rule "shell" "nix-locate *" "allow")
+        (rule "shell" "ouch *" "allow")
+        (rule "shell" "paste *" "allow")
+        (rule "shell" "printf *" "allow")
+        (rule "shell" "pueue follow *" "allow")
+        (rule "shell" "pueue log *" "allow")
+        (rule "shell" "pueue status *" "allow")
+        (rule "shell" "pwd" "allow")
+        (rule "shell" "realpath *" "allow")
+        (rule "shell" "rg *" "allow")
+        (rule "shell" "sed *" "allow")
+        (rule "shell" "seq *" "allow")
+        (rule "shell" "sort *" "allow")
+        (rule "shell" "tail *" "allow")
+        (rule "shell" "tokei *" "allow")
+        (rule "shell" "touch *" "allow")
+        (rule "shell" "tr *" "allow")
+        (rule "shell" "uniq *" "allow")
+        (rule "shell" "wc *" "allow")
+        (rule "shell" "which *" "allow")
+        (rule "read" "*" "allow")
+        (rule "read" "*.env" "deny")
+        (rule "read" "*.env.*" "deny")
+        (rule "read" "*.env.example" "allow")
+        (rule "read" "*.key" "deny")
+        (rule "read" "*.pem" "deny")
+        (rule "read" "*.p12" "deny")
+        (rule "read" "*.pfx" "deny")
+        (rule "read" "*.p8" "deny")
+        (rule "read" "*.kdbx" "deny")
+        (rule "read" "*.agekey" "deny")
+        (rule "read" ".netrc" "deny")
+        (rule "read" "id_*" "deny")
+        (rule "external_directory" "*" "ask")
+        (rule "external_directory" "/tmp/opencode/**" "allow")
+        (rule "external_directory" "/tmp/opencode/**" "allow")
+        (rule "webfetch" "*" "allow")
+        (rule "websearch" "*" "allow")
+      ];
+      # Policies hard-deny, they override permissions and saved approvals.
+      policies = [
+        (rule "tool.use" "shell:sudo *" "deny")
+        (rule "tool.use" "external_directory:${config.home.homeDirectory}/.ssh/*" "deny")
+        (rule "tool.use" "external_directory:${config.home.homeDirectory}/.gnupg/*" "deny")
+        (rule "tool.use" "external_directory:${config.home.homeDirectory}/.config/sops/*" "deny")
+      ];
+      references = {
+        linux = {
+          path = "${config.home.homeDirectory}/Projects/ref/linux";
+          description = "Use when investigating Linux kernel source: syscalls, drivers, filesystems, or kernel APIs.";
         };
-        read = {
-          "*" = "allow";
-          "*.env" = "deny";
-          "*.env.*" = "deny";
-          "*.env.example" = "allow";
-          "*.key" = "deny";
-          "*.pem" = "deny";
-          "*.p12" = "deny";
-          "*.pfx" = "deny";
-          "*.p8" = "deny";
-          "*.kdbx" = "deny";
-          "*.agekey" = "deny";
-          ".netrc" = "deny";
-          "id_*" = "deny";
-          "${config.home.homeDirectory}/.ssh/**" = "deny";
-          "${config.home.homeDirectory}/.gnupg/**" = "deny";
-          "${config.home.homeDirectory}/.config/sops/**" = "deny";
-          "${config.home.homeDirectory}/Projects/ref/**" = "allow";
+        nix-darwin = {
+          path = "${config.home.homeDirectory}/Projects/ref/nix-darwin";
+          description = "Use when looking up nix-darwin options, module definitions, or macOS system defaults.";
         };
-        external_directory = {
-          "/tmp/opencode/**" = "allow";
+        nixpkgs = {
+          path = "${config.home.homeDirectory}/Projects/ref/nixpkgs";
+          description = "Use when looking up Nix package definitions, NixOS module options, or nixpkgs library functions.";
         };
-        webfetch = "allow";
-        websearch = "allow";
+        opencode = {
+          path = "${config.home.homeDirectory}/Projects/ref/opencode";
+          description = "Use when working on OpenCode itself: config schema, plugins, tools, or agent behavior.";
+        };
       };
-      provider = {
+      providers = {
         "llama.cpp" = {
-          npm = "@ai-sdk/openai-compatible";
           name = "llama-server (local)";
-          options = {
+          package = "@opencode/ai/providers/openai-compatible";
+          settings = {
             baseURL = "http://127.0.0.1:11434/v1";
           };
           models = {
@@ -186,18 +192,14 @@
           };
         };
       };
-      plugin = [
+      plugins = [
         "@dietrichgebert/ponytail"
-        "${pkgs.jj-blackbelt}"
-        "${pkgs.plannotator}/share/plannotator/plugins/opencode"
+        "${pkgs.jj-blackbelt}/share/plugins/opencode/jj-blackbelt"
+        "@plannotator/opencode@latest"
       ];
-    };
-    tui = {
-      keybinds = {
-        session_new = "<leader>c";
-        session_compact = "<leader>C";
-        session_child_cycle = "<leader>n";
-        session_child_cycle_reverse = "<leader>p";
+      experimental = {
+        todo = true;
+        subagent_depth = 2;
       };
     };
     commands = {
@@ -209,9 +211,6 @@
       handover = ./commands/handover.md;
       improve-codebase-architecture = ./commands/improve-codebase-architecture.md;
       onboard = ./commands/onboard.md;
-      plannotator-annotate = "${pkgs.plannotator}/share/plannotator/commands/opencode/plannotator-annotate.md";
-      plannotator-last = "${pkgs.plannotator}/share/plannotator/commands/opencode/plannotator-last.md";
-      plannotator-review = "${pkgs.plannotator}/share/plannotator/commands/opencode/plannotator-review.md";
       pr = ./commands/pr.md;
       readme = ./commands/readme.md;
       review = ./commands/review.md;
