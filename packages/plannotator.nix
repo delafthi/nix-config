@@ -74,7 +74,7 @@ let
 
       dontFixup = true;
 
-      outputHash = "sha256-GMxCkOaYBPRNdu5qPBiENI33H5zzV3cqOicZRqnIqFU=";
+      outputHash = "sha256-0P7x1JwDiIyXuL37HGVsepPpQJvfbFoSv0JKTAa+mi8=";
       outputHashAlgo = "sha256";
       outputHashMode = "recursive";
     };
@@ -121,7 +121,7 @@ let
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "plannotator";
-  version = "0.28.19";
+  version = "0.28.23";
 
   __structuredAttrs = true;
   strictDeps = true;
@@ -130,8 +130,10 @@ stdenv.mkDerivation (finalAttrs: {
     owner = "backnotprop";
     repo = "plannotator";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-vxGRw4Nrm7sWMl/AZZoUcR6g2cMqyIYgTgg0HGRE0A4=";
+    hash = "sha256-QxyDUNlf7gvuyb22iNwdzt4vYafF9kDzTu1oj2bMfnU=";
   };
+
+  node_modules = node_modules finalAttrs;
 
   nativeBuildInputs = [
     bun
@@ -146,7 +148,7 @@ stdenv.mkDerivation (finalAttrs: {
   configurePhase = ''
     runHook preConfigure
 
-    cp -R ${finalAttrs.passthru.node_modules}/. .
+    cp -R $node_modules/. .
     patchShebangs node_modules
     patchShebangs packages/*/node_modules
 
@@ -197,14 +199,11 @@ stdenv.mkDerivation (finalAttrs: {
   ];
   doInstallCheck = true;
 
-  passthru = {
-    node_modules = node_modules finalAttrs;
-    updateScript = nix-update-script {
-      extraArgs = [
-        "--subpackage"
-        "node_modules"
-      ];
-    };
+  passthru.updateScript = nix-update-script {
+    extraArgs = [
+      "--subpackage"
+      "node_modules"
+    ];
   };
 
   meta = {

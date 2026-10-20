@@ -189,7 +189,7 @@
       plugin = [
         "@dietrichgebert/ponytail"
         "${pkgs.jj-blackbelt}"
-        "${pkgs.plannotator}/plugins/opencode"
+        "${pkgs.plannotator}/share/plannotator/plugins/opencode"
       ];
     };
     tui = {
@@ -209,9 +209,9 @@
       handover = ./commands/handover.md;
       improve-codebase-architecture = ./commands/improve-codebase-architecture.md;
       onboard = ./commands/onboard.md;
-      plannotator-annotate = "${pkgs.plannotator}/commands/opencode/plannotator-annotate.md";
-      plannotator-last = "${pkgs.plannotator}/commands/opencode/plannotator-last.md";
-      plannotator-review = "${pkgs.plannotator}/commands/opencode/plannotator-review.md";
+      plannotator-annotate = "${pkgs.plannotator}/share/plannotator/commands/opencode/plannotator-annotate.md";
+      plannotator-last = "${pkgs.plannotator}/share/plannotator/commands/opencode/plannotator-last.md";
+      plannotator-review = "${pkgs.plannotator}/share/plannotator/commands/opencode/plannotator-review.md";
       pr = ./commands/pr.md;
       readme = ./commands/readme.md;
       review = ./commands/review.md;
