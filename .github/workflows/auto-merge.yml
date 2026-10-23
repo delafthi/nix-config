@@ -45,12 +45,12 @@ jobs:
         run: |
           pr_state=$(gh pr view "${PR_NUMBER}" --repo "${{ github.repository }}" --json state,mergeable,reviewDecision --jq '.')
 
-          if [[ $(echo "$pr_state" | jq -r '.state') != "OPEN" ]]; then
+          if [[ $(echo "$pr_state" | jaq -r '.state') != "OPEN" ]]; then
             echo "::error::PR #${PR_NUMBER} is not open"
             exit 1
           fi
 
-          if [[ $(echo "$pr_state" | jq -r '.mergeable') == "CONFLICTING" ]]; then
+          if [[ $(echo "$pr_state" | jaq -r '.mergeable') == "CONFLICTING" ]]; then
             echo "::error::PR #${PR_NUMBER} has merge conflicts"
             exit 1
           fi

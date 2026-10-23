@@ -111,7 +111,7 @@ opencode:
 
 ```bash
 opencode run --format json "the query" 2>/dev/null \
-  | jq -s -e 'any(.[]; .type == "tool_use" and .part.tool == "skill")'
+  | jaq -s -e 'any(.[]; .type == "tool_use" and .part.tool == "skill")'
 ```
 
 Verify the tool event shape once against real output before trusting the filter;

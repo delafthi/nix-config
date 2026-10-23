@@ -14,7 +14,6 @@
     ./television.nix
     ./ghostty.nix
     ./helix.nix
-    ./jq.nix
     ./nix-index.nix
     ./pandoc.nix
     ./pueue.nix
@@ -41,6 +40,7 @@
       hexyl
       hyperfine
       imagemagick
+      jaq
       just
       ouch
       p7zip
@@ -60,6 +60,7 @@
       zip
     ];
     shellAliases = {
+      jq = "jaq";
       sg = "ast-grep";
       strace = "strace -yy";
     };

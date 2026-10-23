@@ -27,7 +27,7 @@ in
       ## Preferred tools
 
       - `fd` over `find`, `rg` over `grep`, `bat` over `cat`, `delta` over `diff`, `eza` over `ls`
-      - `jq` for JSON, `tokei` for metrics, `hyperfine` for benchmarks, `ouch` for archives
+      - `jaq` for JSON, `tokei` for metrics, `hyperfine` for benchmarks, `ouch` for archives
 
       ## Version Control
 
@@ -98,6 +98,7 @@ in
         (rule "shell" "jj root *" "allow")
         (rule "shell" "jj show *" "allow")
         (rule "shell" "jj status *" "allow")
+        (rule "shell" "jaq *" "allow")
         (rule "shell" "jq *" "allow")
         (rule "shell" "ls *" "allow")
         (rule "shell" "mkdir *" "allow")

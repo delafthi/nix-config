@@ -5,7 +5,7 @@
   common-updater-scripts,
   curl,
   fetchurl,
-  jq,
+  jaq,
   writeShellScript,
 }:
 
@@ -39,13 +39,13 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     export PATH="${
       lib.makeBinPath [
         curl
-        jq
+        jaq
         common-updater-scripts
       ]
     }"
 
     new_version=$(curl --silent https://proton.me/download/drive/macos/version.json \
-      | jq -r '[.Releases[] | select(.CategoryName == "Stable")] | first | .Version')
+      | jaq -r '[.Releases[] | select(.CategoryName == "Stable")] | first | .Version')
 
     if [[ "${finalAttrs.version}" = "$new_version" ]]; then
         echo "proton-drive is already at the latest version $new_version."
