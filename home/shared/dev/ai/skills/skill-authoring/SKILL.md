@@ -162,7 +162,7 @@ split fixed. Run each query three times through `opencode run --format json` and
 look for a skill tool call:
 
 ```bash
-opencode run --format json "$query" | jq -s -e 'any(.[]; .type == "tool_use")'
+opencode run --format json "$query" | jaq -s -e 'any(.[]; .type == "tool_use")'
 ```
 
 Model behavior is nondeterministic, so compare trigger rates across runs, not
