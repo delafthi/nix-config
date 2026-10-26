@@ -32,7 +32,12 @@ let
       # $out/share/skills/$pname/<skill>/.
       nativeBuildInputs = [ installAgentSkills ];
 
-      passthru.updateScript = nix-update-script { extraArgs = [ "--version=branch" ]; };
+      passthru.updateScript = nix-update-script {
+        extraArgs = [
+          "--flake"
+          "--version=branch"
+        ];
+      };
 
       meta = {
         description = "Cursor plugin specification and official plugins — ${plugin}";
