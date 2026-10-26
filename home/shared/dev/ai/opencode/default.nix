@@ -182,7 +182,7 @@ in
         (rule "read" "id_*" "deny")
         (rule "external_directory" "*" "ask")
         (rule "external_directory" "/tmp/opencode/**" "allow")
-        (rule "external_directory" "/tmp/opencode/**" "allow")
+        (rule "external_directory" "${config.home.homeDirectory}/Projects/ref/**" "allow")
         (rule "webfetch" "*" "allow")
         (rule "websearch" "*" "allow")
       ];
