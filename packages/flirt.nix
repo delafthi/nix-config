@@ -8,7 +8,7 @@
 }:
 rustPlatform.buildRustPackage (_finalAttrs: {
   pname = "flirt";
-  version = "0-unstable-2026-10-13";
+  version = "0-unstable-2026-10-07";
 
   src = fetchFromCodeberg {
     owner = "flirt";
