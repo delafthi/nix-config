@@ -52,7 +52,11 @@ stdenvNoCC.mkDerivation (finalAttrs: {
         exit 0
     fi
 
-    update-source-version "proton-drive" "$new_version" \
+    # Use the per-system attr path (<nix-instantiate -A packages.$system.…>
+    # works via flake-compat) so update-source-version doesn't probe the
+    # flake root and log "attribute 'proton-drive' not found".
+    system="$(nix --extra-experimental-features 'nix-command flakes' eval --impure --raw --expr 'builtins.currentSystem')"
+    update-source-version "packages.$system.proton-drive" "$new_version" \
       --ignore-same-version
   '';
 

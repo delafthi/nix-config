@@ -21,7 +21,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   nativeBuildInputs = [ installAgentSkills ];
 
-  passthru.updateScript = nix-update-script { };
+  passthru.updateScript = nix-update-script { extraArgs = [ "--flake" ]; };
 
   meta = {
     description = "Skills for Real Engineers. Straight from my .agents directory";
