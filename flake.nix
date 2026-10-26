@@ -74,6 +74,7 @@
             };
             apps = {
               apply = import ./nix/apps/apply.nix { inherit pkgs; };
+              update = import ./nix/apps/update.nix { inherit pkgs; };
               setup-yubico-pam = import ./nix/apps/setup-yubico-pam.nix { inherit pkgs; };
               test-yubico-pam = import ./nix/apps/test-yubico-pam.nix { inherit pkgs; };
               default = config.apps.apply;
