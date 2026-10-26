@@ -62,6 +62,8 @@ Other apps in the flake:
 ```console
 nix run .#setup-yubico-pam
 nix run .#test-yubico-pam
+nix run .#update                  # Update all packages
+nix run .#update -- <package>    # Update one package
 ```
 
 ## Development

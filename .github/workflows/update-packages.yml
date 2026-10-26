@@ -1,0 +1,46 @@
+name: Update packages
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 2 * * 1"
+jobs:
+  update-packages:
+    runs-on: macos-latest
+    timeout-minutes: 120
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@v23
+      - name: Configure git (used by nix run .#update for its commits)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+      - name: Update packages
+        id: update
+        continue-on-error: true
+        run: |
+          BASE=$(git rev-parse HEAD)
+          nix run .#update
+          if [ "$(git rev-parse HEAD)" = "$BASE" ]; then
+            echo "No package updates."
+          else
+            echo "updated=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Create pull request
+        if: steps.update.outputs.updated == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          git checkout -b "update-packages-$(date +%Y%m%d)"
+          git push origin "update-packages-$(date +%Y%m%d)"
+          # HEAD carries one commit per updated package, e.g.
+          # "packages/kicad-bin: 10.0.8 -> 10.0.9".
+          gh pr create \
+            --title "packages: update" \
+            --body "Automated package updates via nix-update." \
+            --label auto-merge \
+            --label dependencies || true
