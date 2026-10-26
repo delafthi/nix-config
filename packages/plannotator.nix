@@ -74,7 +74,7 @@ let
 
       dontFixup = true;
 
-      outputHash = "sha256-0P7x1JwDiIyXuL37HGVsepPpQJvfbFoSv0JKTAa+mi8=";
+      outputHash = "sha256-0WRrMrSTCGJwBwEGaMsTxD9gOnTUSkTRk6wJy9eV2Qs=";
       outputHashAlgo = "sha256";
       outputHashMode = "recursive";
     };
@@ -121,7 +121,7 @@ let
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "plannotator";
-  version = "0.28.23";
+  version = "0.28.31";
 
   __structuredAttrs = true;
   strictDeps = true;
@@ -130,7 +130,7 @@ stdenv.mkDerivation (finalAttrs: {
     owner = "backnotprop";
     repo = "plannotator";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-QxyDUNlf7gvuyb22iNwdzt4vYafF9kDzTu1oj2bMfnU=";
+    hash = "sha256-iCPaPlddFewj9JL5CEs48BW4D6p+j3RXyNbMc16+r6Q=";
   };
 
   node_modules = node_modules finalAttrs;
