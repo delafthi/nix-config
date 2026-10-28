@@ -166,6 +166,8 @@
               "zoxide"
               "eza"
               "gum"
+              "rex"
+              "jaq"
             ];
           };
           source = {
@@ -193,15 +195,23 @@
           preview.command = ''eza --tree --level=2 --color=always "{}"'';
           actions = {
             open = {
-              description = "Open project in tmux session";
+              description = "Open project in rex session";
               command = ''
                 sh -c '
                   sess="$(basename "$1" | tr . -) [$(basename "$(dirname "$1")")]"
                   zoxide add "$1" 2>/dev/null
-                  tmux has-session -t "$sess" 2>/dev/null || tmux new-session -ds "$sess" -c "$1"
-                  [ -n "$TMUX" ] \
-                    && tmux switch-client -t "$sess" \
-                    || tmux attach-session -t "$sess"
+                  sid=$(rex ls --json 2>/dev/null | jaq -r --arg s "$sess" ".sessions[]? | select(.label == \$s) | .session_id" | head -n 1)
+                  if [ -z "$sid" ]; then
+                    sid=$(rex new "$sess" -c "$1" --json 2>/dev/null | jaq -r ".session_id")
+                  fi
+                  [ -z "$sid" ] && exit 1
+                  client=$(rex client ls --json 2>/dev/null | jaq -r --arg sid "$REX_SESSION" ".clients[] | select(.info.kind == \"app\" and ((.session_ids // []) | index(\$sid) != null)) | .client_id" | head -n 1)
+                  [ -z "$client" ] && client=$(rex client ls --json 2>/dev/null | jaq -r ".clients[] | select(.info.kind == \"app\") | .client_id" | head -n 1)
+                  if [ -n "$client" ]; then
+                    rex -C "$client" do session.select session_id="$sid" >/dev/null 2>&1 || true
+                  else
+                    rex do session.select session_id="$sid" >/dev/null 2>&1 || true
+                  fi
                 ' -- '{}'
               '';
               mode = "execute";
@@ -245,10 +255,18 @@
                   fi
                   zoxide add "$target" 2>/dev/null
                   sess="$(basename "$target" | tr . -) [$(basename "$(dirname "$target")")]"
-                  tmux has-session -t "$sess" 2>/dev/null || tmux new-session -ds "$sess" -c "$target"
-                  [ -n "$TMUX" ] \
-                    && tmux switch-client -t "$sess" \
-                    || tmux attach-session -t "$sess"
+                  sid=$(rex ls --json 2>/dev/null | jaq -r --arg s "$sess" ".sessions[]? | select(.label == \$s) | .session_id" | head -n 1)
+                  if [ -z "$sid" ]; then
+                    sid=$(rex new "$sess" -c "$target" --json 2>/dev/null | jaq -r ".session_id")
+                  fi
+                  [ -z "$sid" ] && exit 1
+                  client=$(rex client ls --json 2>/dev/null | jaq -r --arg sid "$REX_SESSION" ".clients[] | select(.info.kind == \"app\" and ((.session_ids // []) | index(\$sid) != null)) | .client_id" | head -n 1)
+                  [ -z "$client" ] && client=$(rex client ls --json 2>/dev/null | jaq -r ".clients[] | select(.info.kind == \"app\") | .client_id" | head -n 1)
+                  if [ -n "$client" ]; then
+                    rex -C "$client" do session.select session_id="$sid" >/dev/null 2>&1 || true
+                  else
+                    rex do session.select session_id="$sid" >/dev/null 2>&1 || true
+                  fi
                 '
               '';
               mode = "execute";
