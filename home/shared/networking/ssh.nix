@@ -1,7 +1,11 @@
+{ config, ... }:
 {
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
+    includes = [
+      "${config.xdg.configHome}/rex/ssh_config"
+    ];
     settings = {
       "codeberg.org" = {
         hostname = "codeberg.org";
