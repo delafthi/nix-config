@@ -25,7 +25,7 @@ lib.mkIf osConfig.system.gui.enable {
           "/System/Applications/Music.app"
           "/Applications/Things3.app"
           "/Applications/Anytype.app"
-          "${config.home.homeDirectory}/Applications/Home Manager Apps/Ghostty.app"
+          "/Applications//Rex Beta.app"
         ];
     show-recents = false;
     showhidden = true;

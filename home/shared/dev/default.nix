@@ -19,6 +19,7 @@
     ./pueue.nix
     ./podman.nix
     ./ripgrep.nix
+    ./rex.nix
     ./tealdeer.nix
     ./tmux.nix
     ./yazi.nix
