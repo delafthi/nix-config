@@ -201,6 +201,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   passthru.updateScript = nix-update-script {
     extraArgs = [
+      "--flake"
       "--subpackage"
       "node_modules"
     ];

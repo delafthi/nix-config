@@ -1,0 +1,40 @@
+name: Update packages
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 2 * * 1"
+jobs:
+  update-packages:
+    runs-on: macos-latest
+    timeout-minutes: 120
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@v23
+      - name: Update packages
+        continue-on-error: true
+        run: nix run .#update
+      - name: Create pull request
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          if git diff --quiet; then
+            echo "No package updates."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          BRANCH="update-packages-$(date +%Y%m%d)"
+          git checkout -b "$BRANCH"
+          git add -A
+          git commit -m "packages: update"
+          git push origin "$BRANCH"
+          gh pr create \
+            --title "Update packages" \
+            --body "Automated package updates via nix-update." \
+            --label auto-merge \
+            --label dependencies || true
