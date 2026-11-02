@@ -1,6 +1,9 @@
 {
   config,
+  osConfig,
+  lib,
   pkgs,
+  user,
   ...
 }:
 let
@@ -34,6 +37,10 @@ in
       - Use `jj` only, never `git`. `jj-blackbelt` blocks every `git` command,
         so `jj status || git status`-style fallbacks always get denied.
         Key commands: `jj new`, `jj describe`, `jj squash`, `jj log`, `jj diff`.
+
+      ## Shell
+
+      - Interactive shell is fish (configured via `shell` setting); the shell tool runs zsh because fish is denied for compat. Use fish syntax only for snippets meant for the user's terminal; tool commands stay POSIX/bash.
 
       ## Scratch
 
@@ -70,6 +77,7 @@ in
     settings = {
       update = "disable";
       username = "delafthi";
+      shell = lib.getExe osConfig.users.users."${user}".shell;
       share = "disabled";
       # Rules are ordered, the last matching rule wins.
       permissions = [
