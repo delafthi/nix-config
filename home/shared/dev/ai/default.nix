@@ -6,6 +6,7 @@
     ./llama-cpp.nix
   ];
   home.packages = with pkgs; [
+    anomalyco-hex
     ctx7
   ];
 }
