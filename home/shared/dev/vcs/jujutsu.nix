@@ -136,10 +136,7 @@ _: {
         w = [ "workspaces" ];
       };
       colors."diff token".underline = false;
-      git = {
-        private-commits = "description('wip:*') | description('private:*')";
-        sign-on-push = true;
-      };
+      git.private-commits = "description('wip:*') | description('private:*')";
       remotes = {
         origin.auto-track-bookmarks = "*";
         upstream.auto-track-bookmarks = "delafthi/* | main | master";
@@ -152,6 +149,7 @@ _: {
       };
       revsets = {
         bookmark-advance-to = "closest_pushable(@)";
+        git-sign-on-push = "~signed() & mine()";
       };
       signing = {
         backend = "gpg";
