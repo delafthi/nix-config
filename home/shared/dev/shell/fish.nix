@@ -11,6 +11,10 @@
     };
     plugins = [
       {
+        name = "async-prompt";
+        inherit (pkgs.fishPlugins.async-prompt) src;
+      }
+      {
         name = "autopair";
         inherit (pkgs.fishPlugins.autopair-fish) src;
       }
