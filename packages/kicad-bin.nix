@@ -68,12 +68,16 @@ stdenvNoCC.mkDerivation (finalAttrs: {
         | sort -V \
         | tail -n1)
 
-      if [[ "${finalAttrs.version}" = "$new_version" ]]; then
+      if [[ "''${finalAttrs.version}" = "$new_version" ]]; then
         echo "kicad-bin is already at the latest version $new_version."
         exit 0
       fi
 
-      update-source-version "kicad-bin" "$new_version" \
+      # Use the per-system attr path (<nix-instantiate -A packages.$system.…>
+      # works via flake-compat) so update-source-version doesn't probe the
+      # flake root and log "attribute 'kicad-bin' not found".
+      system="$(nix --extra-experimental-features 'nix-command flakes' eval --impure --raw --expr 'builtins.currentSystem')"
+      update-source-version "packages.$system.kicad-bin" "$new_version" \
         --ignore-same-version
     '';
   };
