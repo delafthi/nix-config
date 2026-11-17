@@ -5,12 +5,14 @@
   darwin,
   fetchFromGitHub,
   git,
+  libgit2,
   makeBinaryWrapper,
   nodejs,
   nix-update-script,
   openssl,
   pkg-config,
   rustPlatform,
+  sqlite,
   versionCheckHook,
   writableTmpDirAsHomeHook,
 }:
@@ -93,7 +95,9 @@ let
     ];
 
     buildInputs = [
+      libgit2
       openssl
+      sqlite
     ];
 
     src = fetchFromGitHub {
